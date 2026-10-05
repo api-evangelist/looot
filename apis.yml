@@ -1,0 +1,33 @@
+aid: looot
+name: looot
+description: 'looot is a company surfaced via the API Evangelist harvest backlog (source: new-submission)
+  and added to the network as a stub for full-pipeline profiling.'
+url: https://raw.githubusercontent.com/api-evangelist/looot/refs/heads/main/apis.yml
+x-type: company
+x-source: harvest:new-submission
+x-tier: stub
+x-tier-reason: harvest
+specificationVersion: '0.20'
+created: '2026-10-05'
+modified: '2026-10-05'
+tags:
+- Company
+apis: []
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
+common:
+- type: Website
+  url: https://looot.ai
+- type: Documentation
+  url: https://docs.looot.ai
+x-submission-notes: 'MARKETPLACE / aggregator: one key + prepaid balance in front of 2,350 endpoints from
+  76 data providers. Profile looot''s OWN platform API (OpenAPI https://api.looot.ai/openapi.json, 3.1,
+  261 paths incl. public catalog), MCP https://api.looot.ai/mcp (bearer auth; registry ai.looot/looot),
+  llms.txt https://api.looot.ai/llms.txt, skill https://looot.ai/skill.md. Per Kin policy: list the marketplace,
+  NOT its individual resold provider APIs.'
+x-submission-probe: root 200, invented 404, docs 200, OpenAPI 3.1 200 (261 paths), public catalog 200,
+  MCP 401 bearer, registry entry present, llms.txt 200
+x-submitted-by: adel@ayautomate.com (apis.io/add, 2026-10-05)
