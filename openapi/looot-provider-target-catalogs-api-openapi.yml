@@ -1,0 +1,217 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Target Catalogs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Target Catalogs
+paths:
+  /v1/provider-target-catalogs:
+    get:
+      summary: List immutable external provider target catalog versions
+      responses:
+        '200':
+          description: Catalog versions
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Provider Target Catalogs
+      operationId: getV1ProviderTargetCatalogs
+      x-operation-id-source: derived
+    post:
+      summary: Submit an immutable compare-and-set provider target catalog version
+      responses:
+        '200':
+          description: Idempotent existing version
+        '201':
+          description: New content-addressed version
+        '400':
+          description: Invalid manifest
+        '403':
+          description: candidates:write scope required
+        '409':
+          description: Stale parent digest
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogs
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}:
+    get:
+      summary: Get the current or digest-selected provider target catalog version
+      responses:
+        '200':
+          description: Immutable catalog version
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: getV1ProviderTargetCatalogsByCatalogId
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/diff:
+    get:
+      summary: Diff added, removed, and structurally changed provider targets
+      responses:
+        '200':
+          description: Non-mutating structural diff
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: getV1ProviderTargetCatalogsByCatalogIdDiff
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/imports:
+    post:
+      summary: Quarantine a supplied OpenAPI document against one exact stored catalog digest…
+      responses:
+        '200':
+          description: Idempotent existing quarantine with catalog lineage
+        '201':
+          description: Unreviewed candidates with catalog lineage
+        '400':
+          description: Blocked evidence, invalid document, or operation mismatch
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Exact catalog digest or target not found
+        '409':
+          description: Partial prior import state
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdImports
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/import-plans:
+    post:
+      summary: Plan selected added or changed catalog targets without importing
+      responses:
+        '200':
+          description: Read-only target import plan
+        '400':
+          description: Invalid, duplicate, or unchanged selection
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdImportPlans
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/batch-imports:
+    post:
+      summary: Quarantine supplied OpenAPI documents for selected added or changed targets
+      responses:
+        '200':
+          description: Per-target created, existing, blocked, or invalid outcomes with exact catalog lineage
+        '400':
+          description: Invalid, duplicate, or unchanged selection
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdBatchImports
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/progress:
+    get:
+      summary: Page exact-digest catalog targets by durable import and candidate-review stage
+      parameters:
+      - name: digest
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: stage
+        in: query
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          pattern: ^target_[a-z0-9_]{1,100}$
+          maxLength: 107
+      responses:
+        '200':
+          description: Non-mutating catalog target progress page
+        '400':
+          description: Invalid filter, limit, or cursor
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Exact catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: getV1ProviderTargetCatalogsByCatalogIdProgress
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/review-plans:
+    post:
+      summary: Plan individual candidate review for selected added or changed catalog targets
+      responses:
+        '200':
+          description: Receipt-pinned non-mutating review plan
+        '400':
+          description: Invalid, duplicate, or unchanged selection
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Exact catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdReviewPlans
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/review-batches:
+    post:
+      summary: Start review for ready selected catalog targets using compare-and-set only
+      responses:
+        '200':
+          description: Per-target transitioned, unchanged, blocked, missing, or conflict outcomes
+        '400':
+          description: Invalid, duplicate, or unchanged selection
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Exact catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdReviewBatches
+      x-operation-id-source: derived
+  /v1/provider-target-catalogs/{catalogId}/compatibility-batches:
+    post:
+      summary: Create fourteen-gate drafts for accepted receipt-pinned catalog operations
+      responses:
+        '200':
+          description: Per-target created, existing, blocked, missing, not accepted, or conflict outcomes
+        '400':
+          description: Invalid, duplicate, or unchanged selection
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Exact catalog version not found
+      tags:
+      - Provider Target Catalogs
+      operationId: postV1ProviderTargetCatalogsByCatalogIdCompatibilityBatches
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

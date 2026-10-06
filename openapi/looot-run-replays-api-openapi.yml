@@ -1,0 +1,62 @@
+openapi: 3.2.0
+info:
+  title: looot Run Replays API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Run Replays
+paths:
+  /v1/run-replays:
+    post:
+      summary: Plan or admit a safe read-only run replay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - sourceRunId
+              - mode
+              - idempotencyKey
+              properties:
+                sourceRunId:
+                  type: string
+                mode:
+                  enum:
+                  - pinned
+                  - latest
+                idempotencyKey:
+                  type: string
+                  maxLength: 300
+                execute:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          description: Replay plan or admitted replay
+        '400':
+          description: Invalid or unsafe replay
+        '404':
+          description: Source run not found
+        '409':
+          description: Idempotency conflict
+      tags:
+      - Run Replays
+      operationId: postV1RunReplays
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

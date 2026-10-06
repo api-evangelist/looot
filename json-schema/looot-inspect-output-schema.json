@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/looot/main/json-schema/looot-inspect-output-schema.json",
+  "title": "InspectOutput",
+  "x-generated": "2026-10-05",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/looot-openapi.json#/components/schemas/InspectOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "endpoint",
+    "estimatedMaxCost",
+    "usageHints"
+  ],
+  "properties": {
+    "endpoint": {
+      "type": "object",
+      "description": "Exact registered endpoint metadata"
+    },
+    "estimatedMaxCost": {
+      "type": "number",
+      "minimum": 0,
+      "description": "The price you pay: the total a run through the platform key would charge"
+    },
+    "inputSchema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Draft 2020-12 input schema resolved from fixture, activation bundle, or direct registration; null when the endpoint declares none"
+    },
+    "requestBinding": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "How validated input fields become the HTTP request (path/query/header/body); null for a fixture or bundle-published endpoint that declares none"
+    },
+    "uiSchema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Presentation hints for a generated form; never validation"
+    },
+    "outputFormat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "summary",
+        "provenance",
+        "note"
+      ],
+      "description": "The endpoint's stored output format, present only when one is stored. Check provenance.verified before relying on it: false means an expected shape not yet checked against real answers",
+      "properties": {
+        "schema": {
+          "type": "object",
+          "description": "Draft 2020-12 output schema, structure only; its $comment says where it came from"
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-line summary of the schema"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "validatedAnswers",
+            "checkedAnswers",
+            "verified"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "own-answers",
+                "treg-shape",
+                "both",
+                "unknown"
+              ]
+            },
+            "validatedAnswers": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Real saved answers that matched the schema"
+            },
+            "checkedAnswers": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Real saved answers the schema was checked against"
+            },
+            "verified": {
+              "type": "boolean",
+              "description": "True only when at least one real answer was checked and every one matched"
+            }
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "One-line label, e.g. \"validated on 12 real answers\" or \"expected shape, not yet checked against real answers\""
+        }
+      }
+    },
+    "usageHints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpointId",
+        "operationVersion",
+        "contractDigest",
+        "authentication",
+        "requiredInputFields",
+        "outputSchema",
+        "examples"
+      ],
+      "properties": {
+        "endpointId": {
+          "type": "string"
+        },
+        "operationVersion": {
+          "type": "string"
+        },
+        "contractDigest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "authentication": {
+          "type": "object",
+          "description": "Bearer placeholder only; never contains a credential"
+        },
+        "requiredInputFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "Pinned Draft 2020-12 output schema"
+        }
+      }
+    }
+  }
+}

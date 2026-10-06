@@ -1,0 +1,38 @@
+openapi: 3.2.0
+info:
+  title: looot Whoami API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Whoami
+paths:
+  /v1/whoami:
+    get:
+      summary: Current principal's membership, organization, tool grants and machine sessions
+      responses:
+        '200':
+          description: Organization, membership, active tool grants and active machine sessions; never includes a tokenHash
+        '403':
+          description: organizations:read scope required
+        '404':
+          description: No membership in the token's organization
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Whoami
+      operationId: getV1Whoami
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

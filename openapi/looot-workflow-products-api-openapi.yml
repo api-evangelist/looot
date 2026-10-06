@@ -1,0 +1,42 @@
+openapi: 3.2.0
+info:
+  title: looot Workflow Products API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workflow Products
+paths:
+  /v1/workflow-products/{workflowId}/actions:
+    post:
+      summary: Pause, resume, clone, or roll back a workflow product
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflow Products
+      operationId: postV1WorkflowProductsByWorkflowIdActions
+      x-operation-id-source: derived
+  /v1/workflow-products/{workflowId}/versions/{version}/export:
+    get:
+      summary: Export a pinned workflow product version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflow Products
+      operationId: getV1WorkflowProductsByWorkflowIdVersionsByVersionExport
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

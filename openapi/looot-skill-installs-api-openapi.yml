@@ -1,0 +1,60 @@
+openapi: 3.2.0
+info:
+  title: looot Skill Installs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Skill Installs
+paths:
+  /v1/skill-installs:
+    get:
+      summary: List tenant-scoped shared skill installations
+      parameters:
+      - name: bundleId
+        in: query
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      responses:
+        '200':
+          description: Installation metadata without bundle contents or secrets
+        '400':
+          description: Invalid or repeated query
+        '403':
+          description: local-product:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Installs
+      operationId: getV1SkillInstalls
+      x-operation-id-source: derived
+  /v1/skill-installs/{installId}/remove:
+    post:
+      summary: Remove one tenant-scoped shared skill installation
+      responses:
+        '200':
+          description: Removed installation metadata
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Installation not found
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Installs
+      operationId: postV1SkillInstallsByInstallIdRemove
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

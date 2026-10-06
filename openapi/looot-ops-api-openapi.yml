@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: looot Ops API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Ops
+paths:
+  /v1/ops/summary:
+    get:
+      summary: Credential-health and operational inventory summary
+      description: Connection states and alerts are scoped to the caller's own organization; provider health/readiness and operational alerts reflect the whole platform, matching how the provider registry itself is not tenant-scoped.
+      responses:
+        '200':
+          description: Summary
+        '403':
+          description: ops:read scope required
+        '503':
+          description: Ops summary unavailable
+      tags:
+      - Ops
+      operationId: getV1OpsSummary
+      x-operation-id-source: derived
+  /v1/ops/probe-results:
+    post:
+      summary: Record one daily-probe run's verdict (#721)
+      description: 'Reads the run from the probe workspace, judges it against the fixture''s expectation and stores one row in the probe results table. A second call for the same run returns the first row. Not tenant-scoped: platform operators with probe:write only.'
+      responses:
+        '200':
+          description: Already recorded; the stored verdict
+        '201':
+          description: Recorded
+        '400':
+          description: Invalid body
+        '403':
+          description: probe:write scope and platform operator authority required
+        '404':
+          description: No such run in the probe workspace
+        '422':
+          description: Not a probe run, endpoint mismatch, or the run has not settled
+        '503':
+          description: Probe workspace not configured, or the table could not be written
+      tags:
+      - Ops
+      operationId: postV1OpsProbeResults
+      x-operation-id-source: derived
+  /v1/ops/signals:
+    get:
+      summary: 'Six operational signals: provider health, route quality, latency, errors, cost…'
+      description: Sourced from the analytics store when configured, otherwise computed from runtime state. Not tenant-scoped -- platform-wide operational data.
+      responses:
+        '200':
+          description: Signals
+        '403':
+          description: ops:read scope and platform operator authority required
+        '503':
+          description: Ops signals unavailable
+      tags:
+      - Ops
+      operationId: getV1OpsSignals
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

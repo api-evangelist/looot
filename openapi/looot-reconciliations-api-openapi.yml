@@ -1,0 +1,85 @@
+openapi: 3.2.0
+info:
+  title: looot Reconciliations API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Reconciliations
+paths:
+  /v1/reconciliations:
+    get:
+      summary: List tenant-scoped pending reconciliation cases
+      responses:
+        '200':
+          description: Pending cases
+        '403':
+          description: reconciliations:read scope required
+      tags:
+      - Reconciliations
+      operationId: getV1Reconciliations
+      x-operation-id-source: derived
+  /v1/reconciliations/{attemptId}:
+    post:
+      summary: Record an immutable reconciliation decision and close its reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveReconciliation'
+      responses:
+        '200':
+          description: Immutable decision
+        '400':
+          description: Invalid cost or evidence
+        '403':
+          description: reconciliations:write scope required
+        '404':
+          description: Pending case not found
+        '409':
+          description: Conflicting decision already exists
+      tags:
+      - Reconciliations
+      operationId: postV1ReconciliationsByAttemptId
+      x-operation-id-source: derived
+components:
+  schemas:
+    ResolveReconciliation:
+      type: object
+      additionalProperties: false
+      required:
+      - action
+      - reason
+      - evidenceRefs
+      properties:
+        action:
+          enum:
+          - charge
+          - release
+        resolvedProviderCost:
+          type: number
+          minimum: 0
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+        evidenceRefs:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            type: string
+            minLength: 1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

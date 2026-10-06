@@ -1,0 +1,32 @@
+generated: '2026-10-05'
+method: probed
+source: https://looot.ai/privacy.md
+signals:
+  data_subject_request:
+    evidence:
+      - source: https://looot.ai/privacy.md
+        http_status: 200
+        fetched: "true"
+        quote: "You can request deletion of your account data at any time."
+    note: Users may request deletion of their personal data.
+  subprocessors:
+    evidence:
+      - source: https://looot.ai/privacy.md
+        http_status: 200
+        fetched: "true"
+        quote: "Services that process data on our behalf, as used in the product today: Supabase (database and authentication), Stripe (payments), Resend (transactional email), Vercel (dashboard hosting), Render (gateway hosting), Tinybird (usage analytics), and PostHog (product analytics, which sees page views, clicks and your email once you sign in; its servers are in the United States)."
+    note: Lists third‑party subprocessors used.
+  data_retention:
+    evidence:
+      - source: https://looot.ai/privacy.md
+        http_status: 200
+        fetched: "true"
+        quote: "Run records are kept while your account exists, so you can see your own history and audit log. Delete your account and we delete the data tied to it, on request."
+    note: Retains data for the duration of the account, deletes on request.
+  compliance:
+    evidence:
+      - source: https://looot.ai/privacy.md
+        http_status: 200
+        fetched: "true"
+        quote: "We aim to follow GDPR principles: we collect what the service needs, tell you what we store, and delete it on request."
+    note: States intention to follow GDPR.

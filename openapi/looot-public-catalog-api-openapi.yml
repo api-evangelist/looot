@@ -1,0 +1,561 @@
+openapi: 3.2.0
+info:
+  title: looot Public Catalog API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Public Catalog
+paths:
+  /v1/public-catalog:
+    get:
+      security: []
+      summary: Search stable redacted public catalog pages by text, capability, category, or…
+      description: Publicly browsable without a bearer token; the catalog is not tenant-scoped.
+      parameters:
+      - name: text
+        in: query
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description: At most 800 UTF-8 bytes; control characters rejected
+      - name: q
+        in: query
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description: Alias for text; cannot be combined with text
+      - name: capability
+        in: query
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      - name: category
+        in: query
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      - name: provider
+        in: query
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      - name: operationId
+        in: query
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 4096
+      - name: signals
+        in: query
+        schema:
+          enum:
+          - '1'
+        description: '1 also returns unsuppliedJobs and warnings when no public endpoint does the query''s job; without it that page is items: [] with the three base keys'
+      responses:
+        '200':
+          description: Stable public catalog page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicCatalogPage'
+        '400':
+          description: Invalid, repeated, or malformed query/cursor
+        '401':
+          description: Only returned for a malformed request; no bearer token is required
+        '403':
+          description: Catalog read scope required
+        '409':
+          description: 'catalog_cursor_stale: cursor no longer matches the query or catalog snapshot'
+      tags:
+      - Public Catalog
+      operationId: getV1PublicCatalog
+      x-operation-id-source: derived
+  /v1/public-catalog/{catalogItemId}:
+    get:
+      security: []
+      summary: Inspect one public published catalog item; hidden and missing ids share 404
+      description: Publicly browsable without a bearer token; the catalog is not tenant-scoped.
+      parameters:
+      - name: catalogItemId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+      responses:
+        '200':
+          description: Public catalog item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicCatalogItem'
+        '401':
+          description: Only returned for a malformed request; no bearer token is required
+        '403':
+          description: Catalog read scope required
+        '404':
+          description: Catalog item not found
+      tags:
+      - Public Catalog
+      operationId: getV1PublicCatalogByCatalogItemId
+      x-operation-id-source: derived
+  /v1/public-catalog/compare:
+    post:
+      security: []
+      summary: Compare 2 to 20 explicit public catalog items without inferring missing price…
+      description: Publicly browsable without a bearer token; the catalog is not tenant-scoped.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - catalogItemIds
+              properties:
+                catalogItemIds:
+                  type: array
+                  minItems: 2
+                  maxItems: 20
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: ^[a-z][a-z0-9_-]{2,127}$
+      responses:
+        '200':
+          description: Conservative catalog comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicCatalogComparison'
+        '400':
+          description: Invalid selection
+        '401':
+          description: Only returned for a malformed request; no bearer token is required
+        '403':
+          description: Catalog read scope required
+        '404':
+          description: One or more catalog items not found
+      tags:
+      - Public Catalog
+      operationId: postV1PublicCatalogCompare
+      x-operation-id-source: derived
+components:
+  schemas:
+    PublicCatalogComparison:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - priceComparison
+      - comparisonDigest
+      properties:
+        items:
+          type: array
+          minItems: 2
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/PublicCatalogItem'
+        priceComparison:
+          oneOf:
+          - type: object
+            additionalProperties: false
+            required:
+            - state
+            - currency
+            - unit
+            - amounts
+            - lowestAmountMicros
+            - lowestCatalogItemIds
+            properties:
+              state:
+                const: comparable
+              currency:
+                type: string
+                pattern: ^[A-Z]{3}$
+              unit:
+                type: string
+                minLength: 1
+                maxLength: 80
+              amounts:
+                type: array
+                minItems: 2
+                maxItems: 20
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - catalogItemId
+                  - amountMicros
+                  properties:
+                    catalogItemId:
+                      type: string
+                      pattern: ^[a-z][a-z0-9_-]{2,127}$
+                    amountMicros:
+                      type: integer
+                      minimum: 0
+                      maximum: 9007199254740991
+              lowestAmountMicros:
+                type: integer
+                minimum: 0
+                maximum: 9007199254740991
+              lowestCatalogItemIds:
+                type: array
+                minItems: 1
+                maxItems: 20
+                items:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+          - type: object
+            additionalProperties: false
+            required:
+            - state
+            - reason
+            properties:
+              state:
+                const: not_comparable
+              reason:
+                enum:
+                - price_state_unknown_or_uncomputable
+                - capability_or_contract_mismatch
+                - price_semantics_unverified
+                - currency_or_unit_mismatch
+        comparisonDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+    PublicCatalogPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - catalogDigest
+      - nextCursor
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/PublicCatalogItem'
+        catalogDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 2000
+        unsuppliedJobs:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            type: string
+            minLength: 1
+            maxLength: 200
+          description: 'Sent only with signals=1 and together with warnings: best-matching job ids no public endpoint is filed under'
+        warnings:
+          type: array
+          minItems: 1
+          maxItems: 5
+          description: Sent only with signals=1, when no public endpoint does the query's job; items is then empty
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - code
+            - jobId
+            - jobTitle
+            - message
+            properties:
+              code:
+                const: no_supply_for_job
+              jobId:
+                type: string
+                minLength: 1
+                maxLength: 200
+              jobTitle:
+                type: string
+                minLength: 1
+                maxLength: 300
+              message:
+                type: string
+                minLength: 1
+                maxLength: 1000
+    PublicCatalogPrice:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - state
+        - amountMicros
+        - currency
+        - unit
+        - effectiveAt
+        properties:
+          state:
+            const: known
+          amountMicros:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+          currency:
+            type: string
+            pattern: ^[A-Z]{3}$
+          unit:
+            type: string
+            minLength: 1
+            maxLength: 80
+          effectiveAt:
+            type: string
+            format: date-time
+          comparisonBasis:
+            type: object
+            additionalProperties: false
+            required:
+            - canonicalMeter
+            - billingBasis
+            - tier
+            - minimumMicros
+            - rounding
+            properties:
+              canonicalMeter:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{2,127}$
+              billingBasis:
+                enum:
+                - per_call
+                - per_result
+                - per_unit
+              tier:
+                type: string
+                minLength: 1
+                maxLength: 80
+              minimumMicros:
+                type: integer
+                minimum: 0
+                maximum: 9007199254740991
+              rounding:
+                enum:
+                - exact
+                - ceil
+                - floor
+      - type: object
+        additionalProperties: false
+        required:
+        - state
+        - reason
+        properties:
+          state:
+            enum:
+            - unknown
+            - uncomputable
+          reason:
+            type: string
+            minLength: 1
+            maxLength: 300
+    PublicCatalogItem:
+      type: object
+      additionalProperties: false
+      required:
+      - catalogItemId
+      - revision
+      - providerId
+      - operationId
+      - title
+      - description
+      - categories
+      - capabilities
+      - inputSchemaDigest
+      - outputSchemaDigest
+      - method
+      - pathTemplate
+      - parameters
+      - verification
+      - references
+      - price
+      - publishedAt
+      - itemDigest
+      - provenanceTier
+      properties:
+        catalogItemId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        providerId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        operationId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        description:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        categories:
+          type: array
+          minItems: 1
+          maxItems: 30
+          items:
+            type: string
+            pattern: ^[a-z][a-z0-9_-]{2,127}$
+        capabilities:
+          type: array
+          maxItems: 30
+          items:
+            type: string
+            pattern: ^[a-z][a-z0-9_-]{2,127}$
+        inputSchemaDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        outputSchemaDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        method:
+          type:
+          - string
+          - 'null'
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - null
+        pathTemplate:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 1024
+        parameters:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - name
+            - location
+            - required
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 120
+              location:
+                enum:
+                - query
+                - path
+                - header
+                - body
+              required:
+                type: boolean
+              description:
+                type: string
+                minLength: 1
+                maxLength: 500
+              schemaDigest:
+                type: string
+                pattern: ^sha256:[a-f0-9]{64}$
+        verification:
+          type: object
+          additionalProperties: false
+          required:
+          - state
+          - verifiedAt
+          - responseCapture
+          properties:
+            state:
+              enum:
+              - unverified
+              - fixture_verified
+              - authenticated_verified
+              - stale
+            verifiedAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            responseCapture:
+              type: object
+              additionalProperties: false
+              required:
+              - available
+              - digest
+              properties:
+                available:
+                  type: boolean
+                digest:
+                  type:
+                  - string
+                  - 'null'
+                  pattern: ^sha256:[a-f0-9]{64}$
+        references:
+          type: array
+          maxItems: 20
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - kind
+            - url
+            properties:
+              kind:
+                enum:
+                - documentation
+                - pricing
+              url:
+                type: string
+                format: uri
+                maxLength: 2048
+        price:
+          $ref: '#/components/schemas/PublicCatalogPrice'
+        publishedAt:
+          type: string
+          format: date-time
+        itemDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        provenanceTier:
+          enum:
+          - official
+          - verified_partner
+          - community
+          - private
+          - unverified
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

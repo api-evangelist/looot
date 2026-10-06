@@ -1,0 +1,58 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Registry Publications API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Registry Publications
+paths:
+  /v1/provider-registry-publications:
+    post:
+      summary: Publish a finally-reviewed provider activation bundle into the live, durable…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishProviderRegistry'
+      responses:
+        '200':
+          description: Idempotent replay of an already-published endpoint version
+        '201':
+          description: New provider and/or endpoint version published; visible immediately, no restart
+        '400':
+          description: Bundle not finally reviewed, capability unsupported, auth type not injectable, price unknown, stale authenticated-test evidence, or an unacknowledged breaking contract change against the current active version
+        '403':
+          description: provider-registry:write scope required
+        '404':
+          description: Bundle not found
+      tags:
+      - Provider Registry Publications
+      operationId: postV1ProviderRegistryPublications
+      x-operation-id-source: derived
+components:
+  schemas:
+    PublishProviderRegistry:
+      type: object
+      additionalProperties: false
+      required:
+      - bundleId
+      properties:
+        bundleId:
+          type: string
+          pattern: ^pab_[a-f0-9]{32}$
+        acknowledgeBreakingChange:
+          type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

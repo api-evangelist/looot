@@ -1,0 +1,43 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://docs.looot.ai/reference",
+      "service-doc": [
+        {
+          "href": "https://docs.looot.ai/reference",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://docs.looot.ai/api/docs",
+      "service-desc": [
+        {
+          "href": "https://docs.looot.ai/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.looot.ai/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://docs.looot.ai/mcp",
+      "service-desc": [
+        {
+          "href": "https://docs.looot.ai/.well-known/mcp.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.looot.ai/",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

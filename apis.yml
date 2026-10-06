@@ -1,33 +1,2247 @@
 aid: looot
 name: looot
-description: 'looot is a company surfaced via the API Evangelist harvest backlog (source: new-submission)
-  and added to the network as a stub for full-pipeline profiling.'
+image: https://looot.ai/opengraph-image
+description: looot provides a unified API marketplace that gives agents a single key and prepaid balance to access over 2,350 endpoints from 76
+  data providers. It offers a platform API (OpenAPI 3.1 with 261 paths) including a public catalog, and an MCP for bearer‑authenticated access.
+  The service integrates with major AI assistants like Claude, Cursor, Codex, and ChatGPT, enabling tasks such as LinkedIn profile lookup, email
+  discovery, SEO ranking, and social media trend analysis. Pricing is usage‑based, and documentation is available at docs.looot.ai.
 url: https://raw.githubusercontent.com/api-evangelist/looot/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:new-submission
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-05 (modular-v1; was harvest)
 specificationVersion: '0.20'
 created: '2026-10-05'
 modified: '2026-10-05'
 tags:
-- Company
-apis: []
+- Marketplace
+- API
+- AI
+- Data
+- Integration
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/looot-agentic-access.yml
+- type: Plans
+  url: plans/looot-plans-pricing.yml
+- type: Spectral
+  url: rules/looot-rules.yml
+- type: JSONLD
+  url: json-ld/looot-context.jsonld
+- type: Vocabulary
+  url: vocabulary/looot-vocabulary.yml
+- type: DataModel
+  url: data-model/looot-data-model.yml
+- type: CLI
+  url: cli/looot-cli.yml
+- type: ChangeLog
+  url: changelog/looot-changelog.yml
+- type: Idempotency
+  url: conventions/looot-conventions.yml
+- type: Conventions
+  url: conventions/looot-conventions.yml
+- type: Compliance
+  url: https://looot.ai/security
+- type: Authentication
+  url: authentication/looot-authentication.yml
+- type: ErrorCatalog
+  url: errors/looot-problem-types.yml
+- type: Conformance
+  url: conformance/looot-conformance.yml
+- type: LLMsTxt
+  url: llms/looot-llms.txt
+- type: MCPServer
+  url: mcp/looot-mcp.yml
+- type: WellKnown
+  url: well-known/looot-well-known.yml
+- type: Hosts
+  url: hosts/looot-hosts.yml
+- type: Vendors
+  url: vendors/looot-vendors.yml
+- type: SDKs
+  url: packages/looot-packages.yml
+- type: Packages
+  url: packages/looot-packages.yml
+- type: Security
+  url: https://looot.ai/security
+- type: ChangeLog
+  url: https://looot.ai/changelog
+- type: DeveloperPortal
+  url: https://api.looot.ai</code
+- type: TrustCenter
+  url: security/looot-trust-center.yml
+- type: DomainSecurity
+  url: security/looot-domain-security.yml
 - type: Website
   url: https://looot.ai
 - type: Documentation
   url: https://docs.looot.ai
-x-submission-notes: 'MARKETPLACE / aggregator: one key + prepaid balance in front of 2,350 endpoints from
-  76 data providers. Profile looot''s OWN platform API (OpenAPI https://api.looot.ai/openapi.json, 3.1,
-  261 paths incl. public catalog), MCP https://api.looot.ai/mcp (bearer auth; registry ai.looot/looot),
-  llms.txt https://api.looot.ai/llms.txt, skill https://looot.ai/skill.md. Per Kin policy: list the marketplace,
-  NOT its individual resold provider APIs.'
-x-submission-probe: root 200, invented 404, docs 200, OpenAPI 3.1 200 (261 paths), public catalog 200,
-  MCP 401 bearer, registry entry present, llms.txt 200
+- type: APIReference
+  url: https://api.looot.ai/openapi.json
+- type: GettingStarted
+  url: https://docs.looot.ai/get-started/quickstart-web
+- type: Support
+  url: https://docs.looot.ai/support
+- type: Blog
+  url: https://looot.ai/blog
+- type: Pricing
+  url: https://looot.ai/pricing
+- type: SignUp
+  url: https://looot.ai/auth/sign-in
+- type: TermsOfService
+  url: https://looot.ai/terms
+- type: PrivacyPolicy
+  url: https://looot.ai/privacy
+apis:
+- aid: looot:looot-activation-proposals-api
+  name: looot Activation Proposals API
+  description: The Activation Proposals API from looot — 2 operation(s) for activation proposals.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Activation Proposals
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-activation-proposals-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-admin-api
+  name: looot Admin API
+  description: The Admin API from looot — 8 operation(s) for admin.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-admin-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-artifacts-api
+  name: looot Artifacts API
+  description: The Artifacts API from looot — 2 operation(s) for artifacts.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Artifacts
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-artifacts-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-audit-records-api
+  name: looot Audit Records API
+  description: The Audit Records API from looot — 1 operation(s) for audit records.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Audit Records
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-audit-records-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-balance-api
+  name: looot Balance API
+  description: The Balance API from looot — 1 operation(s) for balance.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Balance
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-balance-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-billing-api
+  name: looot Billing API
+  description: The Billing API from looot — 1 operation(s) for billing.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-billing-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-budgets-api
+  name: looot Budgets API
+  description: The Budgets API from looot — 5 operation(s) for budgets.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Budgets
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-budgets-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-contradictions-api
+  name: looot Candidate Contradictions API
+  description: >-
+    The Candidate Contradictions API from looot — 1 operation(s) for candidate contradictions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Contradictions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-contradictions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-metadata-bundles-api
+  name: looot Candidate Metadata Bundles API
+  description: >-
+    The Candidate Metadata Bundles API from looot — 1 operation(s) for candidate metadata bundles.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Metadata Bundles
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-metadata-bundles-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-metadata-imports-api
+  name: looot Candidate Metadata Imports API
+  description: >-
+    The Candidate Metadata Imports API from looot — 1 operation(s) for candidate metadata imports.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Metadata Imports
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-metadata-imports-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-review-batches-api
+  name: looot Candidate Review Batches API
+  description: >-
+    The Candidate Review Batches API from looot — 1 operation(s) for candidate review batches.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Review Batches
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-review-batches-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-review-plans-api
+  name: looot Candidate Review Plans API
+  description: The Candidate Review Plans API from looot — 1 operation(s) for candidate review plans.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Review Plans
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-review-plans-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-source-diffs-api
+  name: looot Candidate Source Diffs API
+  description: The Candidate Source Diffs API from looot — 1 operation(s) for candidate source diffs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Source Diffs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-source-diffs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidate-sources-api
+  name: looot Candidate Sources API
+  description: The Candidate Sources API from looot — 1 operation(s) for candidate sources.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidate Sources
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidate-sources-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-candidates-api
+  name: looot Candidates API
+  description: The Candidates API from looot — 3 operation(s) for candidates.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Candidates
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-candidates-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-capability-requests-api
+  name: looot Capability Requests API
+  description: The Capability Requests API from looot — 1 operation(s) for capability requests.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Capability Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-capability-requests-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-capacity-api
+  name: looot Capacity API
+  description: The Capacity API from looot — 2 operation(s) for capacity.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Capacity
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-capacity-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-catalog-api
+  name: looot Catalog API
+  description: The Catalog API from looot — 5 operation(s) for catalog.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Catalog
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-catalog-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-cli-runs-api
+  name: looot Cli Runs API
+  description: The Cli Runs API from looot — 4 operation(s) for cli runs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Cli Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-cli-runs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-cli-tools-api
+  name: looot Cli Tools API
+  description: The Cli Tools API from looot — 5 operation(s) for cli tools.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Cli Tools
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-cli-tools-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-compatibility-drafts-api
+  name: looot Compatibility Drafts API
+  description: The Compatibility Drafts API from looot — 3 operation(s) for compatibility drafts.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Compatibility Drafts
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-compatibility-drafts-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-compatibility-gate-submissions-api
+  name: looot Compatibility Gate Submissions API
+  description: >-
+    The Compatibility Gate Submissions API from looot — 1 operation(s) for compatibility gate submissions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Compatibility Gate Submissions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-compatibility-gate-submissions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-connections-api
+  name: looot Connections API
+  description: The Connections API from looot — 14 operation(s) for connections.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Connections
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-connections-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-discover-api
+  name: looot Discover API
+  description: The Discover API from looot — 1 operation(s) for discover.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Discover
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-discover-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-email-api
+  name: looot Email API
+  description: The Email API from looot — 1 operation(s) for email.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Email
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-email-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-email-deliveries-api
+  name: looot Email Deliveries API
+  description: The Email Deliveries API from looot — 1 operation(s) for email deliveries.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Email Deliveries
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-email-deliveries-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-invitations-api
+  name: looot Invitations API
+  description: The Invitations API from looot — 1 operation(s) for invitations.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Invitations
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-invitations-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-ledger-api
+  name: looot Ledger API
+  description: The Ledger API from looot — 1 operation(s) for ledger.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Ledger
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-ledger-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-media-downloads-api
+  name: looot Media Downloads API
+  description: The Media Downloads API from looot — 1 operation(s) for media downloads.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Media Downloads
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-media-downloads-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-monid-trace-api
+  name: looot Monid Trace API
+  description: The Monid Trace API from looot — 1 operation(s) for monid trace.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Monid Trace
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-monid-trace-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-normalized-route-verifications-api
+  name: looot Normalized Route Verifications API
+  description: >-
+    The Normalized Route Verifications API from looot — 2 operation(s) for normalized route verifications.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Normalized Route Verifications
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-normalized-route-verifications-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-normalized-routes-api
+  name: looot Normalized Routes API
+  description: The Normalized Routes API from looot — 3 operation(s) for normalized routes.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Normalized Routes
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-normalized-routes-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-onboarding-jobs-api
+  name: looot Onboarding Jobs API
+  description: The Onboarding Jobs API from looot — 4 operation(s) for onboarding jobs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Onboarding Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-onboarding-jobs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-openapi-json-api
+  name: looot Openapi.json API
+  description: The Openapi.json API from looot — 1 operation(s) for openapi.json.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Openapi.json
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-openapi-json-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-operations-api
+  name: looot Operations API
+  description: The Operations API from looot — 2 operation(s) for operations.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Operations
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-operations-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-ops-api
+  name: looot Ops API
+  description: The Ops API from looot — 3 operation(s) for ops.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Ops
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-ops-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-organizations-api
+  name: looot Organizations API
+  description: The Organizations API from looot — 12 operation(s) for organizations.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-organizations-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-output-mappings-api
+  name: looot Output Mappings API
+  description: The Output Mappings API from looot — 6 operation(s) for output mappings.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Output Mappings
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-output-mappings-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-platform-keys-api
+  name: looot Platform Keys API
+  description: The Platform Keys API from looot — 2 operation(s) for platform keys.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Platform Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-platform-keys-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-platform-oauth-api
+  name: looot Platform Oauth API
+  description: The Platform Oauth API from looot — 2 operation(s) for platform oauth.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Platform Oauth
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-platform-oauth-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-platform-operators-api
+  name: looot Platform Operators API
+  description: The Platform Operators API from looot — 2 operation(s) for platform operators.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Platform Operators
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-platform-operators-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-price-policies-api
+  name: looot Price Policies API
+  description: The Price Policies API from looot — 1 operation(s) for price policies.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Price Policies
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-price-policies-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-prices-api
+  name: looot Prices API
+  description: The Prices API from looot — 1 operation(s) for prices.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Prices
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-prices-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-activation-bundles-api
+  name: looot Provider Activation Bundles API
+  description: >-
+    The Provider Activation Bundles API from looot — 4 operation(s) for provider activation bundles.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Activation Bundles
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-activation-bundles-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-activation-change-requests-api
+  name: looot Provider Activation Change Requests API
+  description: >-
+    The Provider Activation Change Requests API from looot — 5 operation(s) for provider activation change
+    requests.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Activation Change Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-activation-change-requests-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-activation-evidence-submissions-api
+  name: looot Provider Activation Evidence Submissions API
+  description: >-
+    The Provider Activation Evidence Submissions API from looot — 1 operation(s) for provider activation
+    evidence submissions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Activation Evidence Submissions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-activation-evidence-submissions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-authoring-api
+  name: looot Provider Authoring API
+  description: The Provider Authoring API from looot — 3 operation(s) for provider authoring.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Authoring
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-authoring-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-availability-overrides-api
+  name: looot Provider Availability Overrides API
+  description: >-
+    The Provider Availability Overrides API from looot — 1 operation(s) for provider availability overrides.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Availability Overrides
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-availability-overrides-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-breadth-gaps-api
+  name: looot Provider Breadth Gaps API
+  description: The Provider Breadth Gaps API from looot — 2 operation(s) for provider breadth gaps.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Breadth Gaps
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-breadth-gaps-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-capability-coverage-api
+  name: looot Provider Capability Coverage API
+  description: >-
+    The Provider Capability Coverage API from looot — 1 operation(s) for provider capability coverage.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Capability Coverage
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-capability-coverage-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-mapping-reviews-api
+  name: looot Provider Mapping Reviews API
+  description: >-
+    The Provider Mapping Reviews API from looot — 1 operation(s) for provider mapping reviews.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Mapping Reviews
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-mapping-reviews-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-onboarding-api
+  name: looot Provider Onboarding API
+  description: The Provider Onboarding API from looot — 1 operation(s) for provider onboarding.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-onboarding-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-onboarding-queue-api
+  name: looot Provider Onboarding Queue API
+  description: >-
+    The Provider Onboarding Queue API from looot — 1 operation(s) for provider onboarding queue.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Onboarding Queue
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-onboarding-queue-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-package-drafts-api
+  name: looot Provider Package Drafts API
+  description: The Provider Package Drafts API from looot — 2 operation(s) for provider package drafts.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Package Drafts
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-package-drafts-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-package-revisions-api
+  name: looot Provider Package Revisions API
+  description: >-
+    The Provider Package Revisions API from looot — 3 operation(s) for provider package revisions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Package Revisions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-package-revisions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-registry-api
+  name: looot Provider Registry API
+  description: The Provider Registry API from looot — 2 operation(s) for provider registry.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Registry
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-registry-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-registry-publications-api
+  name: looot Provider Registry Publications API
+  description: >-
+    The Provider Registry Publications API from looot — 1 operation(s) for provider registry publications.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Registry Publications
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-registry-publications-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-target-catalogs-api
+  name: looot Provider Target Catalogs API
+  description: >-
+    The Provider Target Catalogs API from looot — 10 operation(s) for provider target catalogs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Target Catalogs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-target-catalogs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-target-import-receipts-api
+  name: looot Provider Target Import Receipts API
+  description: >-
+    The Provider Target Import Receipts API from looot — 1 operation(s) for provider target import receipts.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Target Import Receipts
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-target-import-receipts-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-provider-target-imports-api
+  name: looot Provider Target Imports API
+  description: The Provider Target Imports API from looot — 1 operation(s) for provider target imports.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Provider Target Imports
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-provider-target-imports-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-providers-api
+  name: looot Providers API
+  description: The Providers API from looot — 5 operation(s) for providers.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Providers
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-providers-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-proxy-sessions-api
+  name: looot Proxy Sessions API
+  description: The Proxy Sessions API from looot — 3 operation(s) for proxy sessions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Proxy Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-proxy-sessions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-public-catalog-api
+  name: looot Public Catalog API
+  description: The Public Catalog API from looot — 3 operation(s) for public catalog.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Public Catalog
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-public-catalog-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-public-catalog-publications-api
+  name: looot Public Catalog Publications API
+  description: >-
+    The Public Catalog Publications API from looot — 1 operation(s) for public catalog publications.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Public Catalog Publications
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-public-catalog-publications-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-quarantine-reviews-api
+  name: looot Quarantine Reviews API
+  description: The Quarantine Reviews API from looot — 3 operation(s) for quarantine reviews.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Quarantine Reviews
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-quarantine-reviews-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-quotes-api
+  name: looot Quotes API
+  description: The Quotes API from looot — 3 operation(s) for quotes.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Quotes
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-quotes-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-reconciliations-api
+  name: looot Reconciliations API
+  description: The Reconciliations API from looot — 2 operation(s) for reconciliations.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Reconciliations
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-reconciliations-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-route-decisions-api
+  name: looot Route Decisions API
+  description: The Route Decisions API from looot — 2 operation(s) for route decisions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Route Decisions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-route-decisions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-route-plans-api
+  name: looot Route Plans API
+  description: The Route Plans API from looot — 2 operation(s) for route plans.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Route Plans
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-route-plans-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-route-policies-api
+  name: looot Route Policies API
+  description: The Route Policies API from looot — 5 operation(s) for route policies.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Route Policies
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-route-policies-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-route-supply-api
+  name: looot Route Supply API
+  description: The Route Supply API from looot — 1 operation(s) for route supply.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Route Supply
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-route-supply-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-route-templates-api
+  name: looot Route Templates API
+  description: The Route Templates API from looot — 2 operation(s) for route templates.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Route Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-route-templates-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-run-replays-api
+  name: looot Run Replays API
+  description: The Run Replays API from looot — 1 operation(s) for run replays.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Run Replays
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-run-replays-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-runs-api
+  name: looot Runs API
+  description: The Runs API from looot — 6 operation(s) for runs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-runs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-session-context-api
+  name: looot Session Context API
+  description: The Session Context API from looot — 1 operation(s) for session context.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Session Context
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-session-context-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-skill-bundle-ids-api
+  name: looot Skill Bundle Ids API
+  description: The Skill Bundle Ids API from looot — 1 operation(s) for skill bundle ids.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Skill Bundle Ids
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-skill-bundle-ids-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-skill-bundles-api
+  name: looot Skill Bundles API
+  description: The Skill Bundles API from looot — 8 operation(s) for skill bundles.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Skill Bundles
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-skill-bundles-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-skill-installs-api
+  name: looot Skill Installs API
+  description: The Skill Installs API from looot — 2 operation(s) for skill installs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Skill Installs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-skill-installs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-skill-trust-keys-api
+  name: looot Skill Trust Keys API
+  description: The Skill Trust Keys API from looot — 2 operation(s) for skill trust keys.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Skill Trust Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-skill-trust-keys-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-skill-uploads-api
+  name: looot Skill Uploads API
+  description: The Skill Uploads API from looot — 3 operation(s) for skill uploads.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Skill Uploads
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-skill-uploads-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-taxonomies-api
+  name: looot Taxonomies API
+  description: The Taxonomies API from looot — 3 operation(s) for taxonomies.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Taxonomies
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-taxonomies-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-tenant-tools-api
+  name: looot Tenant Tools API
+  description: The Tenant Tools API from looot — 10 operation(s) for tenant tools.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Tenant Tools
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-tenant-tools-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-top-ups-api
+  name: looot Top Ups API
+  description: The Top Ups API from looot — 1 operation(s) for top ups.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Top Ups
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-top-ups-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-vendor-submissions-api
+  name: looot Vendor Submissions API
+  description: The Vendor Submissions API from looot — 1 operation(s) for vendor submissions.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Vendor Submissions
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-vendor-submissions-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-waterfall-runs-api
+  name: looot Waterfall Runs API
+  description: The Waterfall Runs API from looot — 3 operation(s) for waterfall runs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Waterfall Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-waterfall-runs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-whoami-api
+  name: looot Whoami API
+  description: The Whoami API from looot — 1 operation(s) for whoami.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Whoami
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-whoami-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-callbacks-api
+  name: looot Workflow Callbacks API
+  description: The Workflow Callbacks API from looot — 1 operation(s) for workflow callbacks.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Callbacks
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-callbacks-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-product-imports-api
+  name: looot Workflow Product Imports API
+  description: >-
+    The Workflow Product Imports API from looot — 1 operation(s) for workflow product imports.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Product Imports
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-product-imports-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-products-api
+  name: looot Workflow Products API
+  description: The Workflow Products API from looot — 2 operation(s) for workflow products.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Products
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-products-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-runs-api
+  name: looot Workflow Runs API
+  description: The Workflow Runs API from looot — 4 operation(s) for workflow runs.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-runs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-triggers-api
+  name: looot Workflow Triggers API
+  description: The Workflow Triggers API from looot — 3 operation(s) for workflow triggers.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Triggers
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-triggers-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflow-waits-api
+  name: looot Workflow Waits API
+  description: The Workflow Waits API from looot — 3 operation(s) for workflow waits.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflow Waits
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflow-waits-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workflows-api
+  name: looot Workflows API
+  description: The Workflows API from looot — 6 operation(s) for workflows.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workflows
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workflows-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workspace-directories-api
+  name: looot Workspace Directories API
+  description: The Workspace Directories API from looot — 4 operation(s) for workspace directories.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workspace Directories
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workspace-directories-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workspace-file-transfers-api
+  name: looot Workspace File Transfers API
+  description: >-
+    The Workspace File Transfers API from looot — 3 operation(s) for workspace file transfers.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workspace File Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workspace-file-transfers-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+- aid: looot:looot-workspace-files-api
+  name: looot Workspace Files API
+  description: The Workspace Files API from looot — 6 operation(s) for workspace files.
+  humanURL: https://api.looot.ai/openapi.json
+  baseURL: https://api.looot.ai
+  tags:
+  - Workspace Files
+  properties:
+  - type: OpenAPI
+    url: openapi/looot-workspace-files-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-public-catalog-item-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-inspect-output-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-connection-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/looot-catalog-overview-topic-schema.json
+x-submission-notes: 'MARKETPLACE / aggregator: one key + prepaid balance in front of 2,350 endpoints from 76 data providers. Profile looot''s
+  OWN platform API (OpenAPI https://api.looot.ai/openapi.json, 3.1, 261 paths incl. public catalog), MCP https://api.looot.ai/mcp (bearer auth;
+  registry ai.looot/looot), llms.txt https://api.looot.ai/llms.txt, skill https://looot.ai/skill.md. Per Kin policy: list the marketplace, NOT
+  its individual resold provider APIs.'
+x-submission-probe: root 200, invented 404, docs 200, OpenAPI 3.1 200 (261 paths), public catalog 200, MCP 401 bearer, registry entry present,
+  llms.txt 200
 x-submitted-by: adel@ayautomate.com (apis.io/add, 2026-10-05)
+x-enrichment:
+  date: '2026-10-05'
+  status: enriched
+  artifacts_added: 27
+  pass: modular-v1
+  engine: identity=local,contract=local,surfaces=local,docs=local,regulatory=local

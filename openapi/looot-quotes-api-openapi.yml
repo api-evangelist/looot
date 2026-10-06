@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: looot Quotes API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Quotes
+paths:
+  /v1/quotes:
+    get:
+      summary: List quotes
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Quotes
+      operationId: getV1Quotes
+      x-operation-id-source: derived
+    post:
+      summary: Issue a quote
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Quotes
+      operationId: postV1Quotes
+      x-operation-id-source: derived
+  /v1/quotes/{quoteId}:
+    get:
+      summary: Get a quote
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Quotes
+      operationId: getV1QuotesByQuoteId
+      x-operation-id-source: derived
+  /v1/quotes/preview:
+    post:
+      summary: Preview a quote without issuing it
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Quotes
+      operationId: postV1QuotesPreview
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

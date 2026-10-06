@@ -1,0 +1,116 @@
+openapi: 3.2.0
+info:
+  title: looot Session Context API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Session Context
+paths:
+  /v1/session-context:
+    get:
+      summary: Get bounded authenticated local session context
+      parameters:
+      - name: include
+        in: query
+        required: false
+        description: expiresAt adds the token's own expiry to the response; organizationName adds the organization's display name. Comma-separated or repeated.
+        schema:
+          type: string
+          examples:
+          - expiresAt
+          - expiresAt,organizationName
+      description: Returns only the server-derived local organization, authentication class, canonical granted scopes, and local mode. It never returns tokens, token hashes, principal identifiers, vault references, or session identifiers.
+      responses:
+        '200':
+          description: Authenticated local session context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionContext'
+        '401':
+          description: Authentication required
+        '403':
+          description: local-product:read scope required
+        '405':
+          description: Method not allowed
+        '503':
+          description: Session context unavailable
+      tags:
+      - Session Context
+      operationId: getV1SessionContext
+      x-operation-id-source: derived
+components:
+  schemas:
+    SessionContext:
+      type: object
+      additionalProperties: false
+      required:
+      - mode
+      - authenticationClass
+      - organizationId
+      - scopes
+      - deploymentMode
+      - role
+      properties:
+        mode:
+          const: local_alpha
+        authenticationClass:
+          enum:
+          - local_static_token
+          - machine_session
+        organizationId:
+          oneOf:
+          - type: string
+            pattern: ^[a-z][a-z0-9_-]{2,127}$
+          - type: string
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+        scopes:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: ^(?:\*|[a-z][a-z0-9-]{0,62}(?::(?:\*|[a-z][a-z0-9-]{0,62}))?)$
+        deploymentMode:
+          description: 'Operator-facing deployment mode: fixture_demo/authenticated_sandbox in local_alpha, approved_production in production, degraded whenever live readiness fails regardless of mode.'
+          enum:
+          - fixture_demo
+          - authenticated_sandbox
+          - approved_production
+          - degraded
+        role:
+          description: The resolved principal's organization role; null for a resolver that never set one.
+          enum:
+          - owner
+          - admin
+          - member
+          - viewer
+          - null
+        expiresAt:
+          description: 'Present only for ?include=expiresAt: the presenting token''s own expiry (ISO 8601 UTC), or null when it has none.'
+          type:
+          - string
+          - 'null'
+          format: date-time
+        organizationName:
+          description: 'Present only for ?include=organizationName: the organization''s display name, or null when the gateway could not read one.'
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 120
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

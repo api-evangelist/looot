@@ -1,0 +1,74 @@
+openapi: 3.2.0
+info:
+  title: looot Workflow Runs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workflow Runs
+paths:
+  /v1/workflow-runs/{workflowRunId}:
+    get:
+      summary: Get a tenant-scoped workflow run and step facts
+      responses:
+        '200':
+          description: Workflow run snapshot
+        '403':
+          description: workflows:read scope required
+        '404':
+          description: Workflow run not found
+      tags:
+      - Workflow Runs
+      operationId: getV1WorkflowRunsByWorkflowRunId
+      x-operation-id-source: derived
+  /v1/workflow-runs/{workflowRunId}/advance:
+    post:
+      summary: Advance at most one ready workflow step
+      responses:
+        '200':
+          description: Advanced workflow run snapshot
+        '403':
+          description: workflows:execute scope required
+        '404':
+          description: Workflow run not found
+      tags:
+      - Workflow Runs
+      operationId: postV1WorkflowRunsByWorkflowRunIdAdvance
+      x-operation-id-source: derived
+  /v1/workflow-runs/{workflowRunId}/cancel:
+    post:
+      summary: Request effect-aware workflow cancellation
+      responses:
+        '200':
+          description: Workflow run snapshot
+        '403':
+          description: workflows:execute scope required
+        '404':
+          description: Workflow run not found
+      tags:
+      - Workflow Runs
+      operationId: postV1WorkflowRunsByWorkflowRunIdCancel
+      x-operation-id-source: derived
+  /v1/workflow-runs/{workflowRunId}/retry:
+    post:
+      summary: Request a proven no-effect failed-step retry
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflow Runs
+      operationId: postV1WorkflowRunsByWorkflowRunIdRetry
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

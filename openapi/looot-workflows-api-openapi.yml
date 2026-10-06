@@ -1,0 +1,459 @@
+openapi: 3.2.0
+info:
+  title: looot Workflows API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workflows
+paths:
+  /v1/workflows:
+    get:
+      summary: List tenant-scoped workflow definitions
+      responses:
+        '200':
+          description: Workflow definitions
+        '403':
+          description: workflows:read scope required
+      tags:
+      - Workflows
+      operationId: getV1Workflows
+      x-operation-id-source: derived
+    post:
+      summary: Create a workflow and its first draft version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflow'
+      responses:
+        '201':
+          description: Workflow snapshot
+        '400':
+          description: Invalid workflow
+        '403':
+          description: workflows:write scope required
+      tags:
+      - Workflows
+      operationId: postV1Workflows
+      x-operation-id-source: derived
+  /v1/workflows/{workflowId}:
+    get:
+      summary: Get a workflow and all immutable versions
+      responses:
+        '200':
+          description: Workflow snapshot
+        '403':
+          description: workflows:read scope required
+        '404':
+          description: Workflow not found
+      tags:
+      - Workflows
+      operationId: getV1WorkflowsByWorkflowId
+      x-operation-id-source: derived
+  /v1/workflows/{workflowId}/revisions:
+    post:
+      summary: Create the next draft workflow version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviseWorkflow'
+      responses:
+        '201':
+          description: Workflow snapshot
+        '403':
+          description: workflows:write scope required
+        '404':
+          description: Workflow not found
+        '409':
+          description: Draft already exists
+      tags:
+      - Workflows
+      operationId: postV1WorkflowsByWorkflowIdRevisions
+      x-operation-id-source: derived
+  /v1/workflows/{workflowId}/publish:
+    post:
+      summary: Publish an acyclic workflow version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishWorkflow'
+      responses:
+        '200':
+          description: Published workflow snapshot
+        '400':
+          description: Invalid dependency graph
+        '403':
+          description: workflows:write scope required
+        '409':
+          description: Version is not draft
+      tags:
+      - Workflows
+      operationId: postV1WorkflowsByWorkflowIdPublish
+      x-operation-id-source: derived
+  /v1/workflows/{workflowId}/runs:
+    post:
+      summary: Start one idempotent version-pinned workflow run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartWorkflow'
+      responses:
+        '201':
+          description: Workflow run snapshot
+        '403':
+          description: workflows:execute scope required
+        '404':
+          description: Published workflow not found
+      tags:
+      - Workflows
+      operationId: postV1WorkflowsByWorkflowIdRuns
+      x-operation-id-source: derived
+  /v1/workflows/preview:
+    post:
+      summary: Validate and preview a workflow without external effects
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflows
+      operationId: postV1WorkflowsPreview
+      x-operation-id-source: derived
+components:
+  schemas:
+    CreateWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - steps
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        steps:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/WorkflowStep'
+    ReviseWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - steps
+      properties:
+        steps:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/WorkflowStep'
+    PublishWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+    WorkflowMapping:
+      type: object
+      maxProperties: 64
+      additionalProperties:
+        $ref: '#/components/schemas/WorkflowValue'
+    StartWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - idempotencyKey
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+          maxLength: 200
+    WorkflowValue:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - source
+        - value
+        properties:
+          source:
+            const: literal
+          value: {}
+      - type: object
+        additionalProperties: false
+        required:
+        - source
+        - stepId
+        - path
+        properties:
+          source:
+            const: step
+          stepId:
+            type: string
+          path:
+            type: array
+            maxItems: 16
+            items:
+              type: string
+              minLength: 1
+              maxLength: 120
+    WorkflowComparison:
+      type: object
+      additionalProperties: false
+      required:
+      - left
+      - operator
+      properties:
+        left:
+          $ref: '#/components/schemas/WorkflowValue'
+        operator:
+          enum:
+          - eq
+          - neq
+          - exists
+          - gt
+          - gte
+          - lt
+          - lte
+        right:
+          $ref: '#/components/schemas/WorkflowValue'
+    WorkflowStep:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - endpointId
+        - input
+        - dependsOn
+        - failurePolicy
+        - maxChargeUsd
+        properties:
+          kind:
+            const: operation
+          stepId:
+            type: string
+          endpointId:
+            type: string
+          input:
+            type: object
+          inputBindings:
+            $ref: '#/components/schemas/WorkflowMapping'
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+          maxChargeUsd:
+            type: number
+            minimum: 0
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - delaySeconds
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: delay
+          stepId:
+            type: string
+          delaySeconds:
+            type: integer
+            minimum: 1
+            maximum: 604800
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - prompt
+        - expiresInSeconds
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: approval
+          stepId:
+            type: string
+          prompt:
+            type: string
+          expiresInSeconds:
+            type: integer
+            minimum: 60
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - label
+        - expiresInSeconds
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: callback
+          stepId:
+            type: string
+          label:
+            type: string
+          expiresInSeconds:
+            type: integer
+            minimum: 60
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - mappings
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: transform
+          stepId:
+            type: string
+          mappings:
+            $ref: '#/components/schemas/WorkflowMapping'
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - condition
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: branch
+          stepId:
+            type: string
+          condition:
+            $ref: '#/components/schemas/WorkflowComparison'
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - stepId
+        - workflowId
+        - workflowVersion
+        - maxChargeUsd
+        - dependsOn
+        - failurePolicy
+        properties:
+          kind:
+            const: subworkflow
+          stepId:
+            type: string
+          workflowId:
+            type: string
+          workflowVersion:
+            type: integer
+            minimum: 1
+          maxChargeUsd:
+            type: number
+            minimum: 0
+          dependsOn:
+            type: array
+            items:
+              type: string
+          failurePolicy:
+            enum:
+            - stop
+            - continue
+          runIf:
+            $ref: '#/components/schemas/WorkflowRunIf'
+    WorkflowRunIf:
+      type: object
+      additionalProperties: false
+      required:
+      - stepId
+      - equals
+      properties:
+        stepId:
+          type: string
+        equals:
+          type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

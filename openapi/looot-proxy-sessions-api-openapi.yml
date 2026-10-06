@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: looot Proxy Sessions API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Proxy Sessions
+paths:
+  /v1/proxy-sessions:
+    get:
+      summary: List local forward-proxy sessions
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Proxy Sessions
+      operationId: getV1ProxySessions
+      x-operation-id-source: derived
+    post:
+      summary: Start a local forward-proxy session; never performs TLS interception
+      responses:
+        '201':
+          description: Created
+      tags:
+      - Proxy Sessions
+      operationId: postV1ProxySessions
+      x-operation-id-source: derived
+  /v1/proxy-sessions/{proxySessionId}:
+    get:
+      summary: Get a proxy session's status and cleanup state
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Proxy Sessions
+      operationId: getV1ProxySessionsByProxySessionId
+      x-operation-id-source: derived
+  /v1/proxy-sessions/{proxySessionId}/stop:
+    post:
+      summary: Stop a proxy session and clean up its state file
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Proxy Sessions
+      operationId: postV1ProxySessionsByProxySessionIdStop
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

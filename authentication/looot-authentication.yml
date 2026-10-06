@@ -1,0 +1,24 @@
+generated: '2026-10-05'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://docs.looot.ai/changelog/v0-4-0-oauth-by-button
+sources:
+- https://docs.looot.ai/changelog/v0-4-0-oauth-by-button
+- https://docs.looot.ai/get-started/quickstart-web
+- https://docs.looot.ai/get-started/quickstart-cli
+- https://docs.looot.ai/get-started/quickstart-mcp
+description: Authentication uses OAuth2 with a token that the client stores and sends in the Authorization header as a Bearer token.
+schemes:
+- type: oauth2
+  name: OAuth
+  evidence: Sign in looot login Opens a link and a code in your browser. Approve it on looot.ai and the CLI saves your token.
+  flows:
+  - authorization_code
+  how_to_obtain: Open a browser link, approve the sign‑in on looot.ai, and the client saves the returned token.
+- type: http-bearer
+  name: Bearer token
+  evidence: The client keeps its own token and renews it in the background; you never copy a key.
+  location: header
+  header: Authorization
+  how_to_obtain: Obtained via the OAuth sign‑in flow described above.
+docs: https://docs.looot.ai/changelog/v0-4-0-oauth-by-button

@@ -1,0 +1,96 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Registry API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Registry
+paths:
+  /v1/provider-registry/import:
+    post:
+      summary: Bulk-register direct endpoints as data, up to 500 per call
+      description: TP-CAT-10. Same shared contract as POST /v1/providers/{providerId}/endpoints, one item per provider/endpoint pair (providerId inline in each item). Continues past a per-item validation or registration error instead of failing the whole batch -- one transaction per item.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportDirectEndpoints'
+      responses:
+        '200':
+          description: 'Per-item results: { providerId, endpointId, version, created, capabilitySuggestions, error }'
+        '400':
+          description: 'Malformed request body (not a { items: [...] } object, or more than 500 items)'
+        '403':
+          description: provider-registry:write scope required
+      tags:
+      - Provider Registry
+      operationId: postV1ProviderRegistryImport
+      x-operation-id-source: derived
+  /v1/provider-registry/{endpointId}/effect-classification:
+    post:
+      summary: Set the effect classification (idempotent/effectful/unknown) for a published…
+      parameters:
+      - name: endpointId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - version
+              - effectClassification
+              properties:
+                version:
+                  type: integer
+                  minimum: 1
+                effectClassification:
+                  enum:
+                  - idempotent
+                  - effectful
+                  - unknown
+      responses:
+        '200':
+          description: Updated endpoint version
+        '403':
+          description: provider-registry:write scope required
+        '404':
+          description: Endpoint version not found
+      tags:
+      - Provider Registry
+      operationId: postV1ProviderRegistryByEndpointIdEffectClassification
+      x-operation-id-source: derived
+components:
+  schemas:
+    ImportDirectEndpoints:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 500
+          items:
+            type: object
+            description: Same shape as RegisterDirectEndpoint, plus providerId inline.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

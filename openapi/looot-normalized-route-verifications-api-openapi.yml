@@ -1,0 +1,46 @@
+openapi: 3.2.0
+info:
+  title: looot Normalized Route Verifications API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Normalized Route Verifications
+paths:
+  /v1/normalized-route-verifications/{verificationId}/decision:
+    post:
+      summary: Independently approve or reject a route verification
+      responses:
+        '201':
+          description: Immutable role-separated decision
+        '400':
+          description: Self-review prohibited
+      tags:
+      - Normalized Route Verifications
+      operationId: postV1NormalizedRouteVerificationsByVerificationIdDecision
+      x-operation-id-source: derived
+  /v1/normalized-route-verifications/{verificationId}/publish:
+    post:
+      summary: Publish an approved current route as waterfall-ready but not directly executable
+      responses:
+        '201':
+          description: Immutable publication
+        '400':
+          description: Not approved or stale
+      tags:
+      - Normalized Route Verifications
+      operationId: postV1NormalizedRouteVerificationsByVerificationIdPublish
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

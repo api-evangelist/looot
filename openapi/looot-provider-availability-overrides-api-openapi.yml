@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Availability Overrides API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Availability Overrides
+paths:
+  /v1/provider-availability-overrides:
+    get:
+      summary: List operator-set provider drain/disable overrides
+      responses:
+        '200':
+          description: Overrides
+        '403':
+          description: provider-registry:read scope required
+      tags:
+      - Provider Availability Overrides
+      operationId: getV1ProviderAvailabilityOverrides
+      x-operation-id-source: derived
+    post:
+      summary: Set (drain/disable) or clear (active) a provider availability override
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - providerId
+              - status
+              - reason
+              properties:
+                providerId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                version:
+                  type:
+                  - integer
+                  - 'null'
+                  minimum: 1
+                region:
+                  type:
+                  - string
+                  - 'null'
+                  pattern: ^[a-z][a-z0-9-]{1,31}$
+                status:
+                  enum:
+                  - active
+                  - draining
+                  - disabled
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        '200':
+          description: Current override (null if cleared)
+        '400':
+          description: Invalid request
+        '403':
+          description: provider-registry:write scope required
+      tags:
+      - Provider Availability Overrides
+      operationId: postV1ProviderAvailabilityOverrides
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,357 @@
+openapi: 3.2.0
+info:
+  title: looot Platform Keys API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Platform Keys
+paths:
+  /v1/platform-keys:
+    get:
+      summary: 'Platform operator: list every registered provider with its platform-key status…'
+      responses:
+        '200':
+          description: Platform key rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformKeyList'
+        '403':
+          description: platform_operator_required, or provider-registry:read scope required
+      tags:
+      - Platform Keys
+      operationId: getV1PlatformKeys
+      x-operation-id-source: derived
+  /v1/platform-keys/{providerId}:
+    put:
+      summary: 'Platform operator: set (or replace) the platform''s own credential for a…'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPlatformKey'
+      responses:
+        '200':
+          description: The updated platform key row
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformKey'
+        '400':
+          description: Invalid request
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: Unknown providerId
+      tags:
+      - Platform Keys
+      operationId: putV1PlatformKeysByProviderId
+      x-operation-id-source: derived
+    patch:
+      summary: 'Platform operator: update any subset of { approved, platformFeeMicros…'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchPlatformKey'
+      responses:
+        '200':
+          description: The updated platform key row
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformKey'
+        '400':
+          description: Invalid request
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: Unknown providerId, or no platform key set yet for this provider
+      tags:
+      - Platform Keys
+      operationId: patchV1PlatformKeysByProviderId
+      x-operation-id-source: derived
+    delete:
+      summary: 'Platform operator: revoke a provider''s platform key and delete its encrypted…'
+      responses:
+        '200':
+          description: '{ revoked: boolean }'
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: No platform key was set for this provider
+      tags:
+      - Platform Keys
+      operationId: deleteV1PlatformKeysByProviderId
+      x-operation-id-source: derived
+components:
+  schemas:
+    SetPlatformKey:
+      type: object
+      additionalProperties: false
+      required:
+      - secret
+      properties:
+        secret:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 4000
+        authMethod:
+          enum:
+          - bearer
+          - header
+          - query
+          - basic
+          - multi
+          description: Selects which of headerName/paramName/valuePrefix/fields apply; omitted falls back to the endpoint's own authPlacement default
+        headerName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "header"
+        paramName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "query"
+        valuePrefix:
+          type: string
+          maxLength: 60
+        fields:
+          type: array
+          maxItems: 20
+          description: Required (at least one) when authMethod is "multi" -- the secret is a JSON object of named fields, each independently placed
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - field
+            - placement
+            - name
+            properties:
+              field:
+                type: string
+                minLength: 1
+                maxLength: 120
+              placement:
+                enum:
+                - header
+                - query
+              name:
+                type: string
+                minLength: 1
+                maxLength: 120
+              valuePrefix:
+                type: string
+                maxLength: 60
+        platformFeeMicros:
+          type: integer
+          minimum: 0
+        approved:
+          type: boolean
+    PlatformKey:
+      type: object
+      additionalProperties: false
+      required:
+      - providerId
+      - displayName
+      - hasKey
+      - keyHint
+      - authConfig
+      - platformFeeMicros
+      - approved
+      - updatedAt
+      - endpointCount
+      - runnable
+      properties:
+        providerId:
+          type: string
+        displayName:
+          type: string
+        hasKey:
+          type: boolean
+        keyHint:
+          type:
+          - string
+          - 'null'
+          description: The secret's last 4 characters only; never the secret itself
+        authConfig:
+          oneOf:
+          - $ref: '#/components/schemas/PlatformAuthConfig'
+          - type: 'null'
+          description: How the credential is injected at run time; null falls back to a header/query default derived from the endpoint's own authPlacement
+        platformFeeMicros:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+        approved:
+          type: boolean
+        updatedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        endpointCount:
+          type: integer
+          minimum: 0
+        runnable:
+          type: boolean
+          description: 'True when a run with no customer connection would actually use this key right now: approved, priced, a secret is stored, and the config can be applied to the provider''s endpoints'
+    PatchPlatformKey:
+      type: object
+      additionalProperties: false
+      description: Same fields as SetPlatformKey minus secret -- every field optional, only the ones present are changed. Requires an existing platform key for this provider (nothing to reuse a vault ref from otherwise).
+      properties:
+        authMethod:
+          enum:
+          - bearer
+          - header
+          - query
+          - basic
+          - multi
+          description: Selects which of headerName/paramName/valuePrefix/fields apply; omitted keeps the existing authConfig
+        headerName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "header"
+        paramName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "query"
+        valuePrefix:
+          type: string
+          maxLength: 60
+        fields:
+          type: array
+          maxItems: 20
+          description: Required (at least one) when authMethod is "multi"
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - field
+            - placement
+            - name
+            properties:
+              field:
+                type: string
+                minLength: 1
+                maxLength: 120
+              placement:
+                enum:
+                - header
+                - query
+              name:
+                type: string
+                minLength: 1
+                maxLength: 120
+              valuePrefix:
+                type: string
+                maxLength: 60
+        platformFeeMicros:
+          type: integer
+          minimum: 0
+        approved:
+          type: boolean
+    PlatformAuthConfig:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        properties:
+          authMethod:
+            const: bearer
+          headerName:
+            type: string
+          valuePrefix:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - headerName
+        properties:
+          authMethod:
+            const: header
+          headerName:
+            type: string
+          valuePrefix:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - paramName
+        properties:
+          authMethod:
+            const: query
+          paramName:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        properties:
+          authMethod:
+            const: basic
+          headerName:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - fields
+        properties:
+          authMethod:
+            const: multi
+          fields:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              additionalProperties: false
+              required:
+              - field
+              - placement
+              - name
+              properties:
+                field:
+                  type: string
+                placement:
+                  enum:
+                  - header
+                  - query
+                name:
+                  type: string
+                valuePrefix:
+                  type: string
+    PlatformKeyList:
+      type: object
+      additionalProperties: false
+      required:
+      - platformKeys
+      properties:
+        platformKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformKey'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

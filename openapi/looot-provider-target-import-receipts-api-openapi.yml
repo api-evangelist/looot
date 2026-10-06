@@ -1,0 +1,45 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Target Import Receipts API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Target Import Receipts
+paths:
+  /v1/provider-target-import-receipts:
+    get:
+      summary: List immutable catalog-to-candidate import receipts
+      parameters:
+      - name: catalogId
+        in: query
+        schema:
+          type: string
+      - name: targetId
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Durable exact catalog, target, source, and candidate lineage
+        '400':
+          description: Invalid filter
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Provider Target Import Receipts
+      operationId: getV1ProviderTargetImportReceipts
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

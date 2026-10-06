@@ -1,0 +1,54 @@
+openapi: 3.2.0
+info:
+  title: looot Route Templates API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Route Templates
+paths:
+  /v1/route-templates:
+    post:
+      summary: Generate a complete non-persisted route input from explicitly compatible…
+      responses:
+        '200':
+          description: Authoring template still requiring verification and independent approval
+        '400':
+          description: Capability or supply selection incompatible
+        '403':
+          description: routes:read scope required
+      tags:
+      - Route Templates
+      operationId: postV1RouteTemplates
+      x-operation-id-source: derived
+  /v1/route-templates/create:
+    post:
+      summary: Atomically generate a compatible template and create only its immutable…
+      responses:
+        '200':
+          description: Idempotent route version
+        '201':
+          description: New route-review contract; not verified or published
+        '400':
+          description: Capability or supply selection incompatible
+        '403':
+          description: routes:write scope required
+        '409':
+          description: Route version content conflict
+      tags:
+      - Route Templates
+      operationId: postV1RouteTemplatesCreate
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

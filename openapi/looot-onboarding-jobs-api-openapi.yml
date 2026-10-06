@@ -1,0 +1,144 @@
+openapi: 3.2.0
+info:
+  title: looot Onboarding Jobs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Onboarding Jobs
+paths:
+  /v1/onboarding-jobs:
+    get:
+      summary: List this workspace's onboarding jobs
+      responses:
+        '200':
+          description: Jobs
+        '403':
+          description: onboarding-jobs:read scope required
+      tags:
+      - Onboarding Jobs
+      operationId: getV1OnboardingJobs
+      x-operation-id-source: derived
+    post:
+      summary: Start an ADR-005 onboarding job from an OpenAPI document/URL or a provider-kit…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOnboardingJob'
+      responses:
+        '200':
+          description: Idempotent replay of an already-started job
+        '201':
+          description: New job started, stage=import
+        '400':
+          description: Invalid input
+        '403':
+          description: onboarding-jobs:write scope required
+      tags:
+      - Onboarding Jobs
+      operationId: postV1OnboardingJobs
+      x-operation-id-source: derived
+  /v1/onboarding-jobs/{jobId}:
+    get:
+      summary: Get one onboarding job (stage, status, refs, nextAction, history)
+      responses:
+        '200':
+          description: Job
+        '403':
+          description: onboarding-jobs:read scope required
+        '404':
+          description: Job not found
+      tags:
+      - Onboarding Jobs
+      operationId: getV1OnboardingJobsByJobId
+      x-operation-id-source: derived
+  /v1/onboarding-jobs/{jobId}/advance:
+    post:
+      summary: Run every stage whose prerequisites are met; idempotent, resumable after…
+      responses:
+        '200':
+          description: Updated job
+        '403':
+          description: onboarding-jobs:write scope required
+        '404':
+          description: Job not found
+      tags:
+      - Onboarding Jobs
+      operationId: postV1OnboardingJobsByJobIdAdvance
+      x-operation-id-source: derived
+  /v1/onboarding-jobs/{jobId}/decisions:
+    post:
+      summary: Human decision on the rights or production_approval gate (non-self-review…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideOnboardingJob'
+      responses:
+        '200':
+          description: Updated job
+        '400':
+          description: No matching pending human gate, or a rights approval missing rightsTarget
+        '403':
+          description: onboarding-jobs:write scope required
+        '404':
+          description: Job not found
+      tags:
+      - Onboarding Jobs
+      operationId: postV1OnboardingJobsByJobIdDecisions
+      x-operation-id-source: derived
+components:
+  schemas:
+    DecideOnboardingJob:
+      type: object
+      additionalProperties: false
+      required:
+      - gate
+      - decision
+      - reason
+      properties:
+        gate:
+          enum:
+          - rights
+          - production_approval
+        decision:
+          enum:
+          - approved
+          - rejected
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        rightsTarget:
+          enum:
+          - byok_approved
+          - partner_approved
+    CreateOnboardingJob:
+      type: object
+      additionalProperties: false
+      required:
+      - providerSlug
+      - input
+      properties:
+        providerSlug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        input:
+          type: object
+        hints:
+          type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

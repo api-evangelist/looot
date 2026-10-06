@@ -1,0 +1,286 @@
+openapi: 3.2.0
+info:
+  title: looot Runs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Runs
+paths:
+  /v1/runs:
+    get:
+      summary: List runs -- bounded summaries (runId, endpointId, providerId, status…
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Runs
+      operationId: getV1Runs
+      x-operation-id-source: derived
+    post:
+      summary: Create a run -- idempotencyKey replay returns the existing run (any status)…
+      description: 'customer-test friction #4 (docs/product/reviews/2026-09-04-customer-test): dispatch is woken immediately for the run''s workspace rather than left for the next poll tick, and the run always returns immediately unless `wait` asks otherwise (either as this query parameter or as a body field of the same name -- the query parameter wins if both are given). `wait=true` (or a bare `?wait`) waits up to the default of 20 s; a number is seconds, clamped to [0, 60]. Returns the result inline, in the same run shape this endpoint already returns, once it reaches a terminal status within `wait` seconds. If it is still queued/running when the window ends, returns that queued/running run instead, exactly as with no `wait` at all -- poll it with GET /v1/runs/{runId} or runs_get. A 201 can carry status:"failed" (a pre-dispatch denial such as endpoint_not_found or a validation_error) -- check the run''s own `status` and `error` fields, never the HTTP status code alone, to know whether it actually ran.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunRequest'
+      parameters:
+      - name: wait
+        in: query
+        schema:
+          oneOf:
+          - type: boolean
+          - type: number
+            minimum: 0
+            maximum: 60
+        description: Seconds to wait for a terminal result inline (default 20 when true/bare, max 60). Omit entirely for the pre-existing immediate-return behavior.
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          minLength: 1
+        description: Alternative to the request body's idempotencyKey field. Either satisfies the (still mandatory) requirement; if both are present, they must be equal or the request is a 400.
+      responses:
+        '201':
+          description: Run created (or the existing run replayed, any status, with replayed:true). A 201 is not itself success -- a pre-dispatch denial (endpoint_not_found, validation_error) also answers 201 with status:"failed" and a populated error; read the body, not the status code.
+        '402':
+          description: Out of balance -- the run was blocked before dispatch, never billed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - code
+                    - message
+                    - requestId
+                    properties:
+                      code:
+                        type: string
+                        const: insufficient_balance
+                      message:
+                        type: string
+                      requestId:
+                        type: string
+                  balanceMicros:
+                    type: integer
+                  estimatedCostMicros:
+                    type: integer
+                  topUpUrl:
+                    type: string
+                    nullable: true
+                  topUp:
+                    type: object
+                    properties:
+                      minimumUsd:
+                        type: number
+                      suggestedUsd:
+                        type: number
+                      checkoutUrl:
+                        type: string
+                        nullable: true
+                      dashboardUrl:
+                        type: string
+                      message:
+                        type: string
+                      reason:
+                        type: string
+                        enum:
+                        - billing_disabled
+                        - payment_processor_not_configured
+                        - operator_workspace
+                        - read_only_token
+                        - rate_limited
+                        - checkout_failed
+                        - stripe_timeout
+                        - amount_out_of_range
+                        - balance_low
+                        - balance_sufficient
+                    required:
+                    - minimumUsd
+                    - suggestedUsd
+                    - checkoutUrl
+                    - dashboardUrl
+                    - message
+                required:
+                - error
+                - balanceMicros
+                - estimatedCostMicros
+                - topUpUrl
+                - topUp
+        '409':
+          description: Idempotency-key conflict -- a request already exists for this key that this one does not match
+        '429':
+          description: Rate limit exceeded (execute class, too_many_inflight_runs) -- see Retry-After and X-RateLimit-* response headers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - code
+                    - message
+                    - requestId
+                    properties:
+                      code:
+                        type: string
+                        const: too_many_inflight_runs
+                      message:
+                        type: string
+                      requestId:
+                        type: string
+                  inflight:
+                    type: integer
+                  limit:
+                    type: integer
+                  retryAfterSeconds:
+                    type: integer
+                required:
+                - error
+                - inflight
+                - limit
+                - retryAfterSeconds
+      tags:
+      - Runs
+      operationId: postV1Runs
+      x-operation-id-source: derived
+  /v1/runs/{runId}:
+    get:
+      summary: Get a run -- on a failed run, error carries { code, providerStatus, message…
+      responses:
+        '200':
+          description: Success
+      description: '2026-09-27 (additive): a completed run can carry an optional `normalized` object next to `result`: { job, endpointId, fields, missing, ambiguous, unmapped, providerValues, verdict, verdictReason, mapVerified }, with fixed field names per job and one email status vocabulary (valid, invalid, catch_all, risky, unknown). Present only when the gateway has it turned on and the answering endpoint has an output map; absent, never null, otherwise. `result` and `outcome` are unchanged.'
+      tags:
+      - Runs
+      operationId: getV1RunsByRunId
+      x-operation-id-source: derived
+  /v1/runs/{runId}/cancel:
+    post:
+      summary: Cancel a run
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Runs
+      operationId: postV1RunsByRunIdCancel
+      x-operation-id-source: derived
+  /v1/runs/{runId}/media/{mediaId}:
+    get:
+      summary: Download a stored audio, image, video or PDF result of a run (bytes with the…
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Runs
+      operationId: getV1RunsByRunIdMediaByMediaId
+      x-operation-id-source: derived
+  /v1/runs/{runId}/attempts:
+    get:
+      summary: Inspect durable attempts and receipts
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Runs
+      operationId: getV1RunsByRunIdAttempts
+      x-operation-id-source: derived
+  /v1/runs/{runId}/artifacts:
+    get:
+      summary: List tenant-scoped run artifact metadata
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Runs
+      operationId: getV1RunsByRunIdArtifacts
+      x-operation-id-source: derived
+components:
+  schemas:
+    RunRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - endpointId
+      - input
+      properties:
+        endpointId:
+          type: string
+          minLength: 1
+          description: The catalog endpoint id to run
+        input:
+          type: object
+          description: Arbitrary key/value input, validated against the endpoint's own input schema
+        idempotencyKey:
+          type: string
+          minLength: 1
+          description: Required, unless supplied instead as the Idempotency-Key request header (either satisfies the requirement; supplying both requires them to match, or the request is a 400). A replay with the same key and the same body returns the original run (replayed:true); the same key with a different body is a 409. Never auto-generated by the gateway -- see the report's decision options for why.
+        output:
+          type: object
+          description: Optional output selection/mapping pin; same shape as an inspected endpoint's outputMappingPin
+        wait:
+          oneOf:
+          - type: boolean
+          - type: number
+            minimum: 0
+            maximum: 60
+          description: Optional alternative to the ?wait= query parameter (the query parameter wins if both are given)
+        fallback:
+          description: Optional. Let the run move to the next provider of the same job when one misses or fails, within ONE hold; only attempts that ran are charged. true takes every default. The run then carries `route` {servedBy, outcome, chargedUsd, capped, attempts[], skipped[], summary}.
+          oneOf:
+          - type: boolean
+          - type: object
+            additionalProperties: false
+            properties:
+              enabled:
+                type: boolean
+                description: false turns it off (the same as omitting fallback)
+              maxAttempts:
+                type: integer
+                minimum: 1
+                maximum: 10
+                description: Dispatched attempts, default 3
+              maxCostUsd:
+                type: number
+                exclusiveMinimum: 0
+                maximum: 100
+                description: The route's cap; default the sum of the first maxAttempts prices; can only lower it
+              prefer:
+                enum:
+                - cheapest
+                - reliable
+                - fastest
+                - balanced
+                description: Order of the job's other providers, default balanced
+              exclude:
+                type: array
+                maxItems: 50
+                items:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description: Endpoint or provider ids never tried
+              stopAtFirstMiss:
+                type: boolean
+                description: Stop at the first empty answer, default false
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

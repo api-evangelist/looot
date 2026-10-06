@@ -1,0 +1,57 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Capability Coverage API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Capability Coverage
+paths:
+  /v1/provider-capability-coverage:
+    get:
+      summary: Measure provider or capability coverage without conflating local fixtures with…
+      parameters:
+      - name: dimension
+        in: query
+        schema:
+          type: string
+          enum:
+          - provider
+          - capability
+          default: provider
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 300
+      responses:
+        '200':
+          description: Bounded derived coverage page with honest lifecycle totals
+        '400':
+          description: Invalid query
+        '403':
+          description: routes:read scope required
+      tags:
+      - Provider Capability Coverage
+      operationId: getV1ProviderCapabilityCoverage
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

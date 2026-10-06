@@ -1,0 +1,56 @@
+openapi: 3.2.0
+info:
+  title: looot Public Catalog Publications API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Public Catalog Publications
+paths:
+  /v1/public-catalog-publications:
+    post:
+      summary: Make an already-live, active endpoint version browsable/searchable/comparable…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishPublicCatalog'
+      responses:
+        '200':
+          description: Idempotent replay of an already-published catalog revision
+        '201':
+          description: New public catalog revision published
+        '400':
+          description: Endpoint's provider missing from the registry
+        '403':
+          description: provider-registry:write scope required
+        '404':
+          description: No active endpoint version for this endpointId
+      tags:
+      - Public Catalog Publications
+      operationId: postV1PublicCatalogPublications
+      x-operation-id-source: derived
+components:
+  schemas:
+    PublishPublicCatalog:
+      type: object
+      additionalProperties: false
+      required:
+      - endpointId
+      properties:
+        endpointId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

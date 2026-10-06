@@ -1,0 +1,73 @@
+openapi: 3.2.0
+info:
+  title: looot Media Downloads API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Media Downloads
+paths:
+  /v1/media-downloads/{runId}/{mediaId}:
+    get:
+      security: []
+      summary: Download a run's stored media through a short-lived signed link, no bearer token
+      description: 'Unauthenticated: the link itself is the credential. When the gateway has signed media URLs turned on, a run result''s `media` (and each `mediaFiles` entry) carries `downloadUrl` next to `downloadPath`: an absolute URL to this route whose query holds `workspace`, `expires` (unix seconds), `v` (1) and `signature` (HMAC-SHA256 over version, workspace, run, media id and expiry). It expires after 15 minutes by default (at most 1 hour, never after the media''s own expiresAt). Anyone holding the URL can download the file until it expires, so never put it in logs, analytics or shared transcripts; fetch a fresh run (GET /v1/runs/{runId}) for a new one. Every refusal (bad, expired or tampered link, another workspace or run, unknown or expired media) is the same 404 media_not_found. Off, this path needs a bearer like any other and is not a route.'
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mediaId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+      - name: workspace
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: expires
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9]{1,12}$
+      - name: v
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - '1'
+      - name: signature
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The stored bytes with their content-type; cache-control private, no-store; referrer-policy no-referrer
+        '404':
+          description: 'media_not_found: the link is invalid, expired or tampered, or the media is unknown or expired'
+        '503':
+          description: media_store_unavailable
+      tags:
+      - Media Downloads
+      operationId: getV1MediaDownloadsByRunIdByMediaId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

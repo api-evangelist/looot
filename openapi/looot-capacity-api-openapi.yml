@@ -1,0 +1,68 @@
+openapi: 3.2.0
+info:
+  title: looot Capacity API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Capacity
+paths:
+  /v1/capacity:
+    get:
+      summary: Current capacity snapshot for a provider/connection/operation dimension
+      description: TP-CAP-01. Reports the latest observed capacity snapshot (limit, remaining, freshness) for the caller's workspace; stale snapshots are reported as capacity_stale.
+      parameters:
+      - name: providerId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: connectionId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: operationId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Capacity snapshot
+        '403':
+          description: capacity:read scope required
+        '404':
+          description: No snapshot
+      tags:
+      - Capacity
+      operationId: getV1Capacity
+      x-operation-id-source: derived
+  /v1/capacity/snapshots:
+    post:
+      summary: Record a provider-account capacity snapshot
+      description: TP-CAP-01. Ingests an observed capacity snapshot with evidence digest and expiry for the caller's workspace.
+      responses:
+        '201':
+          description: Snapshot recorded
+        '400':
+          description: Invalid snapshot
+        '403':
+          description: capacity:write scope required
+      tags:
+      - Capacity
+      operationId: postV1CapacitySnapshots
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

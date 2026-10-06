@@ -1,0 +1,937 @@
+openapi: 3.2.0
+info:
+  title: looot Connections API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Connections
+paths:
+  /v1/connections:
+    get:
+      summary: List connection metadata
+      responses:
+        '200':
+          description: Tenant connection metadata
+        '403':
+          description: connections:read scope required
+      tags:
+      - Connections
+      operationId: getV1Connections
+      x-operation-id-source: derived
+    post:
+      summary: Register a write-only API credential
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterConnection'
+      responses:
+        '201':
+          description: Connection metadata; secrets and internal references are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '403':
+          description: connections:write scope required
+        '409':
+          description: Connection already exists
+      tags:
+      - Connections
+      operationId: postV1Connections
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/rotate:
+    post:
+      summary: Rotate a write-only API credential
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateConnection'
+      responses:
+        '200':
+          description: Connection metadata; secrets and internal references are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdRotate
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/revoke:
+    post:
+      summary: Revoke a connection and delete its encrypted credential
+      responses:
+        '200':
+          description: Connection metadata; secrets and internal references are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdRevoke
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/test:
+    post:
+      summary: Verify local fixture credential access without calling the provider
+      responses:
+        '200':
+          description: Safe receipt labelled fixture_tested or not_tested; providerCalled is always false
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionTestReceipt'
+        '400':
+          description: Credential is revoked, expired, or unavailable
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found in this tenant
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdTest
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/test-receipts:
+    get:
+      summary: List durable successful local fixture-access receipts; never live provider…
+      parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+      responses:
+        '200':
+          description: Newest 100 secret-free fixture receipts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionFixtureReceiptHistory'
+        '401':
+          description: Bearer authentication required
+        '403':
+          description: connections:read scope required
+        '404':
+          description: Connection not found in this tenant
+        '405':
+          description: Method not allowed
+        '503':
+          description: Connection receipt storage unavailable
+      tags:
+      - Connections
+      operationId: getV1ConnectionsByConnectionIdTestReceipts
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/probe:
+    post:
+      summary: Run a real outbound health probe against the connection's configured provider…
+      responses:
+        '200':
+          description: Secret-free health receipt; classifies healthy, invalid_credentials, insufficient_scope, unavailable, rate_limited, or missing_resource, and transitions connection state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionHealthReceipt'
+        '400':
+          description: 'Connection is revoked, has no probe configured, or is in cooldown. error.code is validation_error; a top-level reason says which, with error.message: connection_probe_not_configured ("This provider has no live check yet."), connection_revoked ("This connection is revoked; reconnect it before checking it."), connection_probe_cooldown ("This connection was checked moments ago; try again in a minute.")'
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdProbe
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/authorize:
+    post:
+      summary: Start an authorization-code + PKCE oauth grant for this connection
+      responses:
+        '200':
+          description: Authorization URL with state and code_challenge; the state is single-use and expires
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionAuthorization'
+        '400':
+          description: Connection is not an oauth connection or is revoked
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdAuthorize
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/callback:
+    post:
+      summary: Complete the PKCE authorization-code exchange against the connection's fixed…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionCallback'
+      responses:
+        '200':
+          description: Connection metadata; secrets and internal references are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '400':
+          description: Invalid, expired, already-consumed state, or token exchange failed (moves the connection to action_required)
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdCallback
+      x-operation-id-source: derived
+  /v1/connections/alerts:
+    get:
+      summary: List workspace-scoped connection degradation/expiry/revocation alerts
+      responses:
+        '200':
+          description: Alerts newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - alerts
+                properties:
+                  alerts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionAlert'
+        '403':
+          description: connections:read scope required
+      tags:
+      - Connections
+      operationId: getV1ConnectionsAlerts
+      x-operation-id-source: derived
+  /v1/connections/alerts/{alertId}/acknowledge:
+    post:
+      summary: Acknowledge one connection alert
+      responses:
+        '200':
+          description: The acknowledged alert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionAlert'
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Alert not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsAlertsByAlertIdAcknowledge
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/resources:
+    get:
+      summary: List provider resources discovered by the connection's most recent probe
+      responses:
+        '200':
+          description: Resources for this connection
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - resources
+                properties:
+                  resources:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionResource'
+        '403':
+          description: connections:read scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: getV1ConnectionsByConnectionIdResources
+      x-operation-id-source: derived
+    patch:
+      summary: Select exactly one discovered resource as the connection's default
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectConnectionResource'
+      responses:
+        '200':
+          description: The updated resource list
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - resources
+                properties:
+                  resources:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionResource'
+        '400':
+          description: Invalid resourceId
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection or resource not found
+      tags:
+      - Connections
+      operationId: patchV1ConnectionsByConnectionIdResources
+      x-operation-id-source: derived
+  /v1/connections/oauth/providers:
+    get:
+      summary: List which oauth providers the platform has OAuth client credentials for, so a…
+      responses:
+        '200':
+          description: One row per active provider whose definition has an oauth block
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - providers
+                properties:
+                  providers:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - providerId
+                      - available
+                      properties:
+                        providerId:
+                          type: string
+                        available:
+                          type: boolean
+        '403':
+          description: connections:read scope required
+        '503':
+          description: Platform OAuth control plane unavailable
+      tags:
+      - Connections
+      operationId: getV1ConnectionsOauthProviders
+      x-operation-id-source: derived
+  /v1/connections/oauth/start:
+    post:
+      summary: Register (or revive a revoked) oauth connection and start its…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - providerId
+              - connectionId
+              - label
+              - redirectUri
+              properties:
+                providerId:
+                  type: string
+                connectionId:
+                  type: string
+                label:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                redirectUri:
+                  type: string
+                  format: uri
+                connectionConfig:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    minLength: 1
+                    maxLength: 300
+      responses:
+        '200':
+          description: Authorization URL with state; the state is single-use and expires
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionAuthorization'
+        '400':
+          description: validation_error, oauth_not_configured, oauth_credentials_not_set, or connection_config_required
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Provider or connection not found
+        '409':
+          description: Connection already exists
+        '503':
+          description: Connection control plane unavailable
+      tags:
+      - Connections
+      operationId: postV1ConnectionsOauthStart
+      x-operation-id-source: derived
+  /v1/connections/{connectionId}/credentials/{role}:
+    post:
+      summary: Supply a declared secondary credential (write-only) after the primary auth is…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupplySecondaryCredential'
+      responses:
+        '200':
+          description: Connection metadata; secrets and internal references are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '400':
+          description: The role was not declared at registration, or the secret was empty
+        '403':
+          description: connections:write scope required
+        '404':
+          description: Connection not found
+      tags:
+      - Connections
+      operationId: postV1ConnectionsByConnectionIdCredentialsByRole
+      x-operation-id-source: derived
+components:
+  schemas:
+    SelectConnectionResource:
+      type: object
+      additionalProperties: false
+      required:
+      - resourceId
+      properties:
+        resourceId:
+          type: string
+          pattern: ^cres_[a-f0-9]{32}$
+    RegisterConnection:
+      type: object
+      description: One of api_key (default when kind is omitted), oauth, service_account, credential_file, signed_request, or cli_auth, discriminated by kind
+      additionalProperties: true
+      required:
+      - id
+      - providerId
+      - label
+      properties:
+        kind:
+          enum:
+          - api_key
+          - oauth
+          - service_account
+          - credential_file
+          - signed_request
+          - cli_auth
+        id:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        providerId:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        label:
+          type: string
+        placement:
+          enum:
+          - header
+          - query
+        name:
+          type: string
+        format:
+          type: string
+          description: e.g. "Bearer {secret}"
+        secret:
+          type: string
+          writeOnly: true
+        authorizationUrl:
+          type: string
+          format: uri
+        tokenUrl:
+          type: string
+          format: uri
+        scopes:
+          type: array
+          items:
+            type: string
+        tokenPlacement:
+          enum:
+          - header
+          - query
+        clientId:
+          type: string
+          writeOnly: true
+        keyFile:
+          type: string
+          writeOnly: true
+        file:
+          type: string
+          writeOnly: true
+        keyId:
+          type: string
+        algorithm:
+          const: hmac-sha256
+        signedHeaders:
+          type: array
+          items:
+            type: string
+        blob:
+          type: string
+          writeOnly: true
+        credentialExpiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        probe:
+          anyOf:
+          - $ref: '#/components/schemas/ConnectionProbeDefinition'
+          - type: 'null'
+        secondaryCredentialRoles:
+          type: array
+          items:
+            type: string
+          description: Secondary credential roles this provider requires beyond the primary auth
+    ConnectionFixtureReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - receiptId
+      - connectionId
+      - verification
+      - providerCalled
+      - credentialState
+      - evidence
+      - testedAt
+      properties:
+        receiptId:
+          type: string
+          pattern: ^cfr_[a-f0-9]{32}$
+        connectionId:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        verification:
+          const: fixture_tested
+        providerCalled:
+          type: boolean
+        credentialState:
+          const: available
+        evidence:
+          const: local_fixture_credential_access
+        testedAt:
+          type: string
+          format: date-time
+    ConnectionCallback:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      - code
+      properties:
+        state:
+          type: string
+        code:
+          type: string
+    ConnectionTestReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - receiptId
+      - connectionId
+      - providerId
+      - verification
+      - providerCalled
+      - credentialState
+      - message
+      - testedAt
+      properties:
+        receiptId:
+          type: string
+          pattern: ^ctr_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerId:
+          type: string
+        verification:
+          enum:
+          - fixture_tested
+          - not_tested
+        providerCalled:
+          type: boolean
+          description: Always false for this local-fixture-only endpoint; a real provider call happens only through /probe
+        credentialState:
+          enum:
+          - available
+          - unavailable
+        message:
+          type: string
+          description: Safe status text without credential or provider response material
+        testedAt:
+          type: string
+          format: date-time
+    ConnectionProbeDefinition:
+      type: object
+      additionalProperties: false
+      required:
+      - host
+      - method
+      - path
+      - expectedStatuses
+      properties:
+        host:
+          type: string
+        method:
+          enum:
+          - GET
+          - POST
+        path:
+          type: string
+        expectedStatuses:
+          type: array
+          items:
+            type: integer
+        identityPointer:
+          type: string
+        scopesPointer:
+          type: string
+        resourcesPointer:
+          type: string
+    ConnectionResource:
+      type: object
+      additionalProperties: false
+      required:
+      - resourceId
+      - connectionId
+      - providerResourceId
+      - kind
+      - displayName
+      - selected
+      - discoveredAt
+      properties:
+        resourceId:
+          type: string
+          pattern: ^cres_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerResourceId:
+          type: string
+        kind:
+          type: string
+        displayName:
+          type: string
+        selected:
+          type: boolean
+        discoveredAt:
+          type: string
+          format: date-time
+    RotateConnection:
+      type: object
+      additionalProperties: false
+      required:
+      - secret
+      properties:
+        secret:
+          type: string
+          writeOnly: true
+    Connection:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - providerId
+      - label
+      - status
+      - auth
+      - scopes
+      - lastProbe
+      - cooldownUntil
+      - credentialExpiresAt
+      - consent
+      - pendingCredentialRoles
+      - createdAt
+      - updatedAt
+      - testState
+      properties:
+        id:
+          type: string
+        providerId:
+          type: string
+        label:
+          type: string
+        status:
+          enum:
+          - draft
+          - authorization_pending
+          - connected
+          - degraded
+          - expired
+          - action_required
+          - revoked
+        auth:
+          type: object
+          additionalProperties: false
+          required:
+          - kind
+          properties:
+            kind:
+              enum:
+              - none
+              - api_key
+              - oauth
+              - service_account
+              - credential_file
+              - signed_request
+              - cli_auth
+            placement:
+              enum:
+              - header
+              - query
+            name:
+              type: string
+            authorizationUrl:
+              type: string
+            tokenUrl:
+              type: string
+            scopes:
+              type: array
+              items:
+                type: string
+            tokenPlacement:
+              enum:
+              - header
+              - query
+            algorithm:
+              const: hmac-sha256
+            signedHeaders:
+              type: array
+              items:
+                type: string
+        scopes:
+          type: array
+          items:
+            type: string
+          description: Granted scopes, populated after oauth callback or a probe that reports scopes
+        lastProbe:
+          anyOf:
+          - $ref: '#/components/schemas/ConnectionHealthReceipt'
+          - type: 'null'
+        cooldownUntil:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        credentialExpiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        consent:
+          type: object
+          additionalProperties: false
+          required:
+          - expiresAt
+          - warning
+          properties:
+            expiresAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            warning:
+              enum:
+              - expiring_soon
+              - expired
+              - null
+        pendingCredentialRoles:
+          type: array
+          items:
+            type: string
+          description: Declared secondary credential roles not yet supplied; non-empty implies status action_required
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        testState:
+          enum:
+          - not_tested
+          - verified
+          description: verified requires at least one persisted fixture_tested receipt; never set from CRUD alone
+        probeConfigured:
+          type: boolean
+          description: true when POST /v1/connections/{connectionId}/probe has a live health check to run; false for a pasted api_key with no probe (the probe then answers 400 validation_error with reason connection_probe_not_configured)
+        latestTestReceipt:
+          anyOf:
+          - $ref: '#/components/schemas/ConnectionFixtureReceipt'
+          - type: 'null'
+          description: Present only in the GET /v1/connections list response (absent, not null, on register/rotate/revoke/etc. responses); the same object GET /v1/connections/{connectionId}/test-receipts returns as `latest`
+    SupplySecondaryCredential:
+      type: object
+      additionalProperties: false
+      required:
+      - secret
+      properties:
+        secret:
+          type: string
+          writeOnly: true
+    ConnectionHealthReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - receiptId
+      - connectionId
+      - providerId
+      - outcome
+      - status
+      - identity
+      - scopes
+      - resources
+      - providerRequestId
+      - remediation
+      - checkedAt
+      properties:
+        receiptId:
+          type: string
+          pattern: ^chr_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerId:
+          type: string
+        outcome:
+          enum:
+          - healthy
+          - invalid_credentials
+          - insufficient_scope
+          - unavailable
+          - rate_limited
+          - missing_resource
+        status:
+          type:
+          - integer
+          - 'null'
+        identity:
+          type:
+          - string
+          - 'null'
+        scopes:
+          type: array
+          items:
+            type: string
+        resources:
+          type: array
+          items:
+            type: string
+          description: Accessible provider resource ids discovered by this probe (CA-CONN-03)
+        providerRequestId:
+          type:
+          - string
+          - 'null'
+        remediation:
+          type:
+          - string
+          - 'null'
+          description: Safe human-readable next step; never credential material
+        checkedAt:
+          type: string
+          format: date-time
+    ConnectionAlert:
+      type: object
+      additionalProperties: false
+      required:
+      - alertId
+      - connectionId
+      - providerId
+      - state
+      - message
+      - createdAt
+      - acknowledgedAt
+      properties:
+        alertId:
+          type: string
+          pattern: ^cal_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerId:
+          type: string
+        state:
+          enum:
+          - degraded
+          - expired
+          - action_required
+          - revoked
+        message:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        acknowledgedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    ConnectionFixtureReceiptHistory:
+      type: object
+      additionalProperties: false
+      required:
+      - latest
+      - receipts
+      properties:
+        latest:
+          anyOf:
+          - $ref: '#/components/schemas/ConnectionFixtureReceipt'
+          - type: 'null'
+        receipts:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ConnectionFixtureReceipt'
+    ConnectionAuthorization:
+      type: object
+      additionalProperties: false
+      required:
+      - authorizationUrl
+      - state
+      - expiresAt
+      properties:
+        authorizationUrl:
+          type: string
+          format: uri
+        state:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

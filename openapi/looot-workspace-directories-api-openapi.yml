@@ -1,0 +1,384 @@
+openapi: 3.2.0
+info:
+  title: looot Workspace Directories API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workspace Directories
+paths:
+  /v1/workspace-directories:
+    get:
+      summary: List the durable root namespace and revision
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDirectoryPage'
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:read scope required
+        '503':
+          description: Storage unavailable
+      tags:
+      - Workspace Directories
+      operationId: getV1WorkspaceDirectories
+      x-operation-id-source: derived
+    post:
+      summary: CAS-create a durable directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - path
+              - expectedNamespaceRevision
+              properties:
+                path:
+                  type: string
+                  minLength: 2
+                  maxLength: 1024
+                  pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+                expectedNamespaceRevision:
+                  type: string
+                  pattern: ^sha256:[a-f0-9]{64}$
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDirectoryMutationResult'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '409':
+          description: Namespace or path conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Directories
+      operationId: postV1WorkspaceDirectories
+      x-operation-id-source: derived
+  /v1/workspace-directories/{path}:
+    get:
+      summary: List a durable directory and safe revisions
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDirectoryPage'
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:read scope required
+        '404':
+          description: Directory not found
+        '503':
+          description: Storage unavailable
+      tags:
+      - Workspace Directories
+      operationId: getV1WorkspaceDirectoriesByPath
+      x-operation-id-source: derived
+  /v1/workspace-directories/{path}/move:
+    post:
+      summary: CAS-move a durable directory
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - toPath
+              - expectedRevision
+              - expectedNamespaceRevision
+              properties:
+                toPath:
+                  type: string
+                  minLength: 2
+                  maxLength: 1024
+                  pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+                recursive:
+                  type: boolean
+                  default: false
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+                expectedNamespaceRevision:
+                  type: string
+                  pattern: ^sha256:[a-f0-9]{64}$
+      responses:
+        '200':
+          description: Moved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDirectoryMutationResult'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: Directory not found
+        '409':
+          description: Directory or namespace revision conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Directories
+      operationId: postV1WorkspaceDirectoriesByPathMove
+      x-operation-id-source: derived
+  /v1/workspace-directories/{path}/delete:
+    post:
+      summary: CAS-delete a durable directory
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - expectedRevision
+              - expectedNamespaceRevision
+              properties:
+                recursive:
+                  type: boolean
+                  default: false
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+                expectedNamespaceRevision:
+                  type: string
+                  pattern: ^sha256:[a-f0-9]{64}$
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceDirectoryMutationResult'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: Directory not found
+        '409':
+          description: Directory or namespace revision conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Directories
+      operationId: postV1WorkspaceDirectoriesByPathDelete
+      x-operation-id-source: derived
+components:
+  schemas:
+    WorkspaceDirectoryPage:
+      type: object
+      additionalProperties: false
+      required:
+      - entries
+      - namespaceRevision
+      - directoryRevision
+      properties:
+        entries:
+          type: array
+          maxItems: 100000
+          items:
+            $ref: '#/components/schemas/WorkspaceDirectoryEntry'
+        namespaceRevision:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        directoryRevision:
+          oneOf:
+          - type: integer
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+    WorkspaceDirectoryMutationResult:
+      type: object
+      additionalProperties: false
+      required:
+      - directory
+      - namespaceRevision
+      properties:
+        directory:
+          $ref: '#/components/schemas/WorkspaceDirectory'
+        namespaceRevision:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+    WorkspaceDirectory:
+      type: object
+      additionalProperties: false
+      required:
+      - tenantId
+      - path
+      - createdAt
+      - updatedAt
+      - revision
+      properties:
+        tenantId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        path:
+          type: string
+          minLength: 2
+          maxLength: 1024
+          pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+    WorkspaceDirectoryEntry:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - path
+        - revision
+        properties:
+          kind:
+            const: directory
+          path:
+            type: string
+            minLength: 2
+            maxLength: 1024
+            pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+          revision:
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+      - type: object
+        additionalProperties: false
+        required:
+        - kind
+        - path
+        - file
+        properties:
+          kind:
+            const: file
+          path:
+            type: string
+            minLength: 2
+            maxLength: 1024
+            pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+          file:
+            $ref: '#/components/schemas/WorkspaceFile'
+    WorkspaceFile:
+      type: object
+      additionalProperties: false
+      required:
+      - fileId
+      - tenantId
+      - path
+      - contentType
+      - byteLength
+      - digest
+      - createdAt
+      - updatedAt
+      - expiresAt
+      - revision
+      properties:
+        fileId:
+          type: string
+          pattern: ^wfl_[a-f0-9]{32}$
+        tenantId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        path:
+          type: string
+          minLength: 2
+          maxLength: 1024
+          pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+        contentType:
+          type: string
+          minLength: 1
+          maxLength: 200
+        byteLength:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        digest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

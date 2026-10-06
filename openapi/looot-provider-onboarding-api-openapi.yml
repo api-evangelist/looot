@@ -1,0 +1,36 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Onboarding API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Onboarding
+paths:
+  /v1/provider-onboarding/batch-compatibility-drafts:
+    post:
+      summary: Create drafts for up to 100 explicitly selected accepted operations without…
+      responses:
+        '200':
+          description: Per-item created, existing, missing, or invalid outcomes
+        '400':
+          description: Invalid or duplicate batch
+        '403':
+          description: candidates:write scope required
+      tags:
+      - Provider Onboarding
+      operationId: postV1ProviderOnboardingBatchCompatibilityDrafts
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

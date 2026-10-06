@@ -1,0 +1,142 @@
+openapi: 3.2.0
+info:
+  title: looot Candidate Metadata Imports API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Candidate Metadata Imports
+paths:
+  /v1/candidate-metadata-imports:
+    post:
+      summary: Import bounded provider catalog metadata as non-executable quarantine candidates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportMetadataCandidates'
+      responses:
+        '200':
+          description: Idempotent digest replay
+        '201':
+          description: New metadata source version
+        '400':
+          description: Invalid or oversized metadata seed
+        '403':
+          description: candidates:write scope required
+        '409':
+          description: Partial prior import
+      tags:
+      - Candidate Metadata Imports
+      operationId: postV1CandidateMetadataImports
+      x-operation-id-source: derived
+components:
+  schemas:
+    ImportMetadataCandidates:
+      type: object
+      additionalProperties: false
+      required:
+      - sourceRef
+      - providerSlug
+      - providerName
+      - catalogKind
+      - operations
+      properties:
+        sourceRef:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        providerSlug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        providerName:
+          type: string
+          minLength: 1
+          maxLength: 300
+        catalogKind:
+          enum:
+          - api_catalog
+          - automation_catalog
+          - mcp_registry
+          - manual
+        catalogVersion:
+          type: string
+          minLength: 1
+          maxLength: 200
+        operations:
+          type: array
+          minItems: 1
+          maxItems: 10000
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - operationId
+            - displayName
+            properties:
+              operationId:
+                type: string
+                minLength: 1
+                maxLength: 300
+              displayName:
+                type: string
+                minLength: 1
+                maxLength: 300
+              description:
+                type: string
+                minLength: 1
+                maxLength: 1000
+              capabilityHint:
+                type: string
+              documentationUrl:
+                type: string
+                format: uri
+              openApiUrl:
+                type: string
+                format: uri
+              authHint:
+                enum:
+                - unknown
+                - api_key
+                - bearer
+                - oauth2
+                - basic
+                - custom
+                default: unknown
+              pricingHint:
+                type: object
+                additionalProperties: false
+                required:
+                - status
+                properties:
+                  status:
+                    enum:
+                    - unknown
+                    - listed
+                    - custom
+                  sourceUrl:
+                    type: string
+                    format: uri
+                  summary:
+                    type: string
+                    minLength: 1
+                    maxLength: 500
+              tags:
+                type: array
+                maxItems: 30
+                items:
+                  type: string
+                default: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

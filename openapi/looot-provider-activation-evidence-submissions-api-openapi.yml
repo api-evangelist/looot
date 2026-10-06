@@ -1,0 +1,64 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Activation Evidence Submissions API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Activation Evidence Submissions
+paths:
+  /v1/provider-activation-evidence-submissions/{submissionId}/decision:
+    post:
+      summary: Independently approve or reject one immutable provider activation evidence…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideProviderActivationEvidence'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Immutable decision
+        '400':
+          description: Self-review prohibited
+        '403':
+          description: provider-evidence:review scope required
+        '404':
+          description: Submission not found
+        '409':
+          description: Conflicting decision
+      tags:
+      - Provider Activation Evidence Submissions
+      operationId: postV1ProviderActivationEvidenceSubmissionsBySubmissionIdDecision
+      x-operation-id-source: derived
+components:
+  schemas:
+    DecideProviderActivationEvidence:
+      type: object
+      additionalProperties: false
+      required:
+      - decision
+      - reason
+      properties:
+        decision:
+          enum:
+          - approved
+          - rejected
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

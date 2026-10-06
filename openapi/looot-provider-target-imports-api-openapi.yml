@@ -1,0 +1,42 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Target Imports API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Target Imports
+paths:
+  /v1/provider-target-imports:
+    post:
+      summary: Preflight one manifest target against a supplied OpenAPI document, then…
+      responses:
+        '200':
+          description: Idempotent existing quarantine
+        '201':
+          description: Unreviewed non-executable candidates created
+        '400':
+          description: Blocked evidence, invalid document, or target operation missing
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Target not found
+        '409':
+          description: Partial prior import state
+      tags:
+      - Provider Target Imports
+      operationId: postV1ProviderTargetImports
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

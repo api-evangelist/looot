@@ -1,0 +1,286 @@
+openapi: 3.2.0
+info:
+  title: looot Tenant Tools API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Tenant Tools
+paths:
+  /v1/tenant-tools:
+    get:
+      summary: List tenant tool metadata
+      responses:
+        '200':
+          description: Tenant-scoped tool identities and lifecycle state; no credential references or request paths
+        '403':
+          description: local-product:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: getV1TenantTools
+      x-operation-id-source: derived
+    post:
+      summary: Create a tenant tool draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - toolId
+              - bundleId
+              - definition
+              properties:
+                toolId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                bundleId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                definition:
+                  type: object
+                  description: Strict bounded fixed-origin request policy; tenant and actor are server-derived
+      responses:
+        '201':
+          description: Redacted draft metadata
+        '400':
+          description: Invalid definition
+        '403':
+          description: local-product:manage scope required
+        '409':
+          description: Tool already exists or dependency conflict
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantTools
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}:
+    get:
+      summary: Get redacted tenant tool lifecycle metadata
+      responses:
+        '200':
+          description: Revisions (including the reviewed fixed-host request policy and opaque credential binding references) and grants. Never includes secret values or raw header/cookie content.
+        '403':
+          description: local-product:read scope required
+        '404':
+          description: Tool not found in this tenant
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: getV1TenantToolsByToolId
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/revisions:
+    post:
+      summary: Create the next tenant tool revision
+      responses:
+        '201':
+          description: Redacted draft revision
+        '400':
+          description: Invalid definition
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Revision conflict
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdRevisions
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/publish:
+    post:
+      summary: Publish a tenant tool revision
+      responses:
+        '200':
+          description: Redacted published revision
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Draft or revision conflict
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdPublish
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/revoke:
+    post:
+      summary: Revoke a published tenant tool
+      responses:
+        '200':
+          description: Redacted revoked revision
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Lifecycle conflict
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdRevoke
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/delete:
+    post:
+      summary: Delete an unused initial tenant tool draft
+      responses:
+        '200':
+          description: Deletion acknowledged
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Tool has references or is not an initial draft
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdDelete
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/tombstone:
+    post:
+      summary: Tombstone a revoked unreferenced tenant tool
+      responses:
+        '200':
+          description: Redacted tombstone metadata
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Tool has references or is not revoked
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdTombstone
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/grants:
+    post:
+      summary: Grant scoped tenant tool access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - grantId
+              - principalId
+              - permission
+              properties:
+                grantId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                principalId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                permission:
+                  enum:
+                  - invoke
+                  - manage
+      responses:
+        '201':
+          description: Tenant-scoped grant metadata
+        '400':
+          description: Invalid grant
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool not found
+        '409':
+          description: Grant already exists
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdGrants
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/grants/{grantId}/revoke:
+    post:
+      summary: Revoke one tenant-scoped tool grant
+      responses:
+        '200':
+          description: Revocation acknowledged
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Tool or grant not found
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdGrantsByGrantIdRevoke
+      x-operation-id-source: derived
+  /v1/tenant-tools/{toolId}/invoke:
+    post:
+      summary: Invoke a published tenant tool
+      description: The caller must hold an active invoke or manage grant on this tool; the outbound call is constrained to the tool's reviewed request policy (origin, method, path prefix, header allowlist). The default LOCAL_ALPHA token intentionally lacks local-product:execute.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - method
+              - path
+              properties:
+                method:
+                  enum:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                path:
+                  type: string
+                  minLength: 1
+                  maxLength: 1024
+                headers:
+                  type: object
+                  additionalProperties:
+                    type: string
+                body: {}
+      responses:
+        '200':
+          description: Downstream status, headers and body text
+        '401':
+          description: Authentication required
+        '403':
+          description: local-product:execute scope required, or the caller holds no active grant on this tool (tool_grant_required)
+        '404':
+          description: Tool not found
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Tenant Tools
+      operationId: postV1TenantToolsByToolIdInvoke
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

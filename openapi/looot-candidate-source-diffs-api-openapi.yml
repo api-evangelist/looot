@@ -1,0 +1,38 @@
+openapi: 3.2.0
+info:
+  title: looot Candidate Source Diffs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Candidate Source Diffs
+paths:
+  /v1/candidate-source-diffs:
+    get:
+      summary: Compare added, removed, and structurally changed operations between two…
+      responses:
+        '200':
+          description: Bounded deterministic non-executable diff
+        '400':
+          description: Invalid, mismatched, or stale diff request
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Source version not found
+      tags:
+      - Candidate Source Diffs
+      operationId: getV1CandidateSourceDiffs
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

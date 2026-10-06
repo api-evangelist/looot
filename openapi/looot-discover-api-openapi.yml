@@ -1,0 +1,32 @@
+openapi: 3.2.0
+info:
+  title: looot Discover API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Discover
+paths:
+  /v1/discover:
+    get:
+      summary: Discover operations
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Discover
+      operationId: getV1Discover
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

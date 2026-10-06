@@ -1,0 +1,223 @@
+openapi: 3.2.0
+info:
+  title: looot Audit Records API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Audit Records
+paths:
+  /v1/audit-records:
+    get:
+      summary: Inspect a structurally consistent bounded tenant audit page
+      description: Structural consistency covers the currently stored contiguous chain only. It does not prove that a suffix was not truncated or that the complete history was not rewritten.
+      parameters:
+      - name: action
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 128
+      - name: resourceType
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 64
+      - name: resourceId
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 128
+      - name: outcome
+        in: query
+        schema:
+          enum:
+          - succeeded
+          - denied
+          - failed
+      - name: from
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 2048
+      responses:
+        '200':
+          description: Structurally consistent payload-free audit page with the same truncation and rewrite limitation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditPage'
+        '400':
+          description: Invalid, repeated, stale, or unknown cursor/query
+        '401':
+          description: Authentication required
+        '403':
+          description: audit:read scope required
+        '503':
+          description: Audit integrity unavailable; details withheld
+      tags:
+      - Audit Records
+      operationId: getV1AuditRecords
+      x-operation-id-source: derived
+components:
+  schemas:
+    AuditPage:
+      type: object
+      additionalProperties: false
+      required:
+      - records
+      - nextCursor
+      - chain
+      properties:
+        records:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/AuditRecord'
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 2048
+        chain:
+          type: object
+          description: Self-consistency of the currently stored contiguous chain only; not proof against suffix truncation or complete-history rewrite.
+          additionalProperties: false
+          required:
+          - structurallyConsistent
+          - terminalHash
+          properties:
+            structurallyConsistent:
+              const: true
+            terminalHash:
+              type:
+              - string
+              - 'null'
+              pattern: ^sha256:[a-f0-9]{64}$
+    AuditRecord:
+      type: object
+      additionalProperties: false
+      required:
+      - auditRecordId
+      - organizationId
+      - sequence
+      - actor
+      - action
+      - resourceType
+      - resourceId
+      - outcome
+      - payloadDigest
+      - previousRecordHash
+      - recordHash
+      - occurredAt
+      properties:
+        auditRecordId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        organizationId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        sequence:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        actor:
+          oneOf:
+          - type: object
+            additionalProperties: false
+            required:
+            - kind
+            - principalId
+            properties:
+              kind:
+                const: principal
+              principalId:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{2,127}$
+          - type: object
+            additionalProperties: false
+            required:
+            - kind
+            - principalId
+            - sessionId
+            properties:
+              kind:
+                const: machine_session
+              principalId:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{2,127}$
+              sessionId:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{2,127}$
+          - type: object
+            additionalProperties: false
+            required:
+            - kind
+            - service
+            properties:
+              kind:
+                const: system
+              service:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{1,63}$
+        action:
+          type: string
+          pattern: ^[a-z][a-z0-9_.:-]{2,127}$
+        resourceType:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{1,63}$
+        resourceId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        outcome:
+          enum:
+          - succeeded
+          - denied
+          - failed
+        payloadDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        previousRecordHash:
+          type:
+          - string
+          - 'null'
+          pattern: ^sha256:[a-f0-9]{64}$
+        recordHash:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        occurredAt:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

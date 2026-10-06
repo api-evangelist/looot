@@ -1,0 +1,316 @@
+# looot docs
+
+> Search, price and run data APIs from one account, with the CLI, the MCP server or the REST API. Setup for every agent client, the plugin, every MCP tool, jobs and fallback, money, errors, recipes and the API reference.
+
+## Docs
+
+- [Introduction](https://docs.looot.ai/): looot is one catalog of paid APIs behind one token and one prepaid balance. Search, inspect the price, run a job, and pay for what completed.
+- [FAQ](https://docs.looot.ai/faq): Short answers about looot accounts, tokens, jobs, fallback, prices, failed runs, connecting agents, missing providers and docs made for agents.
+- [Support](https://docs.looot.ai/support): How to get help with looot: what to quote, where to ask, and how to request a missing provider.
+
+## Get started
+
+- [What is looot](https://docs.looot.ai/get-started/what-is-looot): looot is one catalog of paid provider APIs behind one token, one prepaid balance and one run contract, reachable from the web, the CLI or MCP.
+- [Quickstart, web](https://docs.looot.ai/get-started/quickstart-web): Sign up at looot.ai, pick your organization, top up your balance, browse the catalog and connect an agent from the Connect page.
+- [Quickstart, CLI](https://docs.looot.ai/get-started/quickstart-cli): Install the looot CLI, sign in, top up, search the catalog and run your first job from a terminal.
+- [Quickstart, MCP](https://docs.looot.ai/get-started/quickstart-mcp): Add the looot MCP server to Claude Code, sign in with the browser, check your balance, search the catalog and run a job with fallback.
+- [Run your first paid job](https://docs.looot.ai/get-started/first-paid-run): Check your balance, inspect an endpoint, run a job over the CLI, MCP or REST, read the result and the receipt, and retry safely with an idempotency key.
+- [Pricing basics](https://docs.looot.ai/get-started/pricing-basics): looot is prepaid, per call or per result, with $0 on failure and no subscription. Where to see a price before you run anything.
+- [Install](https://docs.looot.ai/get-started/install): Install the looot CLI with npm (Node 20 or newer), check the version, and run looot doctor to confirm the setup works.
+- [Sign in](https://docs.looot.ai/get-started/sign-in): Sign in with looot login, approve the code on looot.ai, see where the CLI saves your token, and sign out with looot logout, which revokes it.
+- [Browse without an account](https://docs.looot.ai/get-started/browse): Search the looot catalog and read endpoint prices before signing up, with looot search, looot inspect and the public catalog API.
+
+## Concepts
+
+- [Jobs](https://docs.looot.ai/concepts/jobs): What a job id is, how to run one with endpointId "job:<id>", how looot picks a provider, and what each refusal means.
+- [Job inputs](https://docs.looot.ai/concepts/job-inputs): The shared input names a job run accepts, how looot maps them to each provider's own fields, and the jobInputs coverage a search row shows.
+- [Fallback](https://docs.looot.ai/concepts/fallback): How fallback tries the next provider of a job inside one hold, what makes it move on or stop, and what route.skipped and route.summary tell you.
+- [Free first](https://docs.looot.ai/concepts/free-first): Why free rows and providers that only bill a found result are tried before paid ones, and how a guessed answer affects what a fallback walk pays.
+- [Outcomes](https://docs.looot.ai/concepts/outcomes): The difference between status, outcome and outcomeReason on a run, what weak and guessed mean, and how whoseError and retryable steer a retry.
+- [Normalized output](https://docs.looot.ai/concepts/normalized-output): The normalized block next to result, which jobs carry fixed field names, the email status vocabulary, and how verdict differs from outcome.
+- [Served provider](https://docs.looot.ai/concepts/served-provider): The difference between endpointId and servedEndpointId/servedProviderId, route.servedBy, and what a runs_list row shows after a fallback run.
+- [Receipts](https://docs.looot.ai/concepts/receipts): How to read what a run actually cost, attempt by attempt, with runs_evidence, GET /v1/runs/{id}/attempts and the exact money in route.summary.
+- [Idempotency](https://docs.looot.ai/concepts/idempotency): Why every run needs an idempotencyKey, what replays and what conflicts, and how a job run's digest differs from a direct run's.
+- [Access](https://docs.looot.ai/concepts/access): What access and credential mean on a catalog row, and how to tell a runnable endpoint from one that needs your own account or has no key yet.
+
+## Wallet and money
+
+- [Wallet and money](https://docs.looot.ai/money): How the looot prepaid balance works, what available and reserved mean, and where to top up.
+- [Quotes](https://docs.looot.ai/money/quotes): How to price a run before you make it, using a search row's estimatedPrice and costPerSuccessUsd, or inspect's estimatedMaxCost.
+- [Holds](https://docs.looot.ai/money/holds): How a run reserves its estimated cost, settles at the actual charge, releases what is left, and what reconciliation_pending means for the hold.
+- [What's free](https://docs.looot.ai/money/free-and-failures): Which tool calls never cost anything, which refusals happen before any hold, and when a billed "not found" answer is still charged.
+- [Cost cap](https://docs.looot.ai/money/cost-cap): How fallback.maxCostUsd bounds a route's hold, what over_cost_cap and route_capped mean, and the single-provider caveat to know before you rely on it.
+- [Settlement ceiling](https://docs.looot.ai/money/settlement-ceiling): The 3x rule that bounds how far a charge can rise above the estimate, when it applies, and why a multi-provider route never goes above its hold.
+- [Receipts](https://docs.looot.ai/money/receipts): Where to find the exact charge for a run: actualCost, route.summary, runs_evidence and your ledger.
+- [Top up](https://docs.looot.ai/money/top-up): How to add credit to a workspace, from the dashboard or with the top_up tool, and what the rate limits and error reasons mean.
+
+## Catalog
+
+- [Catalog](https://docs.looot.ai/catalog): How the looot catalog is organized, categories, platforms, jobs, endpoints and providers, how to find a provider, access states, and the counts behind them.
+- [Social](https://docs.looot.ai/catalog/social): Social in the looot catalog as of 2026-09-28: 1165 jobs served by 9 providers, with the job ids to run and links to the live catalog.
+- [SEO/AEO](https://docs.looot.ai/catalog/seo-aeo): SEO/AEO in the looot catalog as of 2026-09-28: 418 jobs served by 20 providers, with the job ids to run and links to the live catalog.
+- [Enrichment](https://docs.looot.ai/catalog/enrichment): Enrichment in the looot catalog as of 2026-09-28: 132 jobs served by 25 providers, with the job ids to run and links to the live catalog.
+- [Web data](https://docs.looot.ai/catalog/web-data): Web data in the looot catalog as of 2026-09-28: 83 jobs served by 24 providers, with the job ids to run and links to the live catalog.
+- [Market data](https://docs.looot.ai/catalog/market-data): Market data in the looot catalog as of 2026-09-28: 73 jobs served by 4 providers, with the job ids to run and links to the live catalog.
+- [E-commerce](https://docs.looot.ai/catalog/ecommerce): E-commerce in the looot catalog as of 2026-09-28: 20 jobs served by 5 providers, with the job ids to run and links to the live catalog.
+- [Media generation](https://docs.looot.ai/catalog/media-generation): Media generation in the looot catalog as of 2026-09-28: 10 jobs served by 6 providers, with the job ids to run and links to the live catalog.
+- [Developer](https://docs.looot.ai/catalog/developer): Developer in the looot catalog as of 2026-09-28: 19 jobs served by 3 providers, with the job ids to run and links to the live catalog.
+- [Community](https://docs.looot.ai/catalog/community): Community in the looot catalog as of 2026-09-28: 16 jobs served by 3 providers, with the job ids to run and links to the live catalog.
+- [Advertising](https://docs.looot.ai/catalog/advertising): Advertising in the looot catalog as of 2026-09-28: 4 jobs served by 6 providers, with the job ids to run and links to the live catalog.
+- [Utilities](https://docs.looot.ai/catalog/utilities): Utilities in the looot catalog as of 2026-09-28: 14 jobs served by 4 providers, with the job ids to run and links to the live catalog.
+- [Reviews & apps](https://docs.looot.ai/catalog/reviews-apps): Reviews & apps in the looot catalog as of 2026-09-28: 3 jobs served by 2 providers, with the job ids to run and links to the live catalog.
+
+## The looot plugin
+
+- [The looot plugin](https://docs.looot.ai/plugin): A plugin for Claude Code, Codex and Cursor that bundles the looot MCP server and seven skills that cover sign-in, a paid result and its receipt.
+- [Install the plugin](https://docs.looot.ai/plugin/install): Add the looot plugin marketplace and install it in Claude Code, Codex or Cursor.
+
+### Skills
+
+- [find-and-run skill](https://docs.looot.ai/plugin/skills/find-and-run): How the looot plugin's find-and-run skill searches by job, runs with fallback, and reads the outcome and receipt.
+- [setup skill](https://docs.looot.ai/plugin/skills/setup): How the looot plugin's setup skill connects the MCP server, checks the balance, and gets a top-up link.
+- [money skill](https://docs.looot.ai/plugin/skills/money): How the looot plugin's money skill quotes a run, explains holds and settlement, and reads receipts.
+- [recipes skill](https://docs.looot.ai/plugin/skills/recipes): The looot plugin's step lists for common jobs: lead enrichment, account research, SEO and GEO checks, page to markdown, and social lookups.
+- [troubleshooting skill](https://docs.looot.ai/plugin/skills/troubleshooting): How the looot plugin's troubleshooting skill reads error codes and outcomes and decides what to do next.
+- [find-email skill](https://docs.looot.ai/plugin/skills/find-email): The looot plugin's find-email command finds and verifies the work email of one person, or every person in a lead list.
+- [research-company skill](https://docs.looot.ai/plugin/skills/research-company): The looot plugin's research-company command writes a short account brief on a company from its domain.
+
+## Errors
+
+- [Errors](https://docs.looot.ai/errors): The shapes an error takes in the CLI, REST API, MCP tools and failed runs, plus a lookup table for every code and its fix.
+- [Run errors](https://docs.looot.ai/errors/run-errors): Every code a failed run's error object can carry, whose side it's on, whether it's retryable, and the fix.
+- [Job refusals](https://docs.looot.ai/errors/job-refusals): What happens when a job:<id> run or a fallback route can't pick or reach a provider, the result.code values, and the route.skipped codes behind them.
+- [REST errors](https://docs.looot.ai/errors/rest-errors): Every HTTP status and code the looot REST API answers with, and the fix for each.
+- [MCP errors](https://docs.looot.ai/errors/mcp-errors): Every code a looot MCP tool call can return as isError, whatever tool or layer produced it, and the fix.
+- [CLI errors](https://docs.looot.ai/errors/cli-errors): Every code the looot CLI's own error path can print, split into local (never left the machine), network, file and gateway-relayed codes.
+
+## CLI command reference
+
+- [CLI command reference](https://docs.looot.ai/cli): Every command, flag and exit code in the published looot CLI (npm looot 1.1.0), plus env vars and the config file.
+
+## SDKs
+
+- [SDKs](https://docs.looot.ai/sdks): looot-js and looot-python are coming soon. Today, call looot from the REST API or MCP.
+
+## Connect your agent
+
+- [Connect your agent](https://docs.looot.ai/connect): Add the looot MCP server to any agent client, sign in with the browser or a header token, and see what the consent page shows.
+- [Connect Claude Code](https://docs.looot.ai/connect/claude-code): Add the looot MCP server to Claude Code, sign in with the browser or a header token, and check it works.
+- [Connect claude.ai](https://docs.looot.ai/connect/claude-ai): Add looot as a custom connector on claude.ai, sign in with the browser, and check it works.
+- [Connect Claude Desktop](https://docs.looot.ai/connect/claude-desktop): Add looot as a custom connector on Claude Desktop, sign in with the browser, and check it works.
+- [Connect ChatGPT](https://docs.looot.ai/connect/chatgpt): Add looot as a connector in ChatGPT developer mode, sign in with the browser, and check it works.
+- [Connect Codex](https://docs.looot.ai/connect/codex): Add the looot MCP server to Codex CLI or the Codex app, sign in with the browser or a header token, and check it works.
+- [Connect Cursor](https://docs.looot.ai/connect/cursor): Add the looot MCP server to Cursor, sign in with the browser or a header token, and check it works.
+- [Connect VS Code](https://docs.looot.ai/connect/vscode): Add the looot MCP server to VS Code (GitHub Copilot agent mode), sign in with the browser or a stored secret, and check it works.
+- [Connect Gemini CLI](https://docs.looot.ai/connect/gemini-cli): Add the looot MCP server to Gemini CLI, sign in with the browser or a header token, and check it works.
+- [Connect Windsurf](https://docs.looot.ai/connect/windsurf): Add the looot MCP server to Windsurf, and check it works. Browser sign-in is not confirmed on this client.
+- [Connect Devin](https://docs.looot.ai/connect/devin): Add looot as a custom MCP in Devin, sign in with the browser or a header token, and check it works.
+- [Connect Cline](https://docs.looot.ai/connect/cline): Add the looot MCP server to Cline in VS Code with a token in its MCP settings file, and check it works.
+- [Connect OpenClaw](https://docs.looot.ai/connect/openclaw): Add the looot MCP server to OpenClaw with one command, sign in with the browser, and check it works.
+- [Connect Hermes Agent](https://docs.looot.ai/connect/hermes-agent): Add the looot MCP server to Hermes Agent in its YAML config, sign in with the browser, and check it works.
+- [Connect Grok](https://docs.looot.ai/connect/grok): Add looot as a connector in Grok, through the web app, an enterprise admin flow, the CLI, or the xAI API. Not tested by hand yet.
+- [Connect Copilot Studio](https://docs.looot.ai/connect/copilot-studio): Add looot as an MCP tool to a Microsoft Copilot Studio agent, with OAuth dynamic discovery or a header API key. Not tested by hand yet.
+- [Connect Muse](https://docs.looot.ai/connect/muse): Ask Muse to build a custom connector to looot's MCP server. Not tested; this page follows Meta's help page and will change once tested.
+- [Connect a stdio-only client (mcp-remote)](https://docs.looot.ai/connect/mcp-remote): Bridge looot's remote MCP server into a client that only speaks stdio, with the mcp-remote package.
+- [Headless, CI and scripts](https://docs.looot.ai/connect/headless): Connect a script or a CI job to looot with a header token, no browser required.
+- [Set up several clients at once (looot init)](https://docs.looot.ai/connect/looot-init): Run looot init to write a header-token entry into Claude Code, Cursor and Codex in one step.
+- [Connection troubleshooting](https://docs.looot.ai/connect/troubleshooting): Fix a client that can't sign in, lost its tools, or gets a 401 or 402 when talking to looot.
+
+## MCP tools
+
+- [MCP tools](https://docs.looot.ai/mcp-tools): The 15 tools the looot MCP server exposes, the common error shape, and a typical agent flow through discover, run and balance.
+- [search](https://docs.looot.ai/mcp-tools/search): Free catalog search. Describe a job in plain words or pass filters and get back endpoints to inspect and run.
+- [search_catalog](https://docs.looot.ai/mcp-tools/search-catalog): Ranked full-text catalog search with job expansion, stats and access states, up to 200 rows a page.
+- [catalog_overview](https://docs.looot.ai/mcp-tools/catalog-overview): Free tool for what the catalog covers, as categories, platforms and jobs, with counts and cheapest prices at every level.
+- [discover](https://docs.looot.ai/mcp-tools/discover): Free lexical search over up to 5 eligible endpoints, scored by relevance, evidence, availability, price and freshness.
+- [discover_smart](https://docs.looot.ai/mcp-tools/discover-smart): Paid tool that judges a shortlist against a plain-English use case with one small AI call, for jobs a lexical search cannot name.
+- [inspect](https://docs.looot.ai/mcp-tools/inspect): Free tool that returns an endpoint's exact input/output schema, price formula, estimated max cost and a ready-to-send run template.
+- [run](https://docs.looot.ai/mcp-tools/run): Run an endpoint, a job by id, or a workflow, spending prepaid credit with idempotent retries and optional fallback across providers.
+- [runs_get](https://docs.looot.ai/mcp-tools/runs-get): Free tool to get one run's looot status, result and cost once settled, separate from the provider's own response status.
+- [runs_list](https://docs.looot.ai/mcp-tools/runs-list): Free, cursor-paginated run history for a workspace, filtered by status or job, with bounded summary rows by default.
+- [runs_cancel](https://docs.looot.ai/mcp-tools/runs-cancel): Cancel a queued or running run, same as POST /v1/runs/{id}/cancel. Already-settled runs come back unchanged.
+- [runs_evidence](https://docs.looot.ai/mcp-tools/runs-evidence): Free tool for every attempt made for a run, with status, latency, receipt id and cost, as a receipt trail.
+- [balance](https://docs.looot.ai/mcp-tools/balance): Free tool for a workspace's available and reserved balance, plus the top-up link and its minimum.
+- [top_up](https://docs.looot.ai/mcp-tools/top-up): Get a Stripe Checkout link to add prepaid credit to this workspace. The agent never enters card details.
+- [media_link](https://docs.looot.ai/mcp-tools/media-link): Get a short-lived download link for a file a run produced (audio, image, video, PDF, or a large text or CSV answer).
+- [capability_request](https://docs.looot.ai/mcp-tools/capability-request): Ask for a provider or job the catalog does not cover yet, same as POST /v1/capability-requests.
+- [my_tools](https://docs.looot.ai/mcp-tools/my-tools): Free tool listing the tenant tools this workspace may run, and whether each is callable right now.
+
+## Guides
+
+- [Guides](https://docs.looot.ai/guides): Full walk-throughs for the jobs customers run most often through looot, with a quote, the MCP, REST and CLI calls, and what to do on a miss.
+- [Enrich a lead list](https://docs.looot.ai/guides/enrich-leads): Find and verify a work email for every person on a list, one row at a time, with a quote before you spend and a provider name on every result.
+- [Verify an email address](https://docs.looot.ai/guides/verify-emails): Check whether an email address is deliverable before you send to it, read the status looot normalizes across providers, and know what a catch-all or risky result means.
+- [Research a company from its domain](https://docs.looot.ai/guides/account-research): Pull a company's profile, tech stack, recent news and known contacts for one domain, each fact tied to the provider that returned it, then write one brief.
+- [Check SEO and GEO visibility for a keyword](https://docs.looot.ai/guides/seo-geo): Check where a domain ranks in Google, whether AI answers (Google AI Mode, Google AI Overview, ChatGPT) mention or cite it, search volume, and backlink strength.
+- [Turn a web page into markdown](https://docs.looot.ai/guides/page-to-markdown): Scrape a URL into clean markdown or structured JSON, read the title and body, and tell a blocked or sign-in page apart from the page's content.
+- [Look up a social profile](https://docs.looot.ai/guides/social-profiles): Get a LinkedIn, TikTok or Instagram profile through looot, with the right input field for each network.
+- [Find a phone number](https://docs.looot.ai/guides/phone-lookup): Find a phone number for a person from their name and company domain, or from a LinkedIn URL, through looot.
+- [List the technologies a company's site runs](https://docs.looot.ai/guides/technographics): Get a company's tech stack from its domain through looot's company.technographics job.
+- [Look up an IP address](https://docs.looot.ai/guides/ip-lookup): Look up an IP address's location and network through looot's ip.lookup job, and enrich it with company and person signals through ip.enrich.
+- [Bring your own provider key](https://docs.looot.ai/guides/bring-your-own-key): Connect your own API key for a provider so runs on it use your account, not looot's, and know what that changes about the price.
+- [Build a UI on the catalog](https://docs.looot.ai/guides/build-a-ui): The /v2 catalog routes are for building UIs that keep the whole catalog in memory, with ETag revalidation and an ids-only search. Agents and API users should use the /v1 routes.
+
+## Providers
+
+- [Providers](https://docs.looot.ai/providers): The 69 providers behind the looot catalog as of 2026-09-28, grouped by category, with one page per provider: jobs, access, price basis and how to run it.
+- [Adyntel](https://docs.looot.ai/providers/adyntel): Adyntel on looot as of 2026-09-28: 9 jobs through 9 endpoints, how you reach it, what it costs, and how to run it.
+- [AI Ark](https://docs.looot.ai/providers/ai-ark): AI Ark on looot as of 2026-09-28: 10 jobs through 11 endpoints, how you reach it, what it costs, and how to run it.
+- [Akta](https://docs.looot.ai/providers/akta): Akta on looot as of 2026-09-28: 13 jobs through 14 endpoints, how you reach it, what it costs, and how to run it.
+- [Anysite](https://docs.looot.ai/providers/anysite): Anysite on looot as of 2026-09-28: 114 jobs through 120 endpoints, how you reach it, what it costs, and how to run it.
+- [Apify](https://docs.looot.ai/providers/apify): Apify on looot as of 2026-09-28: 3 jobs through 3 endpoints, how you reach it, what it costs, and how to run it.
+- [Apollo (sequences)](https://docs.looot.ai/providers/apollo-sequences): Apollo (sequences) on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Attio](https://docs.looot.ai/providers/attio): Attio on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Aviato](https://docs.looot.ai/providers/aviato): Aviato on looot as of 2026-09-28: 32 jobs through 34 endpoints, how you reach it, what it costs, and how to run it.
+- [Brave Search](https://docs.looot.ai/providers/brave-search): Brave Search on looot as of 2026-09-28: 6 jobs through 6 endpoints, how you reach it, what it costs, and how to run it.
+- [Bright Data](https://docs.looot.ai/providers/brightdata): Bright Data on looot as of 2026-09-28: 1 job through 1 endpoint, how you reach it, what it costs, and how to run it.
+- [BuiltWith](https://docs.looot.ai/providers/builtwith): BuiltWith on looot as of 2026-09-28: 7 jobs through 8 endpoints, how you reach it, what it costs, and how to run it.
+- [CloudConvert](https://docs.looot.ai/providers/cloudconvert): CloudConvert on looot as of 2026-09-28: 9 jobs through 9 endpoints, how you reach it, what it costs, and how to run it.
+- [CoinMarketCap](https://docs.looot.ai/providers/coinmarketcap): CoinMarketCap on looot as of 2026-09-28: 17 jobs through 17 endpoints, how you reach it, what it costs, and how to run it.
+- [Context.dev](https://docs.looot.ai/providers/context-dev): Context.dev on looot as of 2026-09-28: 32 jobs through 32 endpoints, how you reach it, what it costs, and how to run it.
+- [Coresignal](https://docs.looot.ai/providers/coresignal): Coresignal on looot as of 2026-09-28: 19 jobs through 26 endpoints, how you reach it, what it costs, and how to run it.
+- [DataForSEO](https://docs.looot.ai/providers/dataforseo): DataForSEO on looot as of 2026-09-28: 277 jobs through 305 endpoints, how you reach it, what it costs, and how to run it.
+- [Deepgram](https://docs.looot.ai/providers/deepgram): Deepgram on looot as of 2026-09-28: 3 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [Diffbot](https://docs.looot.ai/providers/diffbot): Diffbot on looot as of 2026-09-28: 5 jobs through 10 endpoints, how you reach it, what it costs, and how to run it.
+- [ElevenLabs](https://docs.looot.ai/providers/elevenlabs): ElevenLabs on looot as of 2026-09-28: 1 job through 1 endpoint, how you reach it, what it costs, and how to run it.
+- [EODHD](https://docs.looot.ai/providers/eodhd): EODHD on looot as of 2026-09-28: 82 jobs through 86 endpoints, how you reach it, what it costs, and how to run it.
+- [Exa](https://docs.looot.ai/providers/exa): Exa on looot as of 2026-09-28: 13 jobs through 18 endpoints, how you reach it, what it costs, and how to run it.
+- [Findymail](https://docs.looot.ai/providers/findymail): Findymail on looot as of 2026-09-28: 8 jobs through 10 endpoints, how you reach it, what it costs, and how to run it.
+- [Firecrawl](https://docs.looot.ai/providers/firecrawl): Firecrawl on looot as of 2026-09-28: 9 jobs through 9 endpoints, how you reach it, what it costs, and how to run it.
+- [FullEnrich](https://docs.looot.ai/providers/fullenrich): FullEnrich on looot as of 2026-09-28: 6 jobs through 6 endpoints, how you reach it, what it costs, and how to run it.
+- [GitHub](https://docs.looot.ai/providers/github): GitHub on looot as of 2026-09-28: 2 jobs through 2 endpoints, how you reach it, what it costs, and how to run it.
+- [Gmail](https://docs.looot.ai/providers/gmail): Gmail on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Google Analytics](https://docs.looot.ai/providers/google-analytics): Google Analytics on looot as of 2026-09-28: 3 jobs through 3 endpoints, how you reach it, what it costs, and how to run it.
+- [Google Calendar](https://docs.looot.ai/providers/google-calendar): Google Calendar on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Google Drive](https://docs.looot.ai/providers/google-drive): Google Drive on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Google Sheets](https://docs.looot.ai/providers/google-sheets): Google Sheets on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [HubSpot](https://docs.looot.ai/providers/hubspot): HubSpot on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Hunter](https://docs.looot.ai/providers/hunter): Hunter on looot as of 2026-09-28: 5 jobs through 8 endpoints, how you reach it, what it costs, and how to run it.
+- [Hyperbrowser](https://docs.looot.ai/providers/hyperbrowser): Hyperbrowser on looot as of 2026-09-28: 16 jobs through 16 endpoints, how you reach it, what it costs, and how to run it.
+- [Icypeas](https://docs.looot.ai/providers/icypeas): Icypeas on looot as of 2026-09-28: 14 jobs through 15 endpoints, how you reach it, what it costs, and how to run it.
+- [Instantly](https://docs.looot.ai/providers/instantly): Instantly on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [IPinfo](https://docs.looot.ai/providers/ipinfo): IPinfo on looot as of 2026-09-28: 17 jobs through 27 endpoints, how you reach it, what it costs, and how to run it.
+- [Jina Reader API](https://docs.looot.ai/providers/jina): Jina Reader API on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Just One API](https://docs.looot.ai/providers/justoneapi): Just One API on looot as of 2026-09-28: 34 jobs through 57 endpoints, how you reach it, what it costs, and how to run it.
+- [LeadMagic](https://docs.looot.ai/providers/leadmagic): LeadMagic on looot as of 2026-09-28: 7 jobs through 8 endpoints, how you reach it, what it costs, and how to run it.
+- [lemlist](https://docs.looot.ai/providers/lemlist): lemlist on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Linkup](https://docs.looot.ai/providers/linkup): Linkup on looot as of 2026-09-28: 6 jobs through 6 endpoints, how you reach it, what it costs, and how to run it.
+- [Marketstack](https://docs.looot.ai/providers/marketstack): Marketstack on looot as of 2026-09-28: 39 jobs through 46 endpoints, how you reach it, what it costs, and how to run it.
+- [NewsData.io API](https://docs.looot.ai/providers/newsdata-io): NewsData.io API on looot as of 2026-09-28: 10 jobs through 11 endpoints, how you reach it, what it costs, and how to run it.
+- [Notion](https://docs.looot.ai/providers/notion): Notion on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Octen](https://docs.looot.ai/providers/octen): Octen on looot as of 2026-09-28: 3 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [OpenCage](https://docs.looot.ai/providers/opencage): OpenCage on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [Parallel](https://docs.looot.ai/providers/parallel): Parallel on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [People Data Labs](https://docs.looot.ai/providers/people-data-labs): People Data Labs on looot as of 2026-09-28: 17 jobs through 21 endpoints, how you reach it, what it costs, and how to run it.
+- [Pipedrive](https://docs.looot.ai/providers/pipedrive): Pipedrive on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [PredictLeads](https://docs.looot.ai/providers/predictleads): PredictLeads on looot as of 2026-09-28: 25 jobs through 28 endpoints, how you reach it, what it costs, and how to run it.
+- [Prospeo](https://docs.looot.ai/providers/prospeo): Prospeo on looot as of 2026-09-28: 7 jobs through 7 endpoints, how you reach it, what it costs, and how to run it.
+- [Replicate HTTP API](https://docs.looot.ai/providers/replicate): Replicate HTTP API on looot as of 2026-09-28: 10 jobs through 10 endpoints, how you reach it, what it costs, and how to run it.
+- [ScrapeCreators](https://docs.looot.ai/providers/scrapecreators): ScrapeCreators on looot as of 2026-09-28: 164 jobs through 185 endpoints, how you reach it, what it costs, and how to run it.
+- [Search Console](https://docs.looot.ai/providers/search-console): Search Console on looot as of 2026-09-28: 3 jobs through 3 endpoints, how you reach it, what it costs, and how to run it.
+- [SearchAPI.io](https://docs.looot.ai/providers/searchapi-io): SearchAPI.io on looot as of 2026-09-28: 137 jobs through 137 endpoints, how you reach it, what it costs, and how to run it.
+- [Signalbase](https://docs.looot.ai/providers/signalbase): Signalbase on looot as of 2026-09-28: 8 jobs through 9 endpoints, how you reach it, what it costs, and how to run it.
+- [Slack](https://docs.looot.ai/providers/slack): Slack on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Smartlead](https://docs.looot.ai/providers/smartlead): Smartlead on looot as of 2026-09-28: 5 jobs through 5 endpoints, how you reach it, what it costs, and how to run it.
+- [Steel API](https://docs.looot.ai/providers/steel): Steel API on looot as of 2026-09-28: 3 jobs through 3 endpoints, how you reach it, what it costs, and how to run it.
+- [Sumble](https://docs.looot.ai/providers/sumble): Sumble on looot as of 2026-09-28: 16 jobs through 16 endpoints, how you reach it, what it costs, and how to run it.
+- [Tavily Search and Extract API](https://docs.looot.ai/providers/tavily): Tavily Search and Extract API on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [The Companies API](https://docs.looot.ai/providers/thecompaniesapi): The Companies API on looot as of 2026-09-28: 8 jobs through 13 endpoints, how you reach it, what it costs, and how to run it.
+- [TheirStack](https://docs.looot.ai/providers/theirstack): TheirStack on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [TikHub](https://docs.looot.ai/providers/tikhub): TikHub on looot as of 2026-09-28: 993 jobs through 1025 endpoints, how you reach it, what it costs, and how to run it.
+- [TinyFish Search API](https://docs.looot.ai/providers/tinyfish): TinyFish Search API on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [Tomba](https://docs.looot.ai/providers/tomba): Tomba on looot as of 2026-09-28: 18 jobs through 20 endpoints, how you reach it, what it costs, and how to run it.
+- [TypeSafe (Jev)](https://docs.looot.ai/providers/typesafe): TypeSafe (Jev) on looot as of 2026-09-28: 1 job through 3 endpoints, how you reach it, what it costs, and how to run it.
+- [ZeroBounce](https://docs.looot.ai/providers/zerobounce): ZeroBounce on looot as of 2026-09-28: 4 jobs through 4 endpoints, how you reach it, what it costs, and how to run it.
+- [Zyte API](https://docs.looot.ai/providers/zyte-api): Zyte API on looot as of 2026-09-28: 1 job through 1 endpoint, how you reach it, what it costs, and how to run it.
+
+## Changelog
+
+- [looot CLI 1.3.0](https://docs.looot.ai/changelog/v1-3-0-cli): What changed for looot customers in looot CLI 1.3.0.
+- [v1.2.0, the agent flow](https://docs.looot.ai/changelog/v1-2-0-agent-flow): What changed for looot customers in v1.2.0.
+- [looot CLI 1.1.0](https://docs.looot.ai/changelog/v1-1-0-cli): What changed for looot customers in looot CLI 1.1.0.
+- [v1.0.0, the public CLI release](https://docs.looot.ai/changelog/v1-0-0-public-cli): What changed for looot customers in v1.0.0.
+- [v1.0.1](https://docs.looot.ai/changelog/v1-0-1): What changed for looot customers in v1.0.1.
+- [v0.8.0, demo ready](https://docs.looot.ai/changelog/v0-8-0-demo-ready): What changed for looot customers in v0.8.0.
+- [v0.7.4, money guards](https://docs.looot.ai/changelog/v0-7-4-money-guards): What changed for looot customers in v0.7.4.
+- [v0.7.0, instant dashboard](https://docs.looot.ai/changelog/v0-7-0-instant-dashboard): What changed for looot customers in v0.7.0.
+- [v0.7.1, session cache](https://docs.looot.ai/changelog/v0-7-1-session-cache): What changed for looot customers in v0.7.1.
+- [v0.7.2, pagination and mobile](https://docs.looot.ai/changelog/v0-7-2-pagination-and-mobile): What changed for looot customers in v0.7.2.
+- [v0.7.3, ledger list and sign-in](https://docs.looot.ai/changelog/v0-7-3-ledger-list-and-sign-in): What changed for looot customers in v0.7.3.
+- [v0.6.0, faster paid calls and zero fee](https://docs.looot.ai/changelog/v0-6-0-speed-and-zero-fee): What changed for looot customers in v0.6.0.
+- [v0.4.1, Google Analytics connected live](https://docs.looot.ai/changelog/v0-4-1-google-analytics-live): What changed for looot customers in v0.4.1.
+- [v0.4.2, Google Workspace by button](https://docs.looot.ai/changelog/v0-4-2-google-workspace): What changed for looot customers in v0.4.2.
+- [v0.3.0, customer accounts](https://docs.looot.ai/changelog/v0-3-0-customer-accounts): What changed for looot customers in v0.3.0.
+- [v0.4.0, OAuth by button](https://docs.looot.ai/changelog/v0-4-0-oauth-by-button): What changed for looot customers in v0.4.0.
+
+## Reference
+
+- [looot API](https://docs.looot.ai/reference)
+- [Integrate looot into your app](https://docs.looot.ai/reference/integrate): Call any looot job or tool from your own backend with one HTTP request. API key, first call, reading the answer, retries, long runs, files and costs.
+
+### Jobs
+
+- [Jobs](https://docs.looot.ai/reference/jobs): API reference for the 1862 jobs in the looot catalog as of 2026-10-01, grouped by category: one page each with inputs, providers, prices and code.
+
+### Tools
+
+- [Tools](https://docs.looot.ai/reference/tools): API reference for the 2243 runnable tools in the looot catalog as of 2026-10-01, grouped by provider: one page each with input fields, price and code.
+
+### Account
+
+- [Get session context](https://docs.looot.ai/reference/account/get-v1-session-context)
+- [Who am I](https://docs.looot.ai/reference/account/get-v1-whoami)
+
+### Billing
+
+- [Get balance](https://docs.looot.ai/reference/billing/get-v1-balance)
+- [List ledger entries](https://docs.looot.ai/reference/billing/get-v1-ledger)
+- [List top-ups](https://docs.looot.ai/reference/billing/get-v1-top-ups)
+- [Request a top-up](https://docs.looot.ai/reference/billing/post-v1-top-ups)
+
+### Browse without an account
+
+- [Catalog overview](https://docs.looot.ai/reference/browse-without-an-account/get-v1-catalog-overview)
+- [Compare catalog items](https://docs.looot.ai/reference/browse-without-an-account/post-v1-public-catalog-compare)
+- [Get a catalog item](https://docs.looot.ai/reference/browse-without-an-account/get-v1-public-catalog-catalogitemid)
+- [Search the public catalog](https://docs.looot.ai/reference/browse-without-an-account/get-v1-public-catalog)
+
+### Catalog
+
+- [Discover operations](https://docs.looot.ai/reference/catalog/get-v1-discover)
+- [Inspect an operation](https://docs.looot.ai/reference/catalog/get-v1-operations-endpointid)
+- [List catalog endpoints](https://docs.looot.ai/reference/catalog/get-v1-catalog-endpoints)
+- [Search the catalog](https://docs.looot.ai/reference/catalog/get-v1-catalog-search)
+
+### Requests
+
+- [List capability requests](https://docs.looot.ai/reference/requests/get-v1-capability-requests)
+- [Request a capability](https://docs.looot.ai/reference/requests/post-v1-capability-requests)
+
+### Runs
+
+- [Cancel a run](https://docs.looot.ai/reference/runs/post-v1-runs-runid-cancel)
+- [Create a run](https://docs.looot.ai/reference/runs/post-v1-runs)
+- [Get a run](https://docs.looot.ai/reference/runs/get-v1-runs-runid)
+- [List run attempts](https://docs.looot.ai/reference/runs/get-v1-runs-runid-attempts)
+- [List runs](https://docs.looot.ai/reference/runs/get-v1-runs)
+
+## RSS Feeds
+
+- [looot docs — Changelog](https://docs.looot.ai/changelog/rss.xml)
+
+## Agent skills
+
+- [looot-docs](https://docs.looot.ai/.well-known/agent-skills/looot-docs/SKILL.md): Answer questions about looot (connecting an agent, MCP tools, jobs and fallback, prices, holds, top-ups, error codes, the REST API) from the official docs at docs.looot.ai. Use when a user asks how looot works, why a looot call failed, or what a looot field or error code means.
+
+## Agent resources
+
+- [llms-full.txt](https://docs.looot.ai/llms-full.txt): The full Markdown of every page in one file.
+- [Page Markdown](https://docs.looot.ai/index.md): Append `.md` to any page URL to fetch that page as raw Markdown.
+- [JSON API](https://docs.looot.ai/api/docs/pages.json): Page index of the JSON docs API; each entry links the page's JSON and Markdown forms. Described by the OpenAPI document at https://docs.looot.ai/openapi.json.
+- [MCP server](https://docs.looot.ai/mcp): Streamable HTTP Model Context Protocol server with search_docs, get_page, list_pages, and get_navigation tools, plus every page as a resource. Discovery document: https://docs.looot.ai/.well-known/mcp.json
+- [Agent skills](https://docs.looot.ai/.well-known/agent-skills/index.json): Agent Skills discovery index of the skills this site publishes.
+- [API catalog](https://docs.looot.ai/.well-known/api-catalog): RFC 9727 linkset of the APIs documented here.
+- [AI catalog](https://docs.looot.ai/.well-known/ai-catalog.json): ARD manifest of the agent-facing resources on this site (MCP server, skills, APIs).
+- [agent-readability.json](https://docs.looot.ai/agent-readability.json): Manifest of every agent-facing artifact on this site.
+- [Sitemap](https://docs.looot.ai/sitemap.xml): Every indexable page URL with its last-modified date.

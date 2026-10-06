@@ -1,0 +1,422 @@
+generated: '2026-10-05'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/looot-openapi.json
+vocabulary:
+  name: looot Domain Vocabulary
+  description: 'Terms declared by looot''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-05'
+  terms:
+  - term: RunRequest
+    definition: 'Object declared by the contract with fields: endpointId, input, idempotencyKey, output, wait, fallback.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/RunRequest
+  - term: SessionContext
+    definition: 'Object declared by the contract with fields: mode, authenticationClass, organizationId, scopes, deploymentMode, role, expiresAt,
+      organizationName.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SessionContext
+  - term: WorkspaceFile
+    definition: 'Object declared by the contract with fields: fileId, tenantId, path, contentType, byteLength, digest, createdAt, updatedAt, expiresAt,
+      revision.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceFile
+  - term: WorkspaceDirectory
+    definition: 'Object declared by the contract with fields: tenantId, path, createdAt, updatedAt, revision.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceDirectory
+  - term: WorkspaceRead
+    definition: 'Object declared by the contract with fields: file, contentBase64.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceRead
+  - term: WorkspaceUsage
+    definition: 'Object declared by the contract with fields: files, bytes, maxFiles, maxBytes.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceUsage
+  - term: WorkspaceDirectoryPage
+    definition: 'Object declared by the contract with fields: entries, namespaceRevision, directoryRevision.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceDirectoryPage
+  - term: WorkspaceDirectoryMutationResult
+    definition: 'Object declared by the contract with fields: directory, namespaceRevision.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkspaceDirectoryMutationResult
+  - term: AuditRecord
+    definition: 'Object declared by the contract with fields: auditRecordId, organizationId, sequence, actor, action, resourceType, resourceId,
+      outcome, payloadDigest, previousRecordHash, recordHash, occurredAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/AuditRecord
+  - term: AuditPage
+    definition: 'Object declared by the contract with fields: records, nextCursor, chain.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/AuditPage
+  - term: PublicCatalogItem
+    definition: 'Object declared by the contract with fields: catalogItemId, revision, providerId, operationId, title, description, categories,
+      capabilities, inputSchemaDigest, outputSchemaDigest, method, pathTemplate. (7 more)'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublicCatalogItem
+  - term: PublicCatalogPage
+    definition: 'Object declared by the contract with fields: items, catalogDigest, nextCursor, unsuppliedJobs, warnings.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublicCatalogPage
+  - term: CatalogOverview
+    definition: 'Object declared by the contract with fields: revision, builtAt, depth, filter, totals, categories.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CatalogOverview
+  - term: CatalogOverviewTopic
+    definition: 'Object declared by the contract with fields: revision, builtAt, topic, filter, matchCount, truncated, jobs.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CatalogOverviewTopic
+  - term: PublicCatalogComparison
+    definition: 'Object declared by the contract with fields: items, priceComparison, comparisonDigest.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublicCatalogComparison
+  - term: InspectOutput
+    definition: 'Object declared by the contract with fields: endpoint, estimatedMaxCost, inputSchema, requestBinding, uiSchema, outputFormat,
+      usageHints.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/InspectOutput
+  - term: Connection
+    definition: 'Object declared by the contract with fields: id, providerId, label, status, auth, scopes, lastProbe, cooldownUntil, credentialExpiresAt,
+      consent, pendingCredentialRoles, createdAt. (4 more)'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/Connection
+  - term: RegisterConnection
+    definition: One of api_key (default when kind is omitted), oauth, service_account, credential_file, signed_request, or cli_auth, discriminated
+      by kind
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/RegisterConnection
+  - term: ConnectionProbeDefinition
+    definition: 'Object declared by the contract with fields: host, method, path, expectedStatuses, identityPointer, scopesPointer, resourcesPointer.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionProbeDefinition
+  - term: ConnectionHealthReceipt
+    definition: 'Object declared by the contract with fields: receiptId, connectionId, providerId, outcome, status, identity, scopes, resources,
+      providerRequestId, remediation, checkedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionHealthReceipt
+  - term: ConnectionResource
+    definition: 'Object declared by the contract with fields: resourceId, connectionId, providerResourceId, kind, displayName, selected, discoveredAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionResource
+  - term: SelectConnectionResource
+    definition: 'Object declared by the contract with fields: resourceId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SelectConnectionResource
+  - term: SupplySecondaryCredential
+    definition: 'Object declared by the contract with fields: secret.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SupplySecondaryCredential
+  - term: PlatformKey
+    definition: 'Object declared by the contract with fields: providerId, displayName, hasKey, keyHint, authConfig, platformFeeMicros, approved,
+      updatedAt, endpointCount, runnable.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PlatformKey
+  - term: PlatformKeyList
+    definition: 'Object declared by the contract with fields: platformKeys.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PlatformKeyList
+  - term: SetPlatformKey
+    definition: 'Object declared by the contract with fields: secret, authMethod, headerName, paramName, valuePrefix, fields, platformFeeMicros,
+      approved.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SetPlatformKey
+  - term: PatchPlatformKey
+    definition: Same fields as SetPlatformKey minus secret -- every field optional, only the ones present are changed. Requires an existing platform
+      key for this provider (nothing to reuse a vault ref from otherwise).
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PatchPlatformKey
+  - term: ConnectionAlert
+    definition: 'Object declared by the contract with fields: alertId, connectionId, providerId, state, message, createdAt, acknowledgedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionAlert
+  - term: ConnectionAuthorization
+    definition: 'Object declared by the contract with fields: authorizationUrl, state, expiresAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionAuthorization
+  - term: ConnectionCallback
+    definition: 'Object declared by the contract with fields: state, code.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionCallback
+  - term: RotateConnection
+    definition: 'Object declared by the contract with fields: secret.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/RotateConnection
+  - term: ConnectionTestReceipt
+    definition: 'Object declared by the contract with fields: receiptId, connectionId, providerId, verification, providerCalled, credentialState,
+      message, testedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionTestReceipt
+  - term: ConnectionFixtureReceipt
+    definition: 'Object declared by the contract with fields: receiptId, connectionId, verification, providerCalled, credentialState, evidence,
+      testedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionFixtureReceipt
+  - term: ConnectionFixtureReceiptHistory
+    definition: 'Object declared by the contract with fields: latest, receipts.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ConnectionFixtureReceiptHistory
+  - term: Artifact
+    definition: 'Object declared by the contract with fields: artifactId, runId, attemptId, kind, contentType, byteLength, sha256, status, createdAt,
+      expiresAt, deletedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/Artifact
+  - term: RequestQuarantineReview
+    definition: 'Object declared by the contract with fields: fileId, contentDigest, idempotencyKey.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/RequestQuarantineReview
+  - term: DecideQuarantineReview
+    definition: 'Object declared by the contract with fields: decision, reason.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideQuarantineReview
+  - term: QuarantineReview
+    definition: 'Object declared by the contract with fields: reviewId, fileId, contentDigest, status, decisionReason, reviewerPrincipalId, createdAt,
+      decidedAt.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/QuarantineReview
+  - term: ResolveReconciliation
+    definition: 'Object declared by the contract with fields: action, resolvedProviderCost, reason, evidenceRefs.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ResolveReconciliation
+  - term: ImportCandidates
+    definition: 'Object declared by the contract with fields: sourceRef, providerSlug, document.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ImportCandidates
+  - term: ImportMetadataCandidates
+    definition: 'Object declared by the contract with fields: sourceRef, providerSlug, providerName, catalogKind, catalogVersion, operations.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ImportMetadataCandidates
+  - term: ReviewCandidate
+    definition: 'Object declared by the contract with fields: expectedStatus, nextStatus.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ReviewCandidate
+  - term: CreateCompatibilityDraft
+    definition: 'Object declared by the contract with fields: candidateId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateCompatibilityDraft
+  - term: DetectCandidateContradictions
+    definition: 'Object declared by the contract with fields: providerSlug.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DetectCandidateContradictions
+  - term: CreateOnboardingJob
+    definition: 'Object declared by the contract with fields: providerSlug, input, hints.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateOnboardingJob
+  - term: DecideOnboardingJob
+    definition: 'Object declared by the contract with fields: gate, decision, reason, rightsTarget.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideOnboardingJob
+  - term: CompatibilityEvidenceRef
+    definition: 'Object declared by the contract with fields: url, digest, observedAt, kind.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CompatibilityEvidenceRef
+  - term: SubmitCompatibilityGate
+    definition: 'Object declared by the contract with fields: gate, claim, evidenceRefs.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SubmitCompatibilityGate
+  - term: DecideCompatibilityGate
+    definition: 'Object declared by the contract with fields: decision, reason.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideCompatibilityGate
+  - term: CreateActivationProposal
+    definition: 'Object declared by the contract with fields: draftId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateActivationProposal
+  - term: CreateProviderPackageDraft
+    definition: 'Object declared by the contract with fields: proposalId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateProviderPackageDraft
+  - term: CreateProviderPackageRevision
+    definition: 'Object declared by the contract with fields: packageId, expectedPreviousRevisionId, mapping.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateProviderPackageRevision
+  - term: ValidateProviderMapping
+    definition: 'Object declared by the contract with fields: mapping.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ValidateProviderMapping
+  - term: DecideProviderMapping
+    definition: 'Object declared by the contract with fields: decision, reason, evidenceRefs.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideProviderMapping
+  - term: CreateProviderActivationBundle
+    definition: 'Object declared by the contract with fields: revisionId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateProviderActivationBundle
+  - term: PublishProviderRegistry
+    definition: 'Object declared by the contract with fields: bundleId, acknowledgeBreakingChange.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublishProviderRegistry
+  - term: PublishPublicCatalog
+    definition: 'Object declared by the contract with fields: endpointId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublishPublicCatalog
+  - term: RegisterDirectEndpoint
+    definition: provider is optional when :providerId already exists; required (displayName at minimum) when it does not. See DirectEndpointRegistrationInputSchema
+      in src/import/direct-endpoint-registration-service.ts for the full endpoint shape (capability, name, description, executionMode, eligibility,
+      authType, price, and optionally inputSchema/requestBinding/uiSchema/httpContract).
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/RegisterDirectEndpoint
+  - term: ImportDirectEndpoints
+    definition: 'Object declared by the contract with fields: items.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ImportDirectEndpoints
+  - term: SubmitProviderActivationEvidence
+    definition: 'Object declared by the contract with fields: reportId, blockerCode, claim, evidenceRefs.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/SubmitProviderActivationEvidence
+  - term: DecideProviderActivationEvidence
+    definition: 'Object declared by the contract with fields: decision, reason.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideProviderActivationEvidence
+  - term: CreateProviderActivationChangeRequest
+    definition: 'Object declared by the contract with fields: bundleId, expectedReportId, rightsTarget, driverId, connectionId.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateProviderActivationChangeRequest
+  - term: DecideProviderActivationChange
+    definition: 'Object declared by the contract with fields: decision, reason.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/DecideProviderActivationChange
+  - term: ApplyProviderActivationChange
+    definition: 'Object declared by the contract with fields: expectedDryRunId, acknowledgeBreakingChange.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ApplyProviderActivationChange
+  - term: CreateNormalizedRoute
+    definition: 'Object declared by the contract with fields: routeKey, version, capability, inputSchema, outputSchema, steps.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateNormalizedRoute
+  - term: WorkflowRunIf
+    definition: 'Object declared by the contract with fields: stepId, equals.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkflowRunIf
+  - term: WorkflowComparison
+    definition: 'Object declared by the contract with fields: left, operator, right.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/WorkflowComparison
+  - term: CreateWorkflow
+    definition: 'Object declared by the contract with fields: name, steps.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateWorkflow
+  - term: ReviseWorkflow
+    definition: 'Object declared by the contract with fields: steps.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ReviseWorkflow
+  - term: PublishWorkflow
+    definition: 'Object declared by the contract with fields: version.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PublishWorkflow
+  - term: StartWorkflow
+    definition: 'Object declared by the contract with fields: idempotencyKey.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/StartWorkflow
+  - term: MintWorkflowToken
+    definition: 'Object declared by the contract with fields: ttlSeconds.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/MintWorkflowToken
+  - term: ResolveWorkflowApproval
+    definition: 'Object declared by the contract with fields: token, decision, reason.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ResolveWorkflowApproval
+  - term: ResolveWorkflowCallback
+    definition: 'Object declared by the contract with fields: payload.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ResolveWorkflowCallback
+  - term: OutputMappingDefinition
+    definition: 'Object declared by the contract with fields: mode, expression.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/OutputMappingDefinition
+  - term: CreateOutputMapping
+    definition: 'Object declared by the contract with fields: mappingId, name, definition, targetSchema.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/CreateOutputMapping
+  - term: ReviseOutputMapping
+    definition: 'Object declared by the contract with fields: expectedRevision, definition, targetSchema.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ReviseOutputMapping
+  - term: PreviewOutputMapping
+    definition: 'Object declared by the contract with fields: version, raw, canonical.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/PreviewOutputMapping
+  - term: ChangeOutputMappingPublication
+    definition: 'Object declared by the contract with fields: expectedRevision, version.'
+    tags:
+    - Object
+    source: openapi/looot-openapi.json#/components/schemas/ChangeOutputMappingPublication

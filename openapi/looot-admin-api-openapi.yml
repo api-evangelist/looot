@@ -1,0 +1,251 @@
+openapi: 3.2.0
+info:
+  title: looot Admin API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Admin
+paths:
+  /v1/admin/overview:
+    get:
+      summary: 'Platform operator: totals and a by-day series across all workspaces'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. `days` is clamped to 1-90 (default 30).
+      parameters:
+      - name: days
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 90
+          default: 30
+      responses:
+        '200':
+          description: Overview totals and by-day series
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminOverview
+      x-operation-id-source: derived
+  /v1/admin/workspaces:
+    get:
+      summary: 'Platform operator: one row per workspace with its members, all-time ledger…'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. A flat page, never all rows. `days` windows only the run stats.
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      - name: days
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 90
+          default: 30
+      responses:
+        '200':
+          description: A page of workspace rows
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminWorkspaces
+      x-operation-id-source: derived
+  /v1/admin/users:
+    get:
+      summary: 'Platform operator: one row per distinct user across every workspace they belong…'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. A flat page ordered by first membership, newest first.
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 100
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      responses:
+        '200':
+          description: A page of user rows
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminUsers
+      x-operation-id-source: derived
+  /v1/admin/providers:
+    get:
+      summary: 'Platform operator: every registered provider with its call count, charged total…'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. The catalog itself is unpaginated; `days` windows only the failure stats.
+      parameters:
+      - name: days
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 90
+          default: 30
+      responses:
+        '200':
+          description: Provider rows
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminProviders
+      x-operation-id-source: derived
+  /v1/admin/audit:
+    get:
+      summary: 'Platform operator: the audit trail of platform-operator additions and removals…'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. `limit` is 1-200 (default 50).
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 50
+      responses:
+        '200':
+          description: Audit events
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminAudit
+      x-operation-id-source: derived
+  /v1/admin/ops-signals:
+    get:
+      summary: 'Platform operator: the six operational signals, same payload as /v1/ops/signals'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. Unlike /v1/ops/signals it needs no ops:read scope. Answered from a short read cache when one is configured; failures are never cached.
+      responses:
+        '200':
+          description: Signals
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Operational signals unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminOpsSignals
+      x-operation-id-source: derived
+  /v1/admin/rankings:
+    get:
+      summary: 'Platform operator: per job and provider aggregates for the Rankings page'
+      description: Platform operators only. Read-only; gated on platform operator authority alone, with no scope check. `days` must be 7, 30 or 90 (default 30).
+      parameters:
+      - name: days
+        in: query
+        schema:
+          type: integer
+          enum:
+          - 7
+          - 30
+          - 90
+          default: 30
+      responses:
+        '200':
+          description: Rankings aggregates
+        '400':
+          description: 'validation_error: a query parameter is out of range'
+        '401':
+          description: Authentication required
+        '403':
+          description: platform_operator_required
+        '405':
+          description: Only GET is allowed
+        '503':
+          description: Admin reporting control plane unavailable
+      tags:
+      - Admin
+      operationId: getV1AdminRankings
+      x-operation-id-source: derived
+  /v1/admin/health:
+    get:
+      summary: Gateway process health for the operator admin app
+      description: 'Platform operators only. The same fields GET /health already serves publicly (status, mode, catalog, bridge, session resolver), computed in process. Always 200: read status in the body.'
+      responses:
+        '200':
+          description: The /health payload
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Platform operator authority required
+      tags:
+      - Admin
+      operationId: getV1AdminHealth
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

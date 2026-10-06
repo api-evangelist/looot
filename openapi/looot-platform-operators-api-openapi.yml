@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: looot Platform Operators API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Platform Operators
+paths:
+  /v1/platform-operators:
+    get:
+      summary: 'Platform operator: list every organizationId granted platform-operator authority'
+      responses:
+        '200':
+          description: '{ operators: [{ organizationId, addedAt }] }'
+        '403':
+          description: platform_operator_required, or provider-registry:read scope required
+        '503':
+          description: Platform operator control plane unavailable (postgres persistence backend required)
+      tags:
+      - Platform Operators
+      operationId: getV1PlatformOperators
+      x-operation-id-source: derived
+    post:
+      summary: 'Platform operator: grant another organization platform-operator authority'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organizationId:
+                  type: string
+                  format: uuid
+              required:
+              - organizationId
+              additionalProperties: false
+      responses:
+        '200':
+          description: '{ organizationId, addedAt }'
+        '400':
+          description: Invalid organizationId
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '503':
+          description: Platform operator control plane unavailable
+      tags:
+      - Platform Operators
+      operationId: postV1PlatformOperators
+      x-operation-id-source: derived
+  /v1/platform-operators/{organizationId}:
+    delete:
+      summary: 'Platform operator: revoke another organization''s platform-operator authority…'
+      responses:
+        '200':
+          description: '{ removed: boolean }'
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: organizationId was never a platform operator
+        '409':
+          description: Cannot remove the last remaining platform operator
+        '503':
+          description: Platform operator control plane unavailable
+      tags:
+      - Platform Operators
+      operationId: deleteV1PlatformOperatorsByOrganizationId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

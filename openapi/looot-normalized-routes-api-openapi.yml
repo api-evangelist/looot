@@ -1,0 +1,127 @@
+openapi: 3.2.0
+info:
+  title: looot Normalized Routes API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Normalized Routes
+paths:
+  /v1/normalized-routes:
+    get:
+      summary: List versioned non-executable normalized capability route contracts
+      responses:
+        '200':
+          description: Route-review contracts
+        '403':
+          description: routes:read scope required
+      tags:
+      - Normalized Routes
+      operationId: getV1NormalizedRoutes
+      x-operation-id-source: derived
+    post:
+      summary: Create a digest-pinned canonical contract with at least two distinct provider…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNormalizedRoute'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Immutable non-executable route contract
+        '400':
+          description: Invalid endpoints, capability, schema, adapter or miss rule
+        '403':
+          description: routes:write scope required
+        '409':
+          description: Version content conflict
+      tags:
+      - Normalized Routes
+      operationId: postV1NormalizedRoutes
+      x-operation-id-source: derived
+  /v1/normalized-routes/{routeId}:
+    get:
+      summary: Get one digest-pinned normalized route contract
+      responses:
+        '200':
+          description: Canonical schemas, adapters, miss rules and source digests
+        '403':
+          description: routes:read scope required
+        '404':
+          description: Route not found
+      tags:
+      - Normalized Routes
+      operationId: getV1NormalizedRoutesByRouteId
+      x-operation-id-source: derived
+  /v1/normalized-routes/{routeId}/verification:
+    get:
+      summary: Get fixture verification, decisions and publication for a route
+      responses:
+        '200':
+          description: Digest-pinned verification snapshot
+      tags:
+      - Normalized Routes
+      operationId: getV1NormalizedRoutesByRouteIdVerification
+      x-operation-id-source: derived
+    post:
+      summary: Verify every normalized adapter offline against deterministic fixtures
+      responses:
+        '201':
+          description: Immutable verification report
+        '400':
+          description: Schema, mapping, miss or cost failure
+      tags:
+      - Normalized Routes
+      operationId: postV1NormalizedRoutesByRouteIdVerification
+      x-operation-id-source: derived
+components:
+  schemas:
+    CreateNormalizedRoute:
+      type: object
+      additionalProperties: false
+      required:
+      - routeKey
+      - version
+      - capability
+      - inputSchema
+      - outputSchema
+      - steps
+      properties:
+        routeKey:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        version:
+          type: string
+        capability:
+          enum:
+          - web.search
+          - company.enrich
+          - media.generate
+        inputSchema:
+          type: object
+          description: Draft 2020-12 object schema without external references
+        outputSchema:
+          type: object
+          description: Draft 2020-12 canonical object schema without external references
+        steps:
+          type: array
+          minItems: 2
+          maxItems: 20
+          items:
+            type: object
+            description: Distinct-provider endpoint adapter with contiguous priority, USD ceiling, bounded canonical input/output bindings and explicit miss predicate
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

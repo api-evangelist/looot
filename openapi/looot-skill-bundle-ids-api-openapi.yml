@@ -1,0 +1,36 @@
+openapi: 3.2.0
+info:
+  title: looot Skill Bundle Ids API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Skill Bundle Ids
+paths:
+  /v1/skill-bundle-ids:
+    get:
+      summary: List distinct skill bundle ids known to the tenant
+      responses:
+        '200':
+          description: Sorted, deduplicated bundle ids derived from existing version records
+        '403':
+          description: local-product:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundle Ids
+      operationId: getV1SkillBundleIds
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

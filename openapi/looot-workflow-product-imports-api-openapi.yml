@@ -1,0 +1,41 @@
+openapi: 3.2.0
+info:
+  title: looot Workflow Product Imports API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workflow Product Imports
+paths:
+  /v1/workflow-product-imports:
+    get:
+      summary: List workflow document imports awaiting quarantine review
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflow Product Imports
+      operationId: getV1WorkflowProductImports
+      x-operation-id-source: derived
+    post:
+      summary: Import a workflow document into quarantine
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Workflow Product Imports
+      operationId: postV1WorkflowProductImports
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

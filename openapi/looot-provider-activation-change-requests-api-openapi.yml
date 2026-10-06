@@ -1,0 +1,205 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Activation Change Requests API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Activation Change Requests
+paths:
+  /v1/provider-activation-change-requests:
+    get:
+      summary: List immutable non-executable provider activation change requests
+      responses:
+        '200':
+          description: Review requests
+        '403':
+          description: provider-activation:read scope required
+      tags:
+      - Provider Activation Change Requests
+      operationId: getV1ProviderActivationChangeRequests
+      x-operation-id-source: derived
+    post:
+      summary: Assemble six approved blocker decisions into a proposed activation change set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProviderActivationChangeRequest'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Immutable non-executable request
+        '400':
+          description: Evidence incomplete or report drift
+        '403':
+          description: provider-activation:request scope required
+        '404':
+          description: Bundle not found
+      tags:
+      - Provider Activation Change Requests
+      operationId: postV1ProviderActivationChangeRequests
+      x-operation-id-source: derived
+  /v1/provider-activation-change-requests/{requestId}:
+    get:
+      summary: Get one proposed provider activation change set
+      responses:
+        '200':
+          description: Digest-pinned request with executable false
+        '403':
+          description: provider-activation:read scope required
+        '404':
+          description: Request not found
+      tags:
+      - Provider Activation Change Requests
+      operationId: getV1ProviderActivationChangeRequestsByRequestId
+      x-operation-id-source: derived
+  /v1/provider-activation-change-requests/{requestId}/decision:
+    get:
+      summary: Get the immutable final review decision
+      responses:
+        '200':
+          description: Digest-pinned decision
+        '403':
+          description: provider-activation:read scope required
+        '404':
+          description: Decision not found
+      tags:
+      - Provider Activation Change Requests
+      operationId: getV1ProviderActivationChangeRequestsByRequestIdDecision
+      x-operation-id-source: derived
+    post:
+      summary: Independently approve or reject the exact activation-change request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideProviderActivationChange'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Immutable final decision
+        '400':
+          description: Self-review prohibited
+        '403':
+          description: provider-activation:review scope required
+        '404':
+          description: Request not found
+        '409':
+          description: Conflicting decision
+      tags:
+      - Provider Activation Change Requests
+      operationId: postV1ProviderActivationChangeRequestsByRequestIdDecision
+      x-operation-id-source: derived
+  /v1/provider-activation-change-requests/{requestId}/dry-run:
+    post:
+      summary: Run the real activation planner against actual tenant connection and process…
+      responses:
+        '200':
+          description: Non-mutating planner result; executable and providerCalled remain false
+        '400':
+          description: Request not approved or bundle drift
+        '403':
+          description: provider-activation:dry-run or onboarding-jobs:write scope required
+        '404':
+          description: Request not found
+      tags:
+      - Provider Activation Change Requests
+      operationId: postV1ProviderActivationChangeRequestsByRequestIdDryRun
+      x-operation-id-source: derived
+  /v1/provider-activation-change-requests/{requestId}/apply:
+    post:
+      summary: Atomically audit and apply one approved, dry-run-pinned provider activation for…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyProviderActivationChange'
+      responses:
+        '200':
+          description: Idempotent replay; no state change
+        '201':
+          description: Activation applied and tenant audit record created atomically
+        '400':
+          description: Stale dry run, ineligible planner, or publication precondition failed
+        '403':
+          description: onboarding-jobs:write scope and stable authenticated principal required
+        '404':
+          description: Request not found
+        '409':
+          description: Idempotency payload conflict
+      tags:
+      - Provider Activation Change Requests
+      operationId: postV1ProviderActivationChangeRequestsByRequestIdApply
+      x-operation-id-source: derived
+components:
+  schemas:
+    CreateProviderActivationChangeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - bundleId
+      - expectedReportId
+      - rightsTarget
+      - driverId
+      - connectionId
+      properties:
+        bundleId:
+          type: string
+          pattern: ^pab_[a-f0-9]{32}$
+        expectedReportId:
+          type: string
+          pattern: ^par_[a-f0-9]{32}$
+        rightsTarget:
+          enum:
+          - byok_approved
+          - partner_approved
+        driverId:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        connectionId:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+    ApplyProviderActivationChange:
+      type: object
+      additionalProperties: false
+      required:
+      - expectedDryRunId
+      properties:
+        expectedDryRunId:
+          type: string
+          pattern: ^padr_[a-f0-9]{32}$
+        acknowledgeBreakingChange:
+          type: boolean
+    DecideProviderActivationChange:
+      type: object
+      additionalProperties: false
+      required:
+      - decision
+      - reason
+      properties:
+        decision:
+          enum:
+          - approved
+          - rejected
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

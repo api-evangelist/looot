@@ -1,0 +1,63 @@
+openapi: 3.2.0
+info:
+  title: looot Candidate Contradictions API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Candidate Contradictions
+paths:
+  /v1/candidate-contradictions:
+    get:
+      summary: List persisted candidate contradiction findings, optionally filtered by…
+      responses:
+        '200':
+          description: Contradiction findings
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Candidate Contradictions
+      operationId: getV1CandidateContradictions
+      x-operation-id-source: derived
+    post:
+      summary: Recompute and durably persist contradiction findings for one provider (replaces…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetectCandidateContradictions'
+      responses:
+        '200':
+          description: Refreshed contradiction findings
+        '400':
+          description: Invalid providerSlug
+        '403':
+          description: candidates:write scope required
+      tags:
+      - Candidate Contradictions
+      operationId: postV1CandidateContradictions
+      x-operation-id-source: derived
+components:
+  schemas:
+    DetectCandidateContradictions:
+      type: object
+      additionalProperties: false
+      required:
+      - providerSlug
+      properties:
+        providerSlug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,35 @@
+generated: '2026-10-05'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://docs.looot.ai/changelog/v1-3-0-cli
+sources:
+- https://docs.looot.ai/changelog/v1-3-0-cli
+- https://docs.looot.ai/changelog/v1-2-0-agent-flow
+- https://docs.looot.ai/changelog/v1-1-0-cli
+- https://docs.looot.ai/changelog/v1-0-0-public-cli
+entries:
+- breaking: false
+  highlights:
+  - npm install -g looot now installs 1.3.0.
+  - 'looot run ... --fallback : if a provider misses or fails, the run moves to the next provider of the same job.'
+  - API keys can now have a monthly spending limit (Settings, API keys). When a key reaches it, a run is refused before any provider is called,
+    at $0, with the error key_spend_limit_reached.
+- breaking: false
+  highlights:
+  - 'The agent flow: connect over MCP, search, run a job, get the result, fall back to the next provider, and see provider counts per category.'
+  - 'Run a job, not a provider: endpointId: "job:people.email.verify" . looot picks the provider and says why in requestedJob .'
+  - 'Fallback: fallback: true moves to the next provider of the same job on a miss.'
+- breaking: false
+  highlights:
+  - npm install -g looot now installs 1.1.0.
+  - looot token prints your secret to stdout, so it now needs --reveal , on a terminal and in a pipe alike.
+  - Signed-out looot catalog endpoints follows the paging cursor to the end (it used to repeat page 1), and says when your --limit was capped.
+- breaking: false
+  highlights:
+  - The first public release.
+  - '`npm install -g looot` installs looot 1.0.0: browser sign-in with nothing to copy by hand, browsing the catalog with no account, one-line
+    errors, typed errors on MCP, catalog listings that only offer what can actually run, and this documentation site.'
+  date: '2026-09-25'
+scheme: semantic (major.minor.patch)
+current_version: 1.3.0
+docs: https://docs.looot.ai/changelog/v1-3-0-cli

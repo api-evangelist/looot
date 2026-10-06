@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: looot Route Policies API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Route Policies
+paths:
+  /v1/route-policies:
+    get:
+      summary: List route policies
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: getV1RoutePolicies
+      x-operation-id-source: derived
+    post:
+      summary: Create a route policy draft
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: postV1RoutePolicies
+      x-operation-id-source: derived
+  /v1/route-policies/{policyId}:
+    get:
+      summary: Get a route policy
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: getV1RoutePoliciesByPolicyId
+      x-operation-id-source: derived
+  /v1/route-policies/{policyId}/revisions:
+    post:
+      summary: Revise a route policy draft
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: postV1RoutePoliciesByPolicyIdRevisions
+      x-operation-id-source: derived
+  /v1/route-policies/{policyId}/publish:
+    post:
+      summary: Publish a route policy version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: postV1RoutePoliciesByPolicyIdPublish
+      x-operation-id-source: derived
+  /v1/route-policies/{policyId}/rollback:
+    post:
+      summary: Roll back to a prior route policy version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Policies
+      operationId: postV1RoutePoliciesByPolicyIdRollback
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

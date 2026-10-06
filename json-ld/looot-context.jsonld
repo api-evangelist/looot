@@ -1,0 +1,915 @@
+{
+  "@context": {
+    "@vocab": "https://looot.ai/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "looot": "https://looot.ai/schema#",
+    "RunRequest": "looot:RunRequest",
+    "endpointId": {
+      "@id": "looot:endpointId",
+      "@type": "xsd:string"
+    },
+    "input": {
+      "@id": "looot:input"
+    },
+    "idempotencyKey": {
+      "@id": "looot:idempotencyKey",
+      "@type": "xsd:string"
+    },
+    "output": {
+      "@id": "looot:output"
+    },
+    "wait": {
+      "@id": "looot:wait"
+    },
+    "fallback": {
+      "@id": "looot:fallback"
+    },
+    "SessionContext": "looot:SessionContext",
+    "mode": {
+      "@id": "looot:mode"
+    },
+    "authenticationClass": {
+      "@id": "looot:authenticationClass"
+    },
+    "organizationId": {
+      "@id": "looot:organizationId"
+    },
+    "scopes": {
+      "@id": "looot:scopes",
+      "@container": "@list"
+    },
+    "deploymentMode": {
+      "@id": "looot:deploymentMode"
+    },
+    "role": {
+      "@id": "looot:role"
+    },
+    "expiresAt": {
+      "@id": "looot:expiresAt",
+      "@type": "xsd:dateTime"
+    },
+    "organizationName": {
+      "@id": "looot:organizationName",
+      "@type": "xsd:string"
+    },
+    "WorkspaceFile": "looot:WorkspaceFile",
+    "fileId": {
+      "@id": "looot:fileId",
+      "@type": "xsd:string"
+    },
+    "tenantId": {
+      "@id": "looot:tenantId",
+      "@type": "xsd:string"
+    },
+    "path": {
+      "@id": "looot:path",
+      "@type": "xsd:string"
+    },
+    "contentType": {
+      "@id": "looot:contentType",
+      "@type": "xsd:string"
+    },
+    "byteLength": {
+      "@id": "looot:byteLength",
+      "@type": "xsd:integer"
+    },
+    "digest": {
+      "@id": "looot:digest",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "looot:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "looot:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "revision": {
+      "@id": "looot:revision",
+      "@type": "xsd:integer"
+    },
+    "WorkspaceDirectory": "looot:WorkspaceDirectory",
+    "WorkspaceRead": "looot:WorkspaceRead",
+    "file": {
+      "@id": "looot:file",
+      "@type": "@id"
+    },
+    "contentBase64": {
+      "@id": "looot:contentBase64",
+      "@type": "xsd:string"
+    },
+    "WorkspaceUsage": "looot:WorkspaceUsage",
+    "files": {
+      "@id": "looot:files",
+      "@type": "xsd:integer"
+    },
+    "bytes": {
+      "@id": "looot:bytes",
+      "@type": "xsd:integer"
+    },
+    "maxFiles": {
+      "@id": "looot:maxFiles",
+      "@type": "xsd:integer"
+    },
+    "maxBytes": {
+      "@id": "looot:maxBytes",
+      "@type": "xsd:integer"
+    },
+    "WorkspaceDirectoryPage": "looot:WorkspaceDirectoryPage",
+    "entries": {
+      "@id": "looot:entries",
+      "@container": "@list"
+    },
+    "namespaceRevision": {
+      "@id": "looot:namespaceRevision",
+      "@type": "xsd:string"
+    },
+    "directoryRevision": {
+      "@id": "looot:directoryRevision"
+    },
+    "WorkspaceDirectoryMutationResult": "looot:WorkspaceDirectoryMutationResult",
+    "directory": {
+      "@id": "looot:directory",
+      "@type": "@id"
+    },
+    "AuditRecord": "looot:AuditRecord",
+    "auditRecordId": {
+      "@id": "looot:auditRecordId",
+      "@type": "xsd:string"
+    },
+    "sequence": {
+      "@id": "looot:sequence",
+      "@type": "xsd:integer"
+    },
+    "actor": {
+      "@id": "looot:actor"
+    },
+    "action": {
+      "@id": "looot:action",
+      "@type": "xsd:string"
+    },
+    "resourceType": {
+      "@id": "looot:resourceType",
+      "@type": "xsd:string"
+    },
+    "resourceId": {
+      "@id": "looot:resourceId",
+      "@type": "xsd:string"
+    },
+    "outcome": {
+      "@id": "looot:outcome"
+    },
+    "payloadDigest": {
+      "@id": "looot:payloadDigest",
+      "@type": "xsd:string"
+    },
+    "previousRecordHash": {
+      "@id": "looot:previousRecordHash",
+      "@type": "xsd:string"
+    },
+    "recordHash": {
+      "@id": "looot:recordHash",
+      "@type": "xsd:string"
+    },
+    "occurredAt": {
+      "@id": "looot:occurredAt",
+      "@type": "xsd:dateTime"
+    },
+    "AuditPage": "looot:AuditPage",
+    "records": {
+      "@id": "looot:records",
+      "@container": "@list"
+    },
+    "nextCursor": {
+      "@id": "looot:nextCursor",
+      "@type": "xsd:string"
+    },
+    "chain": {
+      "@id": "looot:chain"
+    },
+    "PublicCatalogItem": "looot:PublicCatalogItem",
+    "catalogItemId": {
+      "@id": "looot:catalogItemId",
+      "@type": "xsd:string"
+    },
+    "providerId": {
+      "@id": "looot:providerId",
+      "@type": "xsd:string"
+    },
+    "operationId": {
+      "@id": "looot:operationId",
+      "@type": "xsd:string"
+    },
+    "title": {
+      "@id": "looot:title",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "looot:description",
+      "@type": "xsd:string"
+    },
+    "categories": {
+      "@id": "looot:categories",
+      "@container": "@list"
+    },
+    "capabilities": {
+      "@id": "looot:capabilities",
+      "@container": "@list"
+    },
+    "inputSchemaDigest": {
+      "@id": "looot:inputSchemaDigest",
+      "@type": "xsd:string"
+    },
+    "outputSchemaDigest": {
+      "@id": "looot:outputSchemaDigest",
+      "@type": "xsd:string"
+    },
+    "method": {
+      "@id": "looot:method",
+      "@type": "xsd:string"
+    },
+    "pathTemplate": {
+      "@id": "looot:pathTemplate",
+      "@type": "xsd:string"
+    },
+    "parameters": {
+      "@id": "looot:parameters",
+      "@container": "@list"
+    },
+    "verification": {
+      "@id": "looot:verification"
+    },
+    "references": {
+      "@id": "looot:references",
+      "@container": "@list"
+    },
+    "price": {
+      "@id": "looot:price",
+      "@type": "@id"
+    },
+    "publishedAt": {
+      "@id": "looot:publishedAt",
+      "@type": "xsd:dateTime"
+    },
+    "itemDigest": {
+      "@id": "looot:itemDigest",
+      "@type": "xsd:string"
+    },
+    "provenanceTier": {
+      "@id": "looot:provenanceTier"
+    },
+    "PublicCatalogPage": "looot:PublicCatalogPage",
+    "items": {
+      "@id": "looot:items",
+      "@container": "@list"
+    },
+    "catalogDigest": {
+      "@id": "looot:catalogDigest",
+      "@type": "xsd:string"
+    },
+    "unsuppliedJobs": {
+      "@id": "looot:unsuppliedJobs",
+      "@container": "@list"
+    },
+    "warnings": {
+      "@id": "looot:warnings",
+      "@container": "@list"
+    },
+    "CatalogOverview": "looot:CatalogOverview",
+    "builtAt": {
+      "@id": "looot:builtAt",
+      "@type": "xsd:dateTime"
+    },
+    "depth": {
+      "@id": "looot:depth"
+    },
+    "filter": {
+      "@id": "looot:filter"
+    },
+    "totals": {
+      "@id": "looot:totals"
+    },
+    "CatalogOverviewTopic": "looot:CatalogOverviewTopic",
+    "topic": {
+      "@id": "looot:topic",
+      "@type": "xsd:string"
+    },
+    "matchCount": {
+      "@id": "looot:matchCount",
+      "@type": "xsd:integer"
+    },
+    "truncated": {
+      "@id": "looot:truncated",
+      "@type": "xsd:boolean"
+    },
+    "jobs": {
+      "@id": "looot:jobs",
+      "@container": "@list"
+    },
+    "PublicCatalogComparison": "looot:PublicCatalogComparison",
+    "priceComparison": {
+      "@id": "looot:priceComparison"
+    },
+    "comparisonDigest": {
+      "@id": "looot:comparisonDigest",
+      "@type": "xsd:string"
+    },
+    "InspectOutput": "looot:InspectOutput",
+    "endpoint": {
+      "@id": "looot:endpoint"
+    },
+    "estimatedMaxCost": {
+      "@id": "looot:estimatedMaxCost",
+      "@type": "xsd:decimal"
+    },
+    "inputSchema": {
+      "@id": "looot:inputSchema"
+    },
+    "requestBinding": {
+      "@id": "looot:requestBinding"
+    },
+    "uiSchema": {
+      "@id": "looot:uiSchema"
+    },
+    "outputFormat": {
+      "@id": "looot:outputFormat"
+    },
+    "usageHints": {
+      "@id": "looot:usageHints"
+    },
+    "Connection": "looot:Connection",
+    "id": {
+      "@id": "looot:id",
+      "@type": "xsd:string"
+    },
+    "label": {
+      "@id": "looot:label",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "looot:status"
+    },
+    "auth": {
+      "@id": "looot:auth"
+    },
+    "lastProbe": {
+      "@id": "looot:lastProbe"
+    },
+    "cooldownUntil": {
+      "@id": "looot:cooldownUntil",
+      "@type": "xsd:dateTime"
+    },
+    "credentialExpiresAt": {
+      "@id": "looot:credentialExpiresAt",
+      "@type": "xsd:dateTime"
+    },
+    "consent": {
+      "@id": "looot:consent"
+    },
+    "pendingCredentialRoles": {
+      "@id": "looot:pendingCredentialRoles",
+      "@container": "@list"
+    },
+    "testState": {
+      "@id": "looot:testState"
+    },
+    "probeConfigured": {
+      "@id": "looot:probeConfigured",
+      "@type": "xsd:boolean"
+    },
+    "latestTestReceipt": {
+      "@id": "looot:latestTestReceipt"
+    },
+    "RegisterConnection": "looot:RegisterConnection",
+    "kind": {
+      "@id": "looot:kind"
+    },
+    "placement": {
+      "@id": "looot:placement"
+    },
+    "name": {
+      "@id": "looot:name",
+      "@type": "xsd:string"
+    },
+    "format": {
+      "@id": "looot:format",
+      "@type": "xsd:string"
+    },
+    "secret": {
+      "@id": "looot:secret",
+      "@type": "xsd:string"
+    },
+    "authorizationUrl": {
+      "@id": "looot:authorizationUrl",
+      "@type": "@id"
+    },
+    "tokenUrl": {
+      "@id": "looot:tokenUrl",
+      "@type": "@id"
+    },
+    "tokenPlacement": {
+      "@id": "looot:tokenPlacement"
+    },
+    "clientId": {
+      "@id": "looot:clientId",
+      "@type": "xsd:string"
+    },
+    "keyFile": {
+      "@id": "looot:keyFile",
+      "@type": "xsd:string"
+    },
+    "keyId": {
+      "@id": "looot:keyId",
+      "@type": "xsd:string"
+    },
+    "algorithm": {
+      "@id": "looot:algorithm"
+    },
+    "signedHeaders": {
+      "@id": "looot:signedHeaders",
+      "@container": "@list"
+    },
+    "blob": {
+      "@id": "looot:blob",
+      "@type": "xsd:string"
+    },
+    "probe": {
+      "@id": "looot:probe"
+    },
+    "secondaryCredentialRoles": {
+      "@id": "looot:secondaryCredentialRoles",
+      "@container": "@list"
+    },
+    "ConnectionProbeDefinition": "looot:ConnectionProbeDefinition",
+    "host": {
+      "@id": "looot:host",
+      "@type": "xsd:string"
+    },
+    "expectedStatuses": {
+      "@id": "looot:expectedStatuses",
+      "@container": "@list"
+    },
+    "identityPointer": {
+      "@id": "looot:identityPointer",
+      "@type": "xsd:string"
+    },
+    "scopesPointer": {
+      "@id": "looot:scopesPointer",
+      "@type": "xsd:string"
+    },
+    "resourcesPointer": {
+      "@id": "looot:resourcesPointer",
+      "@type": "xsd:string"
+    },
+    "ConnectionHealthReceipt": "looot:ConnectionHealthReceipt",
+    "receiptId": {
+      "@id": "looot:receiptId",
+      "@type": "xsd:string"
+    },
+    "connectionId": {
+      "@id": "looot:connectionId",
+      "@type": "xsd:string"
+    },
+    "identity": {
+      "@id": "looot:identity",
+      "@type": "xsd:string"
+    },
+    "resources": {
+      "@id": "looot:resources",
+      "@container": "@list"
+    },
+    "providerRequestId": {
+      "@id": "looot:providerRequestId",
+      "@type": "xsd:string"
+    },
+    "remediation": {
+      "@id": "looot:remediation",
+      "@type": "xsd:string"
+    },
+    "checkedAt": {
+      "@id": "looot:checkedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ConnectionResource": "looot:ConnectionResource",
+    "providerResourceId": {
+      "@id": "looot:providerResourceId",
+      "@type": "xsd:string"
+    },
+    "displayName": {
+      "@id": "looot:displayName",
+      "@type": "xsd:string"
+    },
+    "selected": {
+      "@id": "looot:selected",
+      "@type": "xsd:boolean"
+    },
+    "discoveredAt": {
+      "@id": "looot:discoveredAt",
+      "@type": "xsd:dateTime"
+    },
+    "SelectConnectionResource": "looot:SelectConnectionResource",
+    "SupplySecondaryCredential": "looot:SupplySecondaryCredential",
+    "PlatformKey": "looot:PlatformKey",
+    "hasKey": {
+      "@id": "looot:hasKey",
+      "@type": "xsd:boolean"
+    },
+    "keyHint": {
+      "@id": "looot:keyHint",
+      "@type": "xsd:string"
+    },
+    "authConfig": {
+      "@id": "looot:authConfig"
+    },
+    "platformFeeMicros": {
+      "@id": "looot:platformFeeMicros",
+      "@type": "xsd:integer"
+    },
+    "approved": {
+      "@id": "looot:approved",
+      "@type": "xsd:boolean"
+    },
+    "endpointCount": {
+      "@id": "looot:endpointCount",
+      "@type": "xsd:integer"
+    },
+    "runnable": {
+      "@id": "looot:runnable",
+      "@type": "xsd:boolean"
+    },
+    "PlatformKeyList": "looot:PlatformKeyList",
+    "platformKeys": {
+      "@id": "looot:platformKeys",
+      "@container": "@list"
+    },
+    "SetPlatformKey": "looot:SetPlatformKey",
+    "authMethod": {
+      "@id": "looot:authMethod"
+    },
+    "headerName": {
+      "@id": "looot:headerName",
+      "@type": "xsd:string"
+    },
+    "paramName": {
+      "@id": "looot:paramName",
+      "@type": "xsd:string"
+    },
+    "valuePrefix": {
+      "@id": "looot:valuePrefix",
+      "@type": "xsd:string"
+    },
+    "fields": {
+      "@id": "looot:fields",
+      "@container": "@list"
+    },
+    "PatchPlatformKey": "looot:PatchPlatformKey",
+    "ConnectionAlert": "looot:ConnectionAlert",
+    "alertId": {
+      "@id": "looot:alertId",
+      "@type": "xsd:string"
+    },
+    "state": {
+      "@id": "looot:state"
+    },
+    "message": {
+      "@id": "looot:message",
+      "@type": "xsd:string"
+    },
+    "acknowledgedAt": {
+      "@id": "looot:acknowledgedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ConnectionAuthorization": "looot:ConnectionAuthorization",
+    "ConnectionCallback": "looot:ConnectionCallback",
+    "code": {
+      "@id": "looot:code",
+      "@type": "xsd:string"
+    },
+    "RotateConnection": "looot:RotateConnection",
+    "ConnectionTestReceipt": "looot:ConnectionTestReceipt",
+    "providerCalled": {
+      "@id": "looot:providerCalled",
+      "@type": "xsd:boolean"
+    },
+    "credentialState": {
+      "@id": "looot:credentialState"
+    },
+    "testedAt": {
+      "@id": "looot:testedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ConnectionFixtureReceipt": "looot:ConnectionFixtureReceipt",
+    "evidence": {
+      "@id": "looot:evidence"
+    },
+    "ConnectionFixtureReceiptHistory": "looot:ConnectionFixtureReceiptHistory",
+    "latest": {
+      "@id": "looot:latest"
+    },
+    "receipts": {
+      "@id": "looot:receipts",
+      "@container": "@list"
+    },
+    "Artifact": "looot:Artifact",
+    "artifactId": {
+      "@id": "looot:artifactId",
+      "@type": "xsd:string"
+    },
+    "runId": {
+      "@id": "looot:runId",
+      "@type": "xsd:string"
+    },
+    "attemptId": {
+      "@id": "looot:attemptId",
+      "@type": "xsd:string"
+    },
+    "sha256": {
+      "@id": "looot:sha256",
+      "@type": "xsd:string"
+    },
+    "deletedAt": {
+      "@id": "looot:deletedAt",
+      "@type": "xsd:dateTime"
+    },
+    "RequestQuarantineReview": "looot:RequestQuarantineReview",
+    "contentDigest": {
+      "@id": "looot:contentDigest",
+      "@type": "xsd:string"
+    },
+    "DecideQuarantineReview": "looot:DecideQuarantineReview",
+    "decision": {
+      "@id": "looot:decision"
+    },
+    "reason": {
+      "@id": "looot:reason",
+      "@type": "xsd:string"
+    },
+    "QuarantineReview": "looot:QuarantineReview",
+    "reviewId": {
+      "@id": "looot:reviewId",
+      "@type": "xsd:string"
+    },
+    "decisionReason": {
+      "@id": "looot:decisionReason",
+      "@type": "xsd:string"
+    },
+    "reviewerPrincipalId": {
+      "@id": "looot:reviewerPrincipalId",
+      "@type": "xsd:string"
+    },
+    "decidedAt": {
+      "@id": "looot:decidedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ResolveReconciliation": "looot:ResolveReconciliation",
+    "resolvedProviderCost": {
+      "@id": "looot:resolvedProviderCost",
+      "@type": "xsd:decimal"
+    },
+    "evidenceRefs": {
+      "@id": "looot:evidenceRefs",
+      "@container": "@list"
+    },
+    "ImportCandidates": "looot:ImportCandidates",
+    "sourceRef": {
+      "@id": "looot:sourceRef",
+      "@type": "xsd:string"
+    },
+    "providerSlug": {
+      "@id": "looot:providerSlug",
+      "@type": "xsd:string"
+    },
+    "document": {
+      "@id": "looot:document"
+    },
+    "ImportMetadataCandidates": "looot:ImportMetadataCandidates",
+    "providerName": {
+      "@id": "looot:providerName",
+      "@type": "xsd:string"
+    },
+    "catalogKind": {
+      "@id": "looot:catalogKind"
+    },
+    "catalogVersion": {
+      "@id": "looot:catalogVersion",
+      "@type": "xsd:string"
+    },
+    "operations": {
+      "@id": "looot:operations",
+      "@container": "@list"
+    },
+    "ReviewCandidate": "looot:ReviewCandidate",
+    "expectedStatus": {
+      "@id": "looot:expectedStatus"
+    },
+    "nextStatus": {
+      "@id": "looot:nextStatus"
+    },
+    "CreateCompatibilityDraft": "looot:CreateCompatibilityDraft",
+    "candidateId": {
+      "@id": "looot:candidateId",
+      "@type": "xsd:string"
+    },
+    "DetectCandidateContradictions": "looot:DetectCandidateContradictions",
+    "CreateOnboardingJob": "looot:CreateOnboardingJob",
+    "hints": {
+      "@id": "looot:hints"
+    },
+    "DecideOnboardingJob": "looot:DecideOnboardingJob",
+    "gate": {
+      "@id": "looot:gate"
+    },
+    "rightsTarget": {
+      "@id": "looot:rightsTarget"
+    },
+    "CompatibilityEvidenceRef": "looot:CompatibilityEvidenceRef",
+    "url": {
+      "@id": "looot:url",
+      "@type": "@id"
+    },
+    "observedAt": {
+      "@id": "looot:observedAt",
+      "@type": "xsd:dateTime"
+    },
+    "SubmitCompatibilityGate": "looot:SubmitCompatibilityGate",
+    "claim": {
+      "@id": "looot:claim",
+      "@type": "xsd:string"
+    },
+    "DecideCompatibilityGate": "looot:DecideCompatibilityGate",
+    "CreateActivationProposal": "looot:CreateActivationProposal",
+    "draftId": {
+      "@id": "looot:draftId",
+      "@type": "xsd:string"
+    },
+    "CreateProviderPackageDraft": "looot:CreateProviderPackageDraft",
+    "proposalId": {
+      "@id": "looot:proposalId",
+      "@type": "xsd:string"
+    },
+    "CreateProviderPackageRevision": "looot:CreateProviderPackageRevision",
+    "packageId": {
+      "@id": "looot:packageId",
+      "@type": "xsd:string"
+    },
+    "expectedPreviousRevisionId": {
+      "@id": "looot:expectedPreviousRevisionId",
+      "@type": "xsd:string"
+    },
+    "mapping": {
+      "@id": "looot:mapping"
+    },
+    "ValidateProviderMapping": "looot:ValidateProviderMapping",
+    "DecideProviderMapping": "looot:DecideProviderMapping",
+    "CreateProviderActivationBundle": "looot:CreateProviderActivationBundle",
+    "revisionId": {
+      "@id": "looot:revisionId",
+      "@type": "xsd:string"
+    },
+    "PublishProviderRegistry": "looot:PublishProviderRegistry",
+    "bundleId": {
+      "@id": "looot:bundleId",
+      "@type": "xsd:string"
+    },
+    "acknowledgeBreakingChange": {
+      "@id": "looot:acknowledgeBreakingChange",
+      "@type": "xsd:boolean"
+    },
+    "PublishPublicCatalog": "looot:PublishPublicCatalog",
+    "RegisterDirectEndpoint": "looot:RegisterDirectEndpoint",
+    "provider": {
+      "@id": "looot:provider"
+    },
+    "publishToPublicCatalog": {
+      "@id": "looot:publishToPublicCatalog",
+      "@type": "xsd:boolean"
+    },
+    "autoCapability": {
+      "@id": "looot:autoCapability",
+      "@type": "xsd:boolean"
+    },
+    "ImportDirectEndpoints": "looot:ImportDirectEndpoints",
+    "SubmitProviderActivationEvidence": "looot:SubmitProviderActivationEvidence",
+    "reportId": {
+      "@id": "looot:reportId",
+      "@type": "xsd:string"
+    },
+    "blockerCode": {
+      "@id": "looot:blockerCode"
+    },
+    "DecideProviderActivationEvidence": "looot:DecideProviderActivationEvidence",
+    "CreateProviderActivationChangeRequest": "looot:CreateProviderActivationChangeRequest",
+    "expectedReportId": {
+      "@id": "looot:expectedReportId",
+      "@type": "xsd:string"
+    },
+    "driverId": {
+      "@id": "looot:driverId",
+      "@type": "xsd:string"
+    },
+    "DecideProviderActivationChange": "looot:DecideProviderActivationChange",
+    "ApplyProviderActivationChange": "looot:ApplyProviderActivationChange",
+    "expectedDryRunId": {
+      "@id": "looot:expectedDryRunId",
+      "@type": "xsd:string"
+    },
+    "CreateNormalizedRoute": "looot:CreateNormalizedRoute",
+    "routeKey": {
+      "@id": "looot:routeKey",
+      "@type": "xsd:string"
+    },
+    "version": {
+      "@id": "looot:version",
+      "@type": "xsd:string"
+    },
+    "capability": {
+      "@id": "looot:capability"
+    },
+    "outputSchema": {
+      "@id": "looot:outputSchema"
+    },
+    "steps": {
+      "@id": "looot:steps",
+      "@container": "@list"
+    },
+    "WorkflowRunIf": "looot:WorkflowRunIf",
+    "stepId": {
+      "@id": "looot:stepId",
+      "@type": "xsd:string"
+    },
+    "equals": {
+      "@id": "looot:equals",
+      "@type": "xsd:boolean"
+    },
+    "WorkflowComparison": "looot:WorkflowComparison",
+    "left": {
+      "@id": "looot:left",
+      "@type": "@id"
+    },
+    "operator": {
+      "@id": "looot:operator"
+    },
+    "right": {
+      "@id": "looot:right",
+      "@type": "@id"
+    },
+    "CreateWorkflow": "looot:CreateWorkflow",
+    "ReviseWorkflow": "looot:ReviseWorkflow",
+    "PublishWorkflow": "looot:PublishWorkflow",
+    "StartWorkflow": "looot:StartWorkflow",
+    "MintWorkflowToken": "looot:MintWorkflowToken",
+    "ttlSeconds": {
+      "@id": "looot:ttlSeconds",
+      "@type": "xsd:integer"
+    },
+    "ResolveWorkflowApproval": "looot:ResolveWorkflowApproval",
+    "token": {
+      "@id": "looot:token",
+      "@type": "xsd:string"
+    },
+    "ResolveWorkflowCallback": "looot:ResolveWorkflowCallback",
+    "payload": {
+      "@id": "looot:payload"
+    },
+    "OutputMappingDefinition": "looot:OutputMappingDefinition",
+    "expression": {
+      "@id": "looot:expression",
+      "@type": "@id"
+    },
+    "CreateOutputMapping": "looot:CreateOutputMapping",
+    "mappingId": {
+      "@id": "looot:mappingId",
+      "@type": "xsd:string"
+    },
+    "definition": {
+      "@id": "looot:definition",
+      "@type": "@id"
+    },
+    "targetSchema": {
+      "@id": "looot:targetSchema"
+    },
+    "ReviseOutputMapping": "looot:ReviseOutputMapping",
+    "expectedRevision": {
+      "@id": "looot:expectedRevision",
+      "@type": "xsd:integer"
+    },
+    "PreviewOutputMapping": "looot:PreviewOutputMapping",
+    "raw": {
+      "@id": "looot:raw"
+    },
+    "canonical": {
+      "@id": "looot:canonical"
+    },
+    "ChangeOutputMappingPublication": "looot:ChangeOutputMappingPublication"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "looot API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects looot's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-05) from openapi/looot-openapi.json.",
+  "dcterms:created": "2026-10-05",
+  "dcterms:source": [
+    "openapi/looot-openapi.json"
+  ]
+}

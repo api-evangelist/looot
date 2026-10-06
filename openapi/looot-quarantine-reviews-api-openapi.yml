@@ -1,0 +1,189 @@
+openapi: 3.2.0
+info:
+  title: looot Quarantine Reviews API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Quarantine Reviews
+paths:
+  /v1/quarantine-reviews:
+    get:
+      summary: List tenant-scoped honest malware-review status records; no automated scan runs…
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+      responses:
+        '200':
+          description: Reviews, defaulting to pending until a human decides
+        '403':
+          description: artifacts:read scope required
+      tags:
+      - Quarantine Reviews
+      operationId: getV1QuarantineReviews
+      x-operation-id-source: derived
+    post:
+      summary: Request a manual quarantine review for a file; starts pending, never…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestQuarantineReview'
+      responses:
+        '201':
+          description: New or idempotently replayed pending review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuarantineReview'
+        '400':
+          description: Invalid file id, digest, or idempotency key
+        '403':
+          description: artifacts:write scope required
+        '409':
+          description: Idempotency key already used with different inputs
+      tags:
+      - Quarantine Reviews
+      operationId: postV1QuarantineReviews
+      x-operation-id-source: derived
+  /v1/quarantine-reviews/{reviewId}:
+    get:
+      summary: Get one quarantine review's honest status
+      responses:
+        '200':
+          description: Review record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuarantineReview'
+        '403':
+          description: artifacts:read scope required
+        '404':
+          description: Review not found in this tenant
+      tags:
+      - Quarantine Reviews
+      operationId: getV1QuarantineReviewsByReviewId
+      x-operation-id-source: derived
+  /v1/quarantine-reviews/{reviewId}/decide:
+    post:
+      summary: Decide a pending quarantine review; a configured scanner's suspicious verdict…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideQuarantineReview'
+      responses:
+        '200':
+          description: Decided review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuarantineReview'
+        '400':
+          description: Invalid decision or reason
+        '403':
+          description: artifacts:write scope required
+        '404':
+          description: Review not found in this tenant
+        '409':
+          description: Review already decided differently
+      tags:
+      - Quarantine Reviews
+      operationId: postV1QuarantineReviewsByReviewIdDecide
+      x-operation-id-source: derived
+components:
+  schemas:
+    RequestQuarantineReview:
+      type: object
+      additionalProperties: false
+      required:
+      - fileId
+      - contentDigest
+      - idempotencyKey
+      properties:
+        fileId:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]{2,127}$
+        contentDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        idempotencyKey:
+          type: string
+          minLength: 1
+          maxLength: 300
+    DecideQuarantineReview:
+      type: object
+      additionalProperties: false
+      required:
+      - decision
+      - reason
+      properties:
+        decision:
+          enum:
+          - approved
+          - rejected
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+    QuarantineReview:
+      type: object
+      additionalProperties: false
+      required:
+      - reviewId
+      - fileId
+      - contentDigest
+      - status
+      - decisionReason
+      - reviewerPrincipalId
+      - createdAt
+      - decidedAt
+      properties:
+        reviewId:
+          type: string
+        fileId:
+          type: string
+        contentDigest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        status:
+          enum:
+          - pending
+          - approved
+          - rejected
+        decisionReason:
+          type:
+          - string
+          - 'null'
+        reviewerPrincipalId:
+          type:
+          - string
+          - 'null'
+        createdAt:
+          type: string
+          format: date-time
+        decidedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

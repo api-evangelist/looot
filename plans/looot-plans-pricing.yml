@@ -1,0 +1,38 @@
+generated: '2026-10-05'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://looot.ai/pricing
+sources:
+- https://looot.ai/pricing
+- https://docs.looot.ai/get-started/pricing-basics
+- https://docs.looot.ai/reference/billing/get-v1-balance
+- https://docs.looot.ai/reference/billing/get-v1-ledger
+name: looot pricing
+audience: developer-api
+pricing_basis: per-call
+plans:
+- name: hunter-email-finder
+  price_text: $0.0265 per result
+  price: 0.0265
+  description: Find emails
+- name: exa-search
+  price_text: $0.0090 per call
+  price: 0.009
+  description: Research the web
+- name: diffbot-article
+  price_text: $0.0032 per call
+  price: 0.0032
+  description: Extract any page
+- name: brightdata-scrape-structured
+  price_text: $0.0035 per call
+  price: 0.0035
+  description: Scrape at scale
+- name: justoneapi-api-douyin-hot-search
+  price_text: $0.0317 per call
+  price: 0.0317
+  description: Social trends
+- name: ipinfo-lite
+  price_text: $0.0020 per lookup
+  price: 0.002
+  description: Enrich companies
+docs: https://looot.ai/pricing

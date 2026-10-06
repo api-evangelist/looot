@@ -1,0 +1,84 @@
+openapi: 3.2.0
+info:
+  title: looot Activation Proposals API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Activation Proposals
+paths:
+  /v1/activation-proposals:
+    get:
+      summary: List immutable non-executable activation review proposals
+      responses:
+        '200':
+          description: Review proposals
+        '403':
+          description: activation-proposals:read scope required
+      tags:
+      - Activation Proposals
+      operationId: getV1ActivationProposals
+      x-operation-id-source: derived
+    post:
+      summary: Assemble a proposal from a complete current compatibility audit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivationProposal'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Non-executable proposal created
+        '400':
+          description: Audit incomplete
+        '403':
+          description: activation-proposals:write scope required
+        '404':
+          description: Draft not found
+        '409':
+          description: Source or audit drift
+      tags:
+      - Activation Proposals
+      operationId: postV1ActivationProposals
+      x-operation-id-source: derived
+  /v1/activation-proposals/{proposalId}:
+    get:
+      summary: Get one immutable non-executable activation review proposal
+      responses:
+        '200':
+          description: Proposal with executable false
+        '403':
+          description: activation-proposals:read scope required
+        '404':
+          description: Proposal not found
+      tags:
+      - Activation Proposals
+      operationId: getV1ActivationProposalsByProposalId
+      x-operation-id-source: derived
+components:
+  schemas:
+    CreateActivationProposal:
+      type: object
+      additionalProperties: false
+      required:
+      - draftId
+      properties:
+        draftId:
+          type: string
+          minLength: 1
+          maxLength: 300
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

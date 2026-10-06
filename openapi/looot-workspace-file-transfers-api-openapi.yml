@@ -1,0 +1,85 @@
+openapi: 3.2.0
+info:
+  title: looot Workspace File Transfers API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workspace File Transfers
+paths:
+  /v1/workspace-file-transfers:
+    get:
+      summary: List transfer links for the workspace
+      description: MP-FS-02. Lists issued upload/download transfer tokens (never the raw token).
+      responses:
+        '200':
+          description: Transfer links
+        '403':
+          description: workspace-files:read scope required
+      tags:
+      - Workspace File Transfers
+      operationId: getV1WorkspaceFileTransfers
+      x-operation-id-source: derived
+    post:
+      summary: Issue a revocable, expiring upload or download link
+      description: MP-FS-02. Returns the raw token exactly once; download links require an approved quarantine review.
+      responses:
+        '201':
+          description: Transfer link issued
+        '400':
+          description: Invalid request
+        '403':
+          description: workspace-files:write scope required
+      tags:
+      - Workspace File Transfers
+      operationId: postV1WorkspaceFileTransfers
+      x-operation-id-source: derived
+  /v1/workspace-file-transfers/consume:
+    post:
+      summary: Consume a transfer link once
+      description: MP-FS-02. Single-use redemption of an upload or download token.
+      responses:
+        '200':
+          description: Consumed
+        '403':
+          description: workspace-files:write scope required
+        '409':
+          description: Token already consumed, revoked or expired
+      tags:
+      - Workspace File Transfers
+      operationId: postV1WorkspaceFileTransfersConsume
+      x-operation-id-source: derived
+  /v1/workspace-file-transfers/{tokenHash}/revoke:
+    post:
+      summary: Revoke a transfer link
+      description: MP-FS-02. Revokes an unconsumed transfer token by its hash.
+      parameters:
+      - name: tokenHash
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Revoked
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: Token not found
+      tags:
+      - Workspace File Transfers
+      operationId: postV1WorkspaceFileTransfersByTokenHashRevoke
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

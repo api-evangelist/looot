@@ -1,0 +1,106 @@
+openapi: 3.2.0
+info:
+  title: looot Workflow Waits API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workflow Waits
+paths:
+  /v1/workflow-waits:
+    get:
+      summary: List tenant-scoped pending workflow waits
+      responses:
+        '200':
+          description: Pending waits
+        '403':
+          description: workflows:read scope required
+      tags:
+      - Workflow Waits
+      operationId: getV1WorkflowWaits
+      x-operation-id-source: derived
+  /v1/workflow-waits/{waitId}/token:
+    post:
+      summary: Mint a short-lived wait-bound capability token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MintWorkflowToken'
+      responses:
+        '201':
+          description: Signed capability token
+        '403':
+          description: workflows:execute scope required
+        '404':
+          description: Pending wait not found
+      tags:
+      - Workflow Waits
+      operationId: postV1WorkflowWaitsByWaitIdToken
+      x-operation-id-source: derived
+  /v1/workflow-waits/{waitId}/approval:
+    post:
+      summary: Resolve an approval using bearer identity and signed capability
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveWorkflowApproval'
+      responses:
+        '200':
+          description: Resolved wait
+        '401':
+          description: Invalid capability token
+        '403':
+          description: workflows:execute scope required
+        '409':
+          description: Wait already resolved
+        '410':
+          description: Capability expired
+      tags:
+      - Workflow Waits
+      operationId: postV1WorkflowWaitsByWaitIdApproval
+      x-operation-id-source: derived
+components:
+  schemas:
+    ResolveWorkflowApproval:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      - decision
+      properties:
+        token:
+          type: string
+          writeOnly: true
+        decision:
+          enum:
+          - approved
+          - rejected
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+    MintWorkflowToken:
+      type: object
+      additionalProperties: false
+      properties:
+        ttlSeconds:
+          type: integer
+          minimum: 60
+          maximum: 86400
+          default: 900
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

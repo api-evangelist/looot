@@ -1,0 +1,185 @@
+openapi: 3.2.0
+info:
+  title: looot Providers API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Providers
+paths:
+  /v1/providers:
+    get:
+      summary: List every provider in the live registry (draft, active, deprecated, retired)
+      responses:
+        '200':
+          description: Registered providers
+        '403':
+          description: provider-registry:read scope required
+      tags:
+      - Providers
+      operationId: getV1Providers
+      x-operation-id-source: derived
+  /v1/providers/{providerId}:
+    get:
+      summary: Get one registered provider
+      responses:
+        '200':
+          description: Provider
+        '403':
+          description: provider-registry:read scope required
+        '404':
+          description: Provider not found
+      tags:
+      - Providers
+      operationId: getV1ProvidersByProviderId
+      x-operation-id-source: derived
+  /v1/providers/{providerId}/endpoints:
+    get:
+      summary: Get every endpoint version (active, deprecated) published for one provider
+      responses:
+        '200':
+          description: Endpoint versions
+        '403':
+          description: provider-registry:read scope required
+        '404':
+          description: Provider not found
+      tags:
+      - Providers
+      operationId: getV1ProvidersByProviderIdEndpoints
+      x-operation-id-source: derived
+    post:
+      summary: Register one endpoint directly as data -- no…
+      description: 'TP-CAT-10. Creates the provider if it does not exist yet (provider.displayName required in that case). Idempotent by content digest: registering the identical endpoint again is a no-op (created: false); a changed one appends a new version and supersedes the previous active one. When endpoint.capability is not a known canonical job id or alias, the response''s capabilitySuggestions lists the closest canonical jobs by name/description match; pass autoCapability: true to register under the top suggestion automatically once its score clears the confidence threshold (default: register exactly the capability submitted).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDirectEndpoint'
+      responses:
+        '200':
+          description: 'Idempotent replay of an already-registered endpoint version. { provider, endpointVersion, created: false, capabilitySuggestions, sourceCapability }'
+        '201':
+          description: 'New provider and/or endpoint version registered; discoverable immediately. { provider, endpointVersion, created: true, capabilitySuggestions, sourceCapability }'
+        '400':
+          description: Invalid endpoint definition, or provider missing and no provider.displayName supplied
+        '403':
+          description: provider-registry:write scope required
+      tags:
+      - Providers
+      operationId: postV1ProvidersByProviderIdEndpoints
+      x-operation-id-source: derived
+  /v1/providers/{providerId}/definition:
+    get:
+      summary: Get one provider's full definition plus computed verification and health
+      responses:
+        '200':
+          description: '{ definition, computed }'
+        '403':
+          description: provider-registry:read scope required
+        '404':
+          description: No definition written for this provider yet
+        '503':
+          description: Provider definitions are not available on this deployment
+      tags:
+      - Providers
+      operationId: getV1ProvidersByProviderIdDefinition
+      x-operation-id-source: derived
+    put:
+      summary: Create or update a provider's definition
+      description: 'Owner/admin only. Upserts the provider row and its `definition` jsonb through the catalog tables repository. The platform secret itself is never in this body -- set it via PUT /v1/platform-keys/{providerId}. Submitting oauth2 as the active authMethod is rejected ("oauth2 not available yet"). Body: ProviderDefinitionSchema (src/domain/provider-definition.ts) minus the immutable providerId.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: '{ definition, computed }'
+        '400':
+          description: Invalid definition
+        '403':
+          description: provider-registry:write scope required
+        '503':
+          description: Requires the tables catalog repository
+      tags:
+      - Providers
+      operationId: putV1ProvidersByProviderIdDefinition
+      x-operation-id-source: derived
+  /v1/providers/{providerId}/definition/import-openapi:
+    post:
+      summary: Import an OpenAPI document into a provider-patch + endpoint diff preview…
+      description: 'Adapters table (provider-definition-form.md): servers[0] -> baseUrl, securitySchemes -> authMethod (unknown/oauth2 scheme -> left unset with a note, never a crash), one row per operation with a suggested capability, price and inputSchema, and a create/supersede/unchanged action against this provider''s current endpoints. `?apply=true` also submits every create/supersede row through the existing direct-endpoint-registration service (never edits an endpoint in place -- a changed operation supersedes with a new version).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: object
+                additionalProperties: false
+                required:
+                - url
+                properties:
+                  url:
+                    type: string
+                    format: uri
+              - type: object
+                additionalProperties: false
+                required:
+                - document
+                properties:
+                  document: {}
+      parameters:
+      - name: apply
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+      responses:
+        '200':
+          description: '{ providerPatch, operations: [{ operationId, method, path, capabilitySuggestion, price, inputSchema, action }] }'
+        '400':
+          description: Invalid request body, or the document could not be parsed/fetched
+        '403':
+          description: provider-registry:write scope required
+      tags:
+      - Providers
+      operationId: postV1ProvidersByProviderIdDefinitionImportOpenapi
+      x-operation-id-source: derived
+components:
+  schemas:
+    RegisterDirectEndpoint:
+      type: object
+      additionalProperties: false
+      required:
+      - endpoint
+      description: provider is optional when :providerId already exists; required (displayName at minimum) when it does not. See DirectEndpointRegistrationInputSchema in src/import/direct-endpoint-registration-service.ts for the full endpoint shape (capability, name, description, executionMode, eligibility, authType, price, and optionally inputSchema/requestBinding/uiSchema/httpContract).
+      properties:
+        provider:
+          type: object
+          description: '{ displayName, categoryId?, homepageUrl?, docsUrl?, region? }'
+        endpoint:
+          type: object
+          description: '{ endpointId, capability, name, description, executionMode, eligibility, authType, price, inputSchema?, requestBinding?, uiSchema?, httpContract?, examples?, effectClassification? }'
+        publishToPublicCatalog:
+          type: boolean
+        autoCapability:
+          type: boolean
+          description: When endpoint.capability is not a known canonical job id or alias, register under the top capabilitySuggestions match once its score clears the confidence threshold, instead of the exact slug submitted. Default false.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

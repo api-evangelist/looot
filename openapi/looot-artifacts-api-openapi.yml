@@ -1,0 +1,58 @@
+openapi: 3.2.0
+info:
+  title: looot Artifacts API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Artifacts
+paths:
+  /v1/artifacts/{artifactId}:
+    get:
+      summary: Get artifact metadata
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Artifacts
+      operationId: getV1ArtifactsByArtifactId
+      x-operation-id-source: derived
+    delete:
+      summary: Delete artifact content and retain tombstone metadata
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Artifacts
+      operationId: deleteV1ArtifactsByArtifactId
+      x-operation-id-source: derived
+  /v1/artifacts/{artifactId}/content:
+    get:
+      summary: Download integrity-verified artifact content
+      responses:
+        '200':
+          description: Binary content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '410':
+          description: Missing, expired or deleted content
+      tags:
+      - Artifacts
+      operationId: getV1ArtifactsByArtifactIdContent
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

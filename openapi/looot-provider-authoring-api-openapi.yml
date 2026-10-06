@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Authoring API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Authoring
+paths:
+  /v1/provider-authoring/schema:
+    get:
+      summary: Get the canonical provider mapping JSON Schema
+      responses:
+        '200':
+          description: Draft 2020-12 schema generated from runtime validation
+        '403':
+          description: provider-packages:read scope required
+      tags:
+      - Provider Authoring
+      operationId: getV1ProviderAuthoringSchema
+      x-operation-id-source: derived
+  /v1/provider-authoring/templates/{packageId}:
+    get:
+      summary: Get a deterministic non-executable package-derived mapping template
+      responses:
+        '200':
+          description: Structural defaults and explicit unresolved fields
+        '403':
+          description: provider-packages:read scope required
+        '404':
+          description: Package not found
+      tags:
+      - Provider Authoring
+      operationId: getV1ProviderAuthoringTemplatesByPackageId
+      x-operation-id-source: derived
+  /v1/provider-authoring/validate:
+    post:
+      summary: Validate a provider mapping without persisting or executing it
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateProviderMapping'
+      responses:
+        '200':
+          description: Normalized mapping or bounded path-aware issues
+        '403':
+          description: provider-packages:read scope required
+      tags:
+      - Provider Authoring
+      operationId: postV1ProviderAuthoringValidate
+      x-operation-id-source: derived
+components:
+  schemas:
+    ValidateProviderMapping:
+      type: object
+      additionalProperties: false
+      required:
+      - mapping
+      properties:
+        mapping:
+          type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

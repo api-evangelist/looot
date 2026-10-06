@@ -1,0 +1,47 @@
+openapi: 3.2.0
+info:
+  title: looot Candidate Metadata Bundles API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Candidate Metadata Bundles
+paths:
+  /v1/candidate-metadata-bundles:
+    post:
+      summary: Atomically import up to 100 provider metadata sources with explicit license…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Exact bundle version, license identity/use status, and up to 10,000 operations across 100 providers.
+      responses:
+        '200':
+          description: Idempotent bundle replay
+        '201':
+          description: One or more new immutable provider source versions
+        '400':
+          description: Invalid, duplicate, or oversized bundle
+        '403':
+          description: candidates:write scope required
+        '409':
+          description: Partial prior source state
+      tags:
+      - Candidate Metadata Bundles
+      operationId: postV1CandidateMetadataBundles
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

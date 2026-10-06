@@ -1,0 +1,82 @@
+generated: '2026-10-05'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/looot-openapi.json
+format: custom
+envelope:
+  media_type: application/json
+  schema: null
+coverage:
+  operations: 316
+  statuses_declared: 11
+problems:
+- status: 400
+  title: Bad Request
+  description: Invalid body
+  operations: 111
+  media_types: []
+  schema: null
+- status: 401
+  title: Unauthorized
+  description: Authentication required
+  operations: 29
+  media_types: []
+  schema: null
+- status: 402
+  title: Payment Required
+  description: Out of balance -- the run was blocked before dispatch, never billed
+  operations: 1
+  media_types:
+  - application/json
+  schema: null
+- status: 403
+  title: Forbidden
+  description: candidates:read scope required
+  operations: 227
+  media_types: []
+  schema: null
+- status: 404
+  title: Not Found
+  description: Connection not found
+  operations: 132
+  media_types: []
+  schema: null
+- status: 405
+  title: Method Not Allowed
+  description: Only GET is allowed
+  operations: 9
+  media_types: []
+  schema: null
+- status: 409
+  title: Conflict
+  description: Revision conflict
+  operations: 70
+  media_types: []
+  schema: null
+- status: 410
+  title: Gone
+  description: Capability expired
+  operations: 3
+  media_types: []
+  schema: null
+- status: 422
+  title: Unprocessable Content
+  description: Not a probe run, endpoint mismatch, or the run has not settled
+  operations: 1
+  media_types: []
+  schema: null
+- status: 429
+  title: Too Many Requests
+  description: Rate limit exceeded (execute class, too_many_inflight_runs) -- see Retry-After and X-RateLimit-*
+    response headers
+  operations: 1
+  media_types:
+  - application/json
+  schema: null
+- status: 503
+  title: Service Unavailable
+  description: Control plane unavailable
+  operations: 88
+  media_types: []
+  schema: null

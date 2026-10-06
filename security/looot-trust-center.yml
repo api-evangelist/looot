@@ -1,0 +1,12 @@
+generated: '2026-10-05'
+method: searched
+probe: true
+source: https://looot.ai/security
+url: https://looot.ai/security
+certifications:
+- SOC 2
+evidence:
+- source: https://looot.ai/security
+  keywords:
+  - soc 2
+  - compliance certification

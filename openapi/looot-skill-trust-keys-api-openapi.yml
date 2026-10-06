@@ -1,0 +1,88 @@
+openapi: 3.2.0
+info:
+  title: looot Skill Trust Keys API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Skill Trust Keys
+paths:
+  /v1/skill-trust-keys:
+    get:
+      summary: List redacted tenant trust-key metadata
+      responses:
+        '200':
+          description: Key ids and lifecycle timestamps; PEM omitted
+        '403':
+          description: local-product:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Trust Keys
+      operationId: getV1SkillTrustKeys
+      x-operation-id-source: derived
+    post:
+      summary: Register a bounded public signing key
+      description: Accepts public key material only; private signing keys are never accepted or stored.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - keyId
+              - publicKeyPem
+              properties:
+                keyId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                publicKeyPem:
+                  type: string
+                  minLength: 32
+                  maxLength: 16384
+      responses:
+        '201':
+          description: Redacted tenant-scoped trusted-key metadata; PEM omitted
+        '400':
+          description: Invalid public key
+        '403':
+          description: local-product:manage scope required
+        '409':
+          description: Trust key already exists
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Trust Keys
+      operationId: postV1SkillTrustKeys
+      x-operation-id-source: derived
+  /v1/skill-trust-keys/{keyId}/revoke:
+    post:
+      summary: Revoke one tenant-scoped public trust key
+      responses:
+        '200':
+          description: Redacted revoked-key metadata; PEM omitted
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Trust key not found
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Trust Keys
+      operationId: postV1SkillTrustKeysByKeyIdRevoke
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,172 @@
+openapi: 3.2.0
+info:
+  title: looot Candidates API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Candidates
+paths:
+  /v1/candidates:
+    get:
+      summary: List stable bounded pages of quarantined imported candidates
+      parameters:
+      - name: sourceRef
+        in: query
+        schema:
+          type: string
+      - name: candidateKind
+        in: query
+        schema:
+          type: string
+          enum:
+          - provider
+          - subresource
+          - operation
+      - name: reviewStatus
+        in: query
+        schema:
+          type: string
+          enum:
+          - unreviewed
+          - reviewing
+          - accepted
+          - rejected
+      - name: providerId
+        in: query
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 300
+      responses:
+        '200':
+          description: Review-only candidate page
+        '400':
+          description: Invalid filter, limit, or stale cursor
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Candidates
+      operationId: getV1Candidates
+      x-operation-id-source: derived
+    post:
+      summary: Import a bounded OpenAPI JSON document into quarantine
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportCandidates'
+      responses:
+        '200':
+          description: Idempotent digest replay
+        '201':
+          description: New candidate version
+        '400':
+          description: Invalid or unsupported document
+        '403':
+          description: candidates:write scope required
+        '409':
+          description: Partial prior import
+      tags:
+      - Candidates
+      operationId: postV1Candidates
+      x-operation-id-source: derived
+  /v1/candidates/{candidateId}/review:
+    post:
+      summary: Compare-and-set candidate review status without activation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCandidate'
+      responses:
+        '200':
+          description: Updated review candidate
+        '400':
+          description: Invalid transition
+        '403':
+          description: candidates:write scope required
+        '404':
+          description: Candidate not found
+        '409':
+          description: Expected status mismatch
+      tags:
+      - Candidates
+      operationId: postV1CandidatesByCandidateIdReview
+      x-operation-id-source: derived
+  /v1/candidates/{candidateId}/reviewer-summary:
+    get:
+      summary: Pure reviewer projection over existing state…
+      responses:
+        '200':
+          description: Reviewer summary
+        '403':
+          description: candidates:read scope required
+        '404':
+          description: Candidate not found or not an operation candidate
+      tags:
+      - Candidates
+      operationId: getV1CandidatesByCandidateIdReviewerSummary
+      x-operation-id-source: derived
+components:
+  schemas:
+    ReviewCandidate:
+      type: object
+      additionalProperties: false
+      required:
+      - expectedStatus
+      - nextStatus
+      properties:
+        expectedStatus:
+          enum:
+          - unreviewed
+          - reviewing
+          - accepted
+          - rejected
+        nextStatus:
+          enum:
+          - unreviewed
+          - reviewing
+          - accepted
+          - rejected
+    ImportCandidates:
+      type: object
+      additionalProperties: false
+      required:
+      - sourceRef
+      - providerSlug
+      - document
+      properties:
+        sourceRef:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        providerSlug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        document:
+          type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

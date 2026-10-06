@@ -1,0 +1,380 @@
+openapi: 3.2.0
+info:
+  title: looot Organizations API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Organizations
+paths:
+  /v1/organizations/{organizationId}/overflow-policy:
+    post:
+      summary: Set whether the organization allows same-endpoint overflow relays
+      description: TP-CAP-04. Organization opt-in/opt-out for overflow relays evaluated on capacity exhaustion.
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Policy updated
+        '403':
+          description: organizations:write scope required
+        '404':
+          description: Organization not found
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdOverflowPolicy
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/alert-settings:
+    post:
+      summary: Set the connection-alert email recipient for the organization
+      description: Owner/admin-only. null disables alert email entirely.
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Alert settings updated
+        '403':
+          description: organizations:write scope required
+        '404':
+          description: Organization not found
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdAlertSettings
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/auto-top-up:
+    get:
+      summary: Get the organization's auto top-up settings and saved card
+      description: Owner/admin-only. Never returns the raw Stripe customer or payment method id -- only display brand/last4.
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Auto top-up settings
+        '403':
+          description: organizations:read scope required
+        '404':
+          description: Organization not found
+      tags:
+      - Organizations
+      operationId: getV1OrganizationsByOrganizationIdAutoTopUp
+      x-operation-id-source: derived
+    post:
+      summary: Set the organization's auto top-up settings
+      description: Owner/admin-only. amountMicros must be between $5 and $500. Triggers when a run settlement leaves the organization's available balance below thresholdMicros and a card is saved; respects monthlyCapMicros and backs off 1 hour after a declined charge.
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - enabled
+              - thresholdMicros
+              - amountMicros
+              - monthlyCapMicros
+              properties:
+                enabled:
+                  type: boolean
+                thresholdMicros:
+                  type: integer
+                  minimum: 1
+                amountMicros:
+                  type: integer
+                  minimum: 5000000
+                  maximum: 500000000
+                monthlyCapMicros:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Auto top-up settings updated
+        '400':
+          description: Invalid request
+        '403':
+          description: organizations:write scope required
+        '404':
+          description: Organization not found
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdAutoTopUp
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/auto-top-up/save-card-session:
+    post:
+      summary: Start a Stripe setup-mode Checkout Session to save a card with no charge
+      description: Owner/admin-only. Used by the dashboard's "Save card" button when the organization has no saved card yet.
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Setup Checkout Session created
+        '403':
+          description: organizations:write scope required
+        '404':
+          description: Organization not found
+        '503':
+          description: Stripe not configured
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdAutoTopUpSaveCardSession
+      x-operation-id-source: derived
+  /v1/organizations:
+    get:
+      summary: List organizations the caller belongs to
+      responses:
+        '200':
+          description: Active organizations with an active membership for the caller
+        '403':
+          description: organizations:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: getV1Organizations
+      x-operation-id-source: derived
+    post:
+      summary: Create an organization; the caller becomes its owner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - slug
+              - displayName
+              properties:
+                slug:
+                  type: string
+                  pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+                  maxLength: 63
+                displayName:
+                  type: string
+                  minLength: 1
+                  maxLength: 120
+      responses:
+        '201':
+          description: Created organization
+        '400':
+          description: Invalid slug or display name
+        '403':
+          description: organizations:write scope required
+        '409':
+          description: Slug already in use
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: postV1Organizations
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}:
+    get:
+      summary: Get an organization the caller belongs to
+      responses:
+        '200':
+          description: Organization
+        '403':
+          description: organizations:read scope required
+        '404':
+          description: Not found or caller is not a member
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: getV1OrganizationsByOrganizationId
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/members:
+    get:
+      summary: List an organization's memberships
+      responses:
+        '200':
+          description: Memberships, principal identifiers, role and status
+        '403':
+          description: organizations:read scope required
+        '404':
+          description: Not found or caller is not a member
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: getV1OrganizationsByOrganizationIdMembers
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/members/{membershipId}/role:
+    post:
+      summary: Change a member's role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - role
+              properties:
+                role:
+                  enum:
+                  - owner
+                  - admin
+                  - member
+                  - viewer
+      responses:
+        '200':
+          description: Updated membership
+        '403':
+          description: owner/admin role required, or a forbidden self-escalation or cross-role change
+        '404':
+          description: Membership not found
+        '409':
+          description: Would remove the organization's last owner
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdMembersByMembershipIdRole
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/members/{membershipId}/remove:
+    post:
+      summary: Remove a member; revokes their tool grants and machine sessions
+      responses:
+        '200':
+          description: Removal acknowledged
+        '403':
+          description: owner/admin role required
+        '404':
+          description: Membership not found
+        '409':
+          description: Would remove the organization's last owner
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdMembersByMembershipIdRemove
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/invitations:
+    get:
+      summary: List an organization's invitations
+      responses:
+        '200':
+          description: Invitations without their token or token hash
+        '403':
+          description: owner/admin role required
+        '404':
+          description: Not found or caller is not a member
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: getV1OrganizationsByOrganizationIdInvitations
+      x-operation-id-source: derived
+    post:
+      summary: Invite a member with a role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - email
+              - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 320
+                role:
+                  enum:
+                  - admin
+                  - member
+                  - viewer
+                expiresInSeconds:
+                  type: integer
+                  minimum: 3600
+                  maximum: 2592000
+                  default: 604800
+      responses:
+        '201':
+          description: The minted invitation token, returned exactly once, and its redacted invitation record
+        '400':
+          description: Invalid input
+        '403':
+          description: owner/admin role required
+        '409':
+          description: A pending invitation for this email already exists
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdInvitations
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/invitations/{invitationId}/revoke:
+    post:
+      summary: Revoke a pending invitation
+      responses:
+        '200':
+          description: Revoked invitation
+        '403':
+          description: owner/admin role required
+        '404':
+          description: Invitation not found
+        '409':
+          description: Invitation is not pending
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: postV1OrganizationsByOrganizationIdInvitationsByInvitationIdRevoke
+      x-operation-id-source: derived
+  /v1/organizations/{organizationId}/machine-sessions:
+    get:
+      summary: Org-wide machine session inventory
+      description: 'Owner/admin only: every member''s non-interactive agent tokens in this organization, not only the caller''s.'
+      responses:
+        '200':
+          description: Machine sessions without their tokenHash
+        '403':
+          description: owner/admin role required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Organizations
+      operationId: getV1OrganizationsByOrganizationIdMachineSessions
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,15 @@
+generated: '2026-10-05'
+method: probed
+generator: harvest-packages.py
+source: registry metadata endpoints (registry.npmjs.org, pypi.org, rubygems.org, api.nuget.org, packagist.org, crates.io)
+ownership_rule: 'official: true only when the registry metadata (homepage, repository, author, URLs) names the provider''s domain (looot.ai, security/looot-domain-security.yml,
+  security/looot-trust-center.yml) or its accepted GitHub org.'
+packages:
+- name: looot
+  registry: npm
+  url: https://www.npmjs.com/package/looot
+  language: JavaScript
+  official: true
+  version: 1.3.0
+  published: '2026-10-01'
+  evidence: metadata names looot.ai

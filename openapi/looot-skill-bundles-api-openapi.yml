@@ -1,0 +1,276 @@
+openapi: 3.2.0
+info:
+  title: looot Skill Bundles API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Skill Bundles
+paths:
+  /v1/skill-bundles:
+    post:
+      summary: Quarantine metadata for a skill bundle
+      description: This metadata-only route does not upload or distribute file contents. Supplied digests must exactly match server recomputation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - bundleId
+              - manifest
+              - manifestDigest
+              - contentDigest
+              properties:
+                bundleId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                manifest:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - name
+                  - description
+                  - entrypoint
+                  - files
+                  properties:
+                    name:
+                      type: string
+                      pattern: ^[a-z][a-z0-9_-]{2,127}$
+                    description:
+                      type: string
+                      minLength: 1
+                      maxLength: 1000
+                    entrypoint:
+                      type: string
+                      minLength: 1
+                      maxLength: 512
+                      pattern: ^(?!/)(?!.*\\)(?!.*(?:^|/)\.{1,2}(?:/|$)).+(?<!/)$
+                    files:
+                      type: array
+                      minItems: 1
+                      maxItems: 256
+                      items:
+                        type: object
+                        additionalProperties: false
+                        required:
+                        - path
+                        - sizeBytes
+                        - digest
+                        properties:
+                          path:
+                            type: string
+                            minLength: 1
+                            maxLength: 512
+                            pattern: ^(?!/)(?!.*\\)(?!.*(?:^|/)\.{1,2}(?:/|$)).+(?<!/)$
+                          sizeBytes:
+                            type: integer
+                            minimum: 0
+                            maximum: 1048576
+                          digest:
+                            type: string
+                            pattern: ^sha256:[a-f0-9]{64}$
+                manifestDigest:
+                  type: string
+                  pattern: ^sha256:[a-f0-9]{64}$
+                contentDigest:
+                  type: string
+                  pattern: ^sha256:[a-f0-9]{64}$
+                replace:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          description: Redacted quarantined version metadata
+        '400':
+          description: Invalid manifest or digest mismatch
+        '403':
+          description: local-product:manage scope required
+        '409':
+          description: Changed bundle requires explicit replacement
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundles
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}:
+    get:
+      summary: List immutable redacted skill bundle versions
+      responses:
+        '200':
+          description: Manifest summary without file paths, signatures, PEM, or secrets
+        '403':
+          description: local-product:read scope required
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: getV1SkillBundlesByBundleId
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/review:
+    post:
+      summary: Submit quarantined metadata for review
+      responses:
+        '200':
+          description: Redacted review-state metadata
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Version not found
+        '409':
+          description: Invalid lifecycle transition
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionReview
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/publish:
+    post:
+      summary: Verify a reviewed version against a registered public key and publish it
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - keyId
+              - signature
+              properties:
+                keyId:
+                  type: string
+                  pattern: ^[a-z][a-z0-9_-]{2,127}$
+                signature:
+                  type: string
+                  minLength: 1
+                  maxLength: 16384
+                  writeOnly: true
+      responses:
+        '200':
+          description: Redacted published metadata; signature omitted
+        '400':
+          description: Invalid signature
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Version or trust key not found
+        '409':
+          description: Invalid lifecycle transition
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionPublish
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/revoke:
+    post:
+      summary: Revoke a published skill bundle
+      responses:
+        '200':
+          description: Redacted revoked metadata
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Version not found
+        '409':
+          description: Invalid lifecycle transition
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionRevoke
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/rollback:
+    post:
+      summary: Stage a new quarantined version derived from a previously published target…
+      description: 'The path {version} names the already-published target to roll back to, not the version being mutated. This never republishes anything instantly: it creates a new quarantined version (with derivedFromVersion set to the target) that must still pass the normal review and signing path before it can be published.'
+      responses:
+        '201':
+          description: Redacted quarantined version metadata derived from the target
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Target version not found
+        '409':
+          description: Target version is not published
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionRollback
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/install:
+    post:
+      summary: Install explicitly selected manifest entries from a published skill bundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - selectedFiles
+              properties:
+                selectedFiles:
+                  type: array
+                  minItems: 1
+                  maxItems: 256
+                  uniqueItems: true
+                  items:
+                    type: string
+                    minLength: 1
+                    maxLength: 512
+      responses:
+        '201':
+          description: Metadata-only shared skill installation
+        '400':
+          description: Invalid or unlisted manifest entry
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Bundle version not found
+        '409':
+          description: Bundle version is not published
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionInstall
+      x-operation-id-source: derived
+  /v1/skill-bundles/{bundleId}/{version}/delete:
+    post:
+      summary: Delete an unreferenced skill bundle version
+      responses:
+        '200':
+          description: Deletion acknowledged
+        '403':
+          description: local-product:manage scope required
+        '404':
+          description: Bundle version not found
+        '409':
+          description: Active shared installation references this version
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Skill Bundles
+      operationId: postV1SkillBundlesByBundleIdByVersionDelete
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

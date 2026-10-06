@@ -1,0 +1,42 @@
+openapi: 3.2.0
+info:
+  title: looot Route Decisions API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Route Decisions
+paths:
+  /v1/route-decisions:
+    get:
+      summary: List persisted route decisions
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Decisions
+      operationId: getV1RouteDecisions
+      x-operation-id-source: derived
+  /v1/route-decisions/{decisionId}:
+    get:
+      summary: Get a persisted route decision
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Route Decisions
+      operationId: getV1RouteDecisionsByDecisionId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

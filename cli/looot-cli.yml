@@ -1,0 +1,59 @@
+generated: '2026-10-05'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://docs.looot.ai/get-started/quickstart-cli
+sources:
+- https://docs.looot.ai/get-started/quickstart-cli
+- https://docs.looot.ai/errors/cli-errors
+- https://docs.looot.ai/cli
+- https://docs.looot.ai/sdks
+install:
+- method: npm
+  command: npm install -g looot
+- method: npm
+  command: npm install -g looot@1.1.0
+commands:
+- group: login
+  commands:
+  - login
+- group: logout
+  commands:
+  - logout
+- group: whoami
+  commands:
+  - whoami
+- group: token
+  commands:
+  - token
+- group: init
+  commands:
+  - init
+- group: doctor
+  commands:
+  - doctor
+- group: search
+  commands:
+  - search
+- group: inspect
+  commands:
+  - inspect
+- group: catalog
+  commands:
+  - catalog
+- group: run
+  commands:
+  - run
+- group: runs
+  commands:
+  - runs
+- group: balance
+  commands:
+  - balance
+- group: ledger
+  commands:
+  - ledger
+- group: mcp
+  commands:
+  - mcp
+binary: looot
+docs: https://docs.looot.ai/get-started/quickstart-cli

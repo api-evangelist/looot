@@ -1,0 +1,179 @@
+openapi: 3.2.0
+info:
+  title: looot Operations API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Operations
+paths:
+  /v1/operations/{endpointId}:
+    get:
+      summary: Inspect an operation
+      responses:
+        '200':
+          description: Version-pinned operation contract and safe usage hints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectOutput'
+      tags:
+      - Operations
+      operationId: getV1OperationsByEndpointId
+      x-operation-id-source: derived
+  /v1/operations/reap-stale-holds:
+    post:
+      summary: 'Platform-operator maintenance: release (or settle) every reservation stuck open…'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cutoffMinutes:
+                  type: number
+                  minimum: 0
+                  exclusiveMinimum: 0
+                  maximum: 10080
+                workspaceId:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                all:
+                  type: boolean
+              additionalProperties: false
+      responses:
+        '200':
+          description: What was released, grouped by workspaceId
+        '400':
+          description: Invalid cutoffMinutes or workspaceId
+        '403':
+          description: platform_operator_required, or ops:write scope required
+        '503':
+          description: Stale-hold reaper control plane unavailable
+      tags:
+      - Operations
+      operationId: postV1OperationsReapStaleHolds
+      x-operation-id-source: derived
+components:
+  schemas:
+    InspectOutput:
+      type: object
+      additionalProperties: false
+      required:
+      - endpoint
+      - estimatedMaxCost
+      - usageHints
+      properties:
+        endpoint:
+          type: object
+          description: Exact registered endpoint metadata
+        estimatedMaxCost:
+          type: number
+          minimum: 0
+          description: 'The price you pay: the total a run through the platform key would charge'
+        inputSchema:
+          type:
+          - object
+          - 'null'
+          description: Draft 2020-12 input schema resolved from fixture, activation bundle, or direct registration; null when the endpoint declares none
+        requestBinding:
+          type:
+          - object
+          - 'null'
+          description: How validated input fields become the HTTP request (path/query/header/body); null for a fixture or bundle-published endpoint that declares none
+        uiSchema:
+          type:
+          - object
+          - 'null'
+          description: Presentation hints for a generated form; never validation
+        outputFormat:
+          type: object
+          additionalProperties: false
+          required:
+          - schema
+          - summary
+          - provenance
+          - note
+          description: 'The endpoint''s stored output format, present only when one is stored. Check provenance.verified before relying on it: false means an expected shape not yet checked against real answers'
+          properties:
+            schema:
+              type: object
+              description: Draft 2020-12 output schema, structure only; its $comment says where it came from
+            summary:
+              type: string
+              description: One-line summary of the schema
+            provenance:
+              type: object
+              additionalProperties: false
+              required:
+              - source
+              - validatedAnswers
+              - checkedAnswers
+              - verified
+              properties:
+                source:
+                  enum:
+                  - own-answers
+                  - treg-shape
+                  - both
+                  - unknown
+                validatedAnswers:
+                  type: integer
+                  minimum: 0
+                  description: Real saved answers that matched the schema
+                checkedAnswers:
+                  type: integer
+                  minimum: 0
+                  description: Real saved answers the schema was checked against
+                verified:
+                  type: boolean
+                  description: True only when at least one real answer was checked and every one matched
+            note:
+              type: string
+              description: One-line label, e.g. "validated on 12 real answers" or "expected shape, not yet checked against real answers"
+        usageHints:
+          type: object
+          additionalProperties: false
+          required:
+          - endpointId
+          - operationVersion
+          - contractDigest
+          - authentication
+          - requiredInputFields
+          - outputSchema
+          - examples
+          properties:
+            endpointId:
+              type: string
+            operationVersion:
+              type: string
+            contractDigest:
+              type: string
+              pattern: ^sha256:[a-f0-9]{64}$
+            authentication:
+              type: object
+              description: Bearer placeholder only; never contains a credential
+            requiredInputFields:
+              type: array
+              items:
+                type: string
+            outputSchema:
+              type: object
+              description: Pinned Draft 2020-12 output schema
+            examples:
+              type: object
+              description: Equivalent REST, MCP, and CLI requests using placeholders only
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

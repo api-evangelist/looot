@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Package Drafts API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Package Drafts
+paths:
+  /v1/provider-package-drafts:
+    get:
+      summary: List disabled provider engineering package drafts
+      responses:
+        '200':
+          description: Non-executable package drafts
+        '403':
+          description: provider-packages:read scope required
+      tags:
+      - Provider Package Drafts
+      operationId: getV1ProviderPackageDrafts
+      x-operation-id-source: derived
+    post:
+      summary: Compile a reviewed proposal into a disabled engineering package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProviderPackageDraft'
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Disabled package draft created
+        '403':
+          description: provider-packages:write scope required
+        '404':
+          description: Proposal not found
+        '409':
+          description: Source or package drift
+      tags:
+      - Provider Package Drafts
+      operationId: postV1ProviderPackageDrafts
+      x-operation-id-source: derived
+  /v1/provider-package-drafts/{packageId}:
+    get:
+      summary: Get one disabled provider engineering package draft
+      responses:
+        '200':
+          description: Package with executable false and disabled executor
+        '403':
+          description: provider-packages:read scope required
+        '404':
+          description: Package not found
+      tags:
+      - Provider Package Drafts
+      operationId: getV1ProviderPackageDraftsByPackageId
+      x-operation-id-source: derived
+components:
+  schemas:
+    CreateProviderPackageDraft:
+      type: object
+      additionalProperties: false
+      required:
+      - proposalId
+      properties:
+        proposalId:
+          type: string
+          minLength: 1
+          maxLength: 300
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

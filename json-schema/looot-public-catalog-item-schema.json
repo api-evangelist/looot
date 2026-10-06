@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/looot/main/json-schema/looot-public-catalog-item-schema.json",
+  "title": "PublicCatalogItem",
+  "x-generated": "2026-10-05",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/looot-openapi.json#/components/schemas/PublicCatalogItem",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalogItemId",
+    "revision",
+    "providerId",
+    "operationId",
+    "title",
+    "description",
+    "categories",
+    "capabilities",
+    "inputSchemaDigest",
+    "outputSchemaDigest",
+    "method",
+    "pathTemplate",
+    "parameters",
+    "verification",
+    "references",
+    "price",
+    "publishedAt",
+    "itemDigest",
+    "provenanceTier"
+  ],
+  "properties": {
+    "catalogItemId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "providerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+    },
+    "operationId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+      }
+    },
+    "inputSchemaDigest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "outputSchemaDigest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "method": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        null
+      ]
+    },
+    "pathTemplate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "parameters": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "location",
+          "required"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "location": {
+            "enum": [
+              "query",
+              "path",
+              "header",
+              "body"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "schemaDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "verifiedAt",
+        "responseCapture"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "unverified",
+            "fixture_verified",
+            "authenticated_verified",
+            "stale"
+          ]
+        },
+        "verifiedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "responseCapture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "available",
+            "digest"
+          ],
+          "properties": {
+            "available": {
+              "type": "boolean"
+            },
+            "digest": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "url"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "documentation",
+              "pricing"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          }
+        }
+      }
+    },
+    "price": {
+      "$ref": "#/$defs/PublicCatalogPrice"
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "itemDigest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "provenanceTier": {
+      "enum": [
+        "official",
+        "verified_partner",
+        "community",
+        "private",
+        "unverified"
+      ]
+    }
+  },
+  "$defs": {
+    "PublicCatalogPrice": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "amountMicros",
+            "currency",
+            "unit",
+            "effectiveAt"
+          ],
+          "properties": {
+            "state": {
+              "const": "known"
+            },
+            "amountMicros": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "effectiveAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "comparisonBasis": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "canonicalMeter",
+                "billingBasis",
+                "tier",
+                "minimumMicros",
+                "rounding"
+              ],
+              "properties": {
+                "canonicalMeter": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+                },
+                "billingBasis": {
+                  "enum": [
+                    "per_call",
+                    "per_result",
+                    "per_unit"
+                  ]
+                },
+                "tier": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "minimumMicros": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "rounding": {
+                  "enum": [
+                    "exact",
+                    "ceil",
+                    "floor"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "reason"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "uncomputable"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          }
+        }
+      ]
+    }
+  }
+}

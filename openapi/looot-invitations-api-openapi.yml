@@ -1,0 +1,60 @@
+openapi: 3.2.0
+info:
+  title: looot Invitations API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Invitations
+paths:
+  /v1/invitations/redeem:
+    post:
+      summary: Redeem an organization invitation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - token
+              - email
+              properties:
+                token:
+                  type: string
+                  minLength: 1
+                  maxLength: 512
+                  writeOnly: true
+                email:
+                  type: string
+                  format: email
+                  maxLength: 320
+      responses:
+        '200':
+          description: New membership
+        '400':
+          description: Invalid, expired, wrong-email or already-consumed invitation
+        '403':
+          description: organizations:write scope required
+        '409':
+          description: Already a member of this organization
+        '503':
+          description: Control plane unavailable
+      tags:
+      - Invitations
+      operationId: postV1InvitationsRedeem
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

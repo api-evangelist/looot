@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: looot Cli Tools API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Cli Tools
+paths:
+  /v1/cli-tools:
+    get:
+      summary: List CLI tool definitions
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Cli Tools
+      operationId: getV1CliTools
+      x-operation-id-source: derived
+    post:
+      summary: Create a draft CLI tool definition
+      responses:
+        '201':
+          description: Created
+      tags:
+      - Cli Tools
+      operationId: postV1CliTools
+      x-operation-id-source: derived
+  /v1/cli-tools/{toolId}:
+    get:
+      summary: Get a CLI tool definition and its lifecycle
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Cli Tools
+      operationId: getV1CliToolsByToolId
+      x-operation-id-source: derived
+  /v1/cli-tools/{toolId}/revisions:
+    post:
+      summary: Revise a CLI tool definition's binary allowlist and deny patterns
+      responses:
+        '201':
+          description: Revised
+      tags:
+      - Cli Tools
+      operationId: postV1CliToolsByToolIdRevisions
+      x-operation-id-source: derived
+  /v1/cli-tools/{toolId}/publish:
+    post:
+      summary: Publish a CLI tool definition
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Cli Tools
+      operationId: postV1CliToolsByToolIdPublish
+      x-operation-id-source: derived
+  /v1/cli-tools/{toolId}/revoke:
+    post:
+      summary: Revoke a CLI tool definition
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Cli Tools
+      operationId: postV1CliToolsByToolIdRevoke
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

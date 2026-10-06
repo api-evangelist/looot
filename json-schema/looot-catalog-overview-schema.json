@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/looot/main/json-schema/looot-catalog-overview-schema.json",
+  "title": "CatalogOverview",
+  "x-generated": "2026-10-05",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/looot-openapi.json#/components/schemas/CatalogOverview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "revision",
+    "builtAt",
+    "depth",
+    "categories"
+  ],
+  "properties": {
+    "revision": {
+      "type": "string"
+    },
+    "builtAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "depth": {
+      "enum": [
+        "summary",
+        "platforms",
+        "jobs",
+        "full"
+      ]
+    },
+    "filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Present only on a narrowed view (category or platform given); such a view has no totals",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Whole catalog; only on a view that is not narrowed",
+      "required": [
+        "categories",
+        "platforms",
+        "jobs",
+        "providers",
+        "endpoints",
+        "runnableEndpoints"
+      ],
+      "properties": {
+        "categories": {
+          "type": "integer"
+        },
+        "platforms": {
+          "type": "integer"
+        },
+        "jobs": {
+          "type": "integer"
+        },
+        "providers": {
+          "type": "integer"
+        },
+        "endpoints": {
+          "type": "integer"
+        },
+        "runnableEndpoints": {
+          "type": "integer"
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "platformCount",
+          "jobCount",
+          "providerCount",
+          "endpointCount",
+          "runnableCount",
+          "cheapestPerCall",
+          "cheapestPerResult"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "platformCount": {
+            "type": "integer"
+          },
+          "jobCount": {
+            "type": "integer"
+          },
+          "providerCount": {
+            "type": "integer",
+            "description": "Distinct providers with at least one listed endpoint at this level"
+          },
+          "endpointCount": {
+            "type": "integer"
+          },
+          "runnableCount": {
+            "type": "integer",
+            "description": "Endpoints runnable without your own key (keyless, or a platform key exists)"
+          },
+          "cheapestPerCall": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call"
+          },
+          "cheapestPerResult": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result"
+          },
+          "platforms": {
+            "type": "array",
+            "description": "Depth platforms, jobs and full, and any view narrowed by platform",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "jobCount",
+                "providerCount",
+                "endpointCount",
+                "runnableCount",
+                "cheapestPerCall",
+                "cheapestPerResult"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "jobCount": {
+                  "type": "integer"
+                },
+                "providerCount": {
+                  "type": "integer",
+                  "description": "Distinct providers with at least one listed endpoint at this level"
+                },
+                "endpointCount": {
+                  "type": "integer"
+                },
+                "runnableCount": {
+                  "type": "integer",
+                  "description": "Endpoints runnable without your own key (keyless, or a platform key exists)"
+                },
+                "cheapestPerCall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call"
+                },
+                "cheapestPerResult": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result"
+                },
+                "jobs": {
+                  "type": "array",
+                  "description": "Depth jobs only: this platform's jobs",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "title",
+                      "providerCount",
+                      "endpointCount",
+                      "runnableCount",
+                      "cheapestPerCall",
+                      "cheapestPerResult"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "providerCount": {
+                        "type": "integer",
+                        "description": "Distinct providers with at least one listed endpoint at this level"
+                      },
+                      "endpointCount": {
+                        "type": "integer"
+                      },
+                      "runnableCount": {
+                        "type": "integer",
+                        "description": "Endpoints runnable without your own key (keyless, or a platform key exists)"
+                      },
+                      "cheapestPerCall": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call"
+                      },
+                      "cheapestPerResult": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "jobs": {
+            "type": "array",
+            "description": "Depth full only: the category's jobs, each naming its platform",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "platform",
+                "providerCount",
+                "endpointCount",
+                "runnableCount",
+                "cheapestPerCall",
+                "cheapestPerResult"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "platform": {
+                  "type": "string"
+                },
+                "providerCount": {
+                  "type": "integer",
+                  "description": "Distinct providers with at least one listed endpoint at this level"
+                },
+                "endpointCount": {
+                  "type": "integer"
+                },
+                "runnableCount": {
+                  "type": "integer",
+                  "description": "Endpoints runnable without your own key (keyless, or a platform key exists)"
+                },
+                "cheapestPerCall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call"
+                },
+                "cheapestPerResult": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

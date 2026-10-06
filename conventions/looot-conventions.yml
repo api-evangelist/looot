@@ -1,0 +1,22 @@
+generated: '2026-10-05'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://docs.looot.ai/changelog/v0-7-2-pagination-and-mobile
+sources:
+- https://docs.looot.ai/changelog/v0-7-2-pagination-and-mobile
+- https://docs.looot.ai/get-started/quickstart-web
+- https://docs.looot.ai/get-started/quickstart-cli
+- https://docs.looot.ai/get-started/quickstart-mcp
+idempotency:
+  coverage: partial
+  evidence: idempotencyKey on 5 of 172 mutating operations
+  scope:
+  - not enumerated on the pages read
+  header: idempotencyKey
+  mechanism: request header / body token declared in the OpenAPI
+  verified: derived
+pagination:
+  style: server-side
+  evidence: Run list and five other dashboard lists are paginated on the server as of v0.7.2, but no pagination parameters or response fields
+    are documented.
+docs: https://docs.looot.ai/changelog/v0-7-2-pagination-and-mobile

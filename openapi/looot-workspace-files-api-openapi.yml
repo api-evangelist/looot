@@ -1,0 +1,409 @@
+openapi: 3.2.0
+info:
+  title: looot Workspace Files API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Workspace Files
+paths:
+  /v1/workspace-files:
+    get:
+      summary: List tenant workspace file metadata with safe revisions
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 100000
+                items:
+                  $ref: '#/components/schemas/WorkspaceFile'
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:read scope required
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Files
+      operationId: getV1WorkspaceFiles
+      x-operation-id-source: derived
+    post:
+      summary: Create a bounded tenant workspace file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - path
+              - contentType
+              - contentBase64
+              - retentionSeconds
+              properties:
+                path:
+                  type: string
+                  minLength: 2
+                  maxLength: 1024
+                  pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+                contentType:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                contentBase64:
+                  type: string
+                  minLength: 4
+                  maxLength: 699052
+                  pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+                  description: Canonical padded base64; decoded body is at most 524288 bytes
+                retentionSeconds:
+                  type: integer
+                  minimum: 1
+                  maximum: 31536000
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceFile'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '409':
+          description: Path or quota conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Files
+      operationId: postV1WorkspaceFiles
+      x-operation-id-source: derived
+  /v1/workspace-files/usage:
+    get:
+      summary: Get tenant workspace quota usage
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUsage'
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:read scope required
+        '503':
+          description: Storage unavailable
+      tags:
+      - Workspace Files
+      operationId: getV1WorkspaceFilesUsage
+      x-operation-id-source: derived
+  /v1/workspace-files/{path}:
+    get:
+      summary: Read a tenant workspace file as canonical base64
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      responses:
+        '200':
+          description: Safe metadata revision and content; internal storage identifiers and host paths are excluded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:read scope required
+        '404':
+          description: File not found
+        '503':
+          description: Storage unavailable
+      tags:
+      - Workspace Files
+      operationId: getV1WorkspaceFilesByPath
+      x-operation-id-source: derived
+  /v1/workspace-files/{path}/update:
+    post:
+      summary: CAS-update a tenant workspace file
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - expectedRevision
+              - contentBase64
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+                contentBase64:
+                  type: string
+                  minLength: 4
+                  maxLength: 699052
+                  pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+                contentType:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                retentionSeconds:
+                  type: integer
+                  minimum: 1
+                  maximum: 31536000
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceFile'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: File not found
+        '409':
+          description: Revision or quota conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Files
+      operationId: postV1WorkspaceFilesByPathUpdate
+      x-operation-id-source: derived
+  /v1/workspace-files/{path}/move:
+    post:
+      summary: CAS-move a tenant workspace file
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - expectedRevision
+              - toPath
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+                toPath:
+                  type: string
+                  minLength: 2
+                  maxLength: 1024
+                  pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+      responses:
+        '200':
+          description: Moved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceFile'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: File not found
+        '409':
+          description: Revision or path conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Files
+      operationId: postV1WorkspaceFilesByPathMove
+      x-operation-id-source: derived
+  /v1/workspace-files/{path}/delete:
+    post:
+      summary: CAS-delete a tenant workspace file
+      parameters:
+      - name: path
+        in: path
+        required: true
+        description: Percent-encoded canonical virtual path
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 3072
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - expectedRevision
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceFile'
+        '400':
+          description: Invalid body
+        '401':
+          description: Authentication required
+        '403':
+          description: workspace-files:write scope required
+        '404':
+          description: File not found
+        '409':
+          description: Revision conflict
+        '503':
+          description: Storage unavailable or commit outcome uncertain
+      tags:
+      - Workspace Files
+      operationId: postV1WorkspaceFilesByPathDelete
+      x-operation-id-source: derived
+components:
+  schemas:
+    WorkspaceUsage:
+      type: object
+      additionalProperties: false
+      required:
+      - files
+      - bytes
+      - maxFiles
+      - maxBytes
+      properties:
+        files:
+          type: integer
+          minimum: 0
+          maximum: 100000
+        bytes:
+          type: integer
+          minimum: 0
+          maximum: 1073741824
+        maxFiles:
+          type: integer
+          minimum: 1
+          maximum: 100000
+        maxBytes:
+          type: integer
+          minimum: 1
+          maximum: 1073741824
+    WorkspaceRead:
+      type: object
+      additionalProperties: false
+      required:
+      - file
+      - contentBase64
+      properties:
+        file:
+          $ref: '#/components/schemas/WorkspaceFile'
+        contentBase64:
+          type: string
+          minLength: 4
+          maxLength: 699052
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+    WorkspaceFile:
+      type: object
+      additionalProperties: false
+      required:
+      - fileId
+      - tenantId
+      - path
+      - contentType
+      - byteLength
+      - digest
+      - createdAt
+      - updatedAt
+      - expiresAt
+      - revision
+      properties:
+        fileId:
+          type: string
+          pattern: ^wfl_[a-f0-9]{32}$
+        tenantId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        path:
+          type: string
+          minLength: 2
+          maxLength: 1024
+          pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+        contentType:
+          type: string
+          minLength: 1
+          maxLength: 200
+        byteLength:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        digest:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

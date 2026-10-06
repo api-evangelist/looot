@@ -1,0 +1,52 @@
+openapi: 3.2.0
+info:
+  title: looot Taxonomies API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Taxonomies
+paths:
+  /v1/taxonomies:
+    post:
+      summary: Create an immutable taxonomy version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Taxonomies
+      operationId: postV1Taxonomies
+      x-operation-id-source: derived
+  /v1/taxonomies/{taxonomyId}:
+    get:
+      summary: Get the latest visible taxonomy version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Taxonomies
+      operationId: getV1TaxonomiesByTaxonomyId
+      x-operation-id-source: derived
+  /v1/taxonomies/{taxonomyId}/{version}:
+    get:
+      summary: Get an exact visible taxonomy version
+      responses:
+        '200':
+          description: Success
+      tags:
+      - Taxonomies
+      operationId: getV1TaxonomiesByTaxonomyIdByVersion
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

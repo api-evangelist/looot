@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/looot/main/json-schema/looot-connection-schema.json",
+  "title": "Connection",
+  "x-generated": "2026-10-05",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/looot-openapi.json#/components/schemas/Connection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "providerId",
+    "label",
+    "status",
+    "auth",
+    "scopes",
+    "lastProbe",
+    "cooldownUntil",
+    "credentialExpiresAt",
+    "consent",
+    "pendingCredentialRoles",
+    "createdAt",
+    "updatedAt",
+    "testState"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "providerId": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "authorization_pending",
+        "connected",
+        "degraded",
+        "expired",
+        "action_required",
+        "revoked"
+      ]
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "none",
+            "api_key",
+            "oauth",
+            "service_account",
+            "credential_file",
+            "signed_request",
+            "cli_auth"
+          ]
+        },
+        "placement": {
+          "enum": [
+            "header",
+            "query"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "authorizationUrl": {
+          "type": "string"
+        },
+        "tokenUrl": {
+          "type": "string"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tokenPlacement": {
+          "enum": [
+            "header",
+            "query"
+          ]
+        },
+        "algorithm": {
+          "const": "hmac-sha256"
+        },
+        "signedHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Granted scopes, populated after oauth callback or a probe that reports scopes"
+    },
+    "lastProbe": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConnectionHealthReceipt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cooldownUntil": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "credentialExpiresAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expiresAt",
+        "warning"
+      ],
+      "properties": {
+        "expiresAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "warning": {
+          "enum": [
+            "expiring_soon",
+            "expired",
+            null
+          ]
+        }
+      }
+    },
+    "pendingCredentialRoles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Declared secondary credential roles not yet supplied; non-empty implies status action_required"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "testState": {
+      "enum": [
+        "not_tested",
+        "verified"
+      ],
+      "description": "verified requires at least one persisted fixture_tested receipt; never set from CRUD alone"
+    },
+    "probeConfigured": {
+      "type": "boolean",
+      "description": "true when POST /v1/connections/{connectionId}/probe has a live health check to run; false for a pasted api_key with no probe (the probe then answers 400 validation_error with reason connection_probe_not_configured)"
+    },
+    "latestTestReceipt": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConnectionFixtureReceipt"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Present only in the GET /v1/connections list response (absent, not null, on register/rotate/revoke/etc. responses); the same object GET /v1/connections/{connectionId}/test-receipts returns as `latest`"
+    }
+  },
+  "$defs": {
+    "ConnectionFixtureReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receiptId",
+        "connectionId",
+        "verification",
+        "providerCalled",
+        "credentialState",
+        "evidence",
+        "testedAt"
+      ],
+      "properties": {
+        "receiptId": {
+          "type": "string",
+          "pattern": "^cfr_[a-f0-9]{32}$"
+        },
+        "connectionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "verification": {
+          "const": "fixture_tested"
+        },
+        "providerCalled": {
+          "type": "boolean"
+        },
+        "credentialState": {
+          "const": "available"
+        },
+        "evidence": {
+          "const": "local_fixture_credential_access"
+        },
+        "testedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ConnectionHealthReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receiptId",
+        "connectionId",
+        "providerId",
+        "outcome",
+        "status",
+        "identity",
+        "scopes",
+        "resources",
+        "providerRequestId",
+        "remediation",
+        "checkedAt"
+      ],
+      "properties": {
+        "receiptId": {
+          "type": "string",
+          "pattern": "^chr_[a-f0-9]{32}$"
+        },
+        "connectionId": {
+          "type": "string"
+        },
+        "providerId": {
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "healthy",
+            "invalid_credentials",
+            "insufficient_scope",
+            "unavailable",
+            "rate_limited",
+            "missing_resource"
+          ]
+        },
+        "status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Accessible provider resource ids discovered by this probe (CA-CONN-03)"
+        },
+        "providerRequestId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "remediation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Safe human-readable next step; never credential material"
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

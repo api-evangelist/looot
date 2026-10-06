@@ -1,0 +1,555 @@
+openapi: 3.2.0
+info:
+  title: looot Catalog API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Catalog
+paths:
+  /v1/catalog/endpoints:
+    get:
+      summary: Paged, filtered, faceted catalog listing
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 5000
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 4096
+      - name: category
+        in: query
+        schema:
+          type: string
+      - name: platform
+        in: query
+        schema:
+          type: string
+      - name: provider
+        in: query
+        schema:
+          type: string
+      - name: capability
+        in: query
+        schema:
+          type: string
+      - name: keyless
+        in: query
+        schema:
+          type: boolean
+      - name: verified
+        in: query
+        schema:
+          type: boolean
+      - name: maxPriceMicros
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      - name: hidden
+        in: query
+        schema:
+          type: boolean
+      - name: facets
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Catalog listing page with nextCursor and, when facets=true, category/platform/provider/capability counts for the filtered set
+        '304':
+          description: Catalog unchanged since If-None-Match
+        '403':
+          description: catalog:read scope required
+      tags:
+      - Catalog
+      operationId: getV1CatalogEndpoints
+      x-operation-id-source: derived
+  /v1/catalog/search:
+    get:
+      summary: Ranked full-text catalog search, with capability expansion and a stemmed-token…
+      description: 'The same search core answers MCP `search` (10 title rows by default) and MCP search_catalog (50 full rows by default, like this route). A title row is a subset of this route''s row: endpointId, provider, name, capability, category, estimatedPrice, priceBasis, access, executionMode, costPerSuccessUsd (facts.costPerSuccessUsd), async (facts.async), works, sourceCapability and credential, in the same order for the same q, limit and offset for a customer token. A platform operator token differs: this route always includes unavailable rows, while MCP honors an explicit filters.includeUnavailable false.'
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 200
+      - name: offset
+        in: query
+        description: Where the page starts in the ranked list; pass the previous page's nextOffset (null on the last page).
+        schema:
+          type: integer
+          minimum: 0
+      - name: category
+        in: query
+        schema:
+          type: string
+      - name: platform
+        in: query
+        schema:
+          type: string
+      - name: provider
+        in: query
+        schema:
+          type: string
+      - name: capability
+        in: query
+        schema:
+          type: string
+      - name: keyless
+        in: query
+        schema:
+          type: boolean
+      - name: verified
+        in: query
+        schema:
+          type: boolean
+      - name: mock
+        in: query
+        description: true/false excludes the other kind; omitted keeps both but real providers still rank above mocks
+        schema:
+          type: boolean
+      - name: maxPriceMicros
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      - name: hidden
+        in: query
+        schema:
+          type: boolean
+      - name: prefer
+        in: query
+        description: 'How providers are ordered inside a job: balanced (default), cheapest, reliable or fastest. Any other value is a 400 validation_error. Every item''s facts carry it and the body echoes it; it changes the order only once the gateway serves the shared ranking.'
+        schema:
+          type: string
+          enum:
+          - cheapest
+          - reliable
+          - fastest
+          - balanced
+      responses:
+        '200':
+          description: 'Ranked catalog items (each carrying mock, verified, keyless, runnableNow, stats, access, matchedBy, facts, works, credential and sourceCapability; capability is the resolved job id), same shape as the listing, plus the prefer value used. An empty page may carry warnings (no_supply_for_job) or priceHint (price_above_max: maxPriceMicros removed every endpoint that does the named job; it names the cheapest)'
+        '400':
+          description: q is required
+        '403':
+          description: catalog:read scope required
+      tags:
+      - Catalog
+      operationId: getV1CatalogSearch
+      x-operation-id-source: derived
+  /v1/catalog/overview:
+    get:
+      security: []
+      summary: 'What the catalog covers: categories > platforms > jobs with provider, endpoint…'
+      description: 'Publicly readable without a bearer token; the same answer for every caller, rebuilt only when the catalog revision (or a platform key or fee) changes. Counts the rows the live public catalog lists (GET /v1/public-catalog when it serves the live catalog): the same row rules and public record checks (hidden slugs, prohibited, mock, unpriced, inactive and disabled rows, and records the public schema refuses, are left out). A category is the vocabulary category of the job''s platform, `other` when the platform is not in the vocabulary. Every level (category, platform, job) carries providerCount (distinct providers), endpointCount, runnableCount (runnable without your own key: keyless, or a platform key exists), cheapestPerCall and cheapestPerResult (lowest prices, the price you pay, null when nothing is priced that way; never compared with each other). The default answer is depth summary (totals plus one entry per category, a few KB); depth=full is the whole document (about 490 KB). category or platform narrows to one branch (default depth platforms; depth=jobs lists its jobs) and then answers filter instead of totals. topic answers the matching jobs, at most 25. Each view has its own ETag; revalidate with If-None-Match.'
+      parameters:
+      - name: depth
+        in: query
+        required: false
+        schema:
+          enum:
+          - summary
+          - platforms
+          - jobs
+          - full
+        description: 'summary (default): totals and per category counts. platforms: adds each category''s platforms. jobs: adds each platform''s jobs (a tree). full: each category''s platforms[] and flat jobs[] with job.platform. Default platforms when category or platform is given; pass jobs to list the branch jobs. Not allowed with topic.'
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 200
+        description: 'A category id: answers only that category. Unknown: 404 unknown_category.'
+      - name: platform
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 200
+        description: 'A platform id: answers the category holding it with only that platform. Unknown (or not in the given category): 404 unknown_platform.'
+      - name: topic
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 200
+        description: 'Words such as email or phone: answers the jobs whose id, title, platform or category match (the job-first search matcher), best first, at most 25, with truncated. Combines with category and platform.'
+      - name: If-None-Match
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 'Catalog overview view: a depth view, or a topic view when topic is given'
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: W/"rev-<revision>-<digest of this view>"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/CatalogOverview'
+                - $ref: '#/components/schemas/CatalogOverviewTopic'
+        '304':
+          description: View unchanged since If-None-Match
+        '400':
+          description: 'validation_error: error.field names the argument (depth, category, platform or topic) and error.message says what to send'
+        '404':
+          description: unknown_category (error.categories lists the ids) or unknown_platform; error.field names the argument
+        '503':
+          description: 'catalog_loading: no catalog snapshot is loaded yet; retry after retry-after seconds. production_runtime_unavailable: this deployment serves no v2 catalog'
+      tags:
+      - Catalog
+      operationId: getV1CatalogOverview
+      x-operation-id-source: derived
+  /v1/catalog/overlay:
+    get:
+      summary: Per-workspace catalog overlay (connected, platformSupply) by provider
+      description: Per-workspace overlay (connected, platformSupply) for each provider, returned in one call.
+      responses:
+        '200':
+          description: '{ generatedAt, workspaceId, providers: { [providerId]: { connected, platformSupply } } }'
+        '403':
+          description: catalog:read scope required
+      tags:
+      - Catalog
+      operationId: getV1CatalogOverlay
+      x-operation-id-source: derived
+  /v1/catalog/endpoints/{endpointId}/verify:
+    post:
+      summary: Run an endpoint's stored testRequest and stamp verifiedAt on success
+      description: Dispatches through the exact same execute/settle path POST /v1/runs uses, then on success only stamps verifiedAt/verifiedRunId. Requires both runs:execute and provider-registry:write.
+      responses:
+        '200':
+          description: '{ ok, endpointId, version, runId, latencyMs, error }'
+        '403':
+          description: runs:execute and provider-registry:write scopes both required
+        '404':
+          description: Endpoint not found
+        '409':
+          description: Endpoint has no stored testRequest to verify against
+      tags:
+      - Catalog
+      operationId: postV1CatalogEndpointsByEndpointIdVerify
+      x-operation-id-source: derived
+components:
+  schemas:
+    CatalogOverview:
+      type: object
+      additionalProperties: false
+      required:
+      - revision
+      - builtAt
+      - depth
+      - categories
+      properties:
+        revision:
+          type: string
+        builtAt:
+          type: string
+          format: date-time
+        depth:
+          enum:
+          - summary
+          - platforms
+          - jobs
+          - full
+        filter:
+          type: object
+          additionalProperties: false
+          description: Present only on a narrowed view (category or platform given); such a view has no totals
+          properties:
+            category:
+              type: string
+            platform:
+              type: string
+        totals:
+          type: object
+          additionalProperties: false
+          description: Whole catalog; only on a view that is not narrowed
+          required:
+          - categories
+          - platforms
+          - jobs
+          - providers
+          - endpoints
+          - runnableEndpoints
+          properties:
+            categories:
+              type: integer
+            platforms:
+              type: integer
+            jobs:
+              type: integer
+            providers:
+              type: integer
+            endpoints:
+              type: integer
+            runnableEndpoints:
+              type: integer
+        categories:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - id
+            - title
+            - platformCount
+            - jobCount
+            - providerCount
+            - endpointCount
+            - runnableCount
+            - cheapestPerCall
+            - cheapestPerResult
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              platformCount:
+                type: integer
+              jobCount:
+                type: integer
+              providerCount:
+                type: integer
+                description: Distinct providers with at least one listed endpoint at this level
+              endpointCount:
+                type: integer
+              runnableCount:
+                type: integer
+                description: Endpoints runnable without your own key (keyless, or a platform key exists)
+              cheapestPerCall:
+                type:
+                - number
+                - 'null'
+                description: Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call
+              cheapestPerResult:
+                type:
+                - number
+                - 'null'
+                description: Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result
+              platforms:
+                type: array
+                description: Depth platforms, jobs and full, and any view narrowed by platform
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - id
+                  - title
+                  - jobCount
+                  - providerCount
+                  - endpointCount
+                  - runnableCount
+                  - cheapestPerCall
+                  - cheapestPerResult
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    jobCount:
+                      type: integer
+                    providerCount:
+                      type: integer
+                      description: Distinct providers with at least one listed endpoint at this level
+                    endpointCount:
+                      type: integer
+                    runnableCount:
+                      type: integer
+                      description: Endpoints runnable without your own key (keyless, or a platform key exists)
+                    cheapestPerCall:
+                      type:
+                      - number
+                      - 'null'
+                      description: Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call
+                    cheapestPerResult:
+                      type:
+                      - number
+                      - 'null'
+                      description: Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result
+                    jobs:
+                      type: array
+                      description: 'Depth jobs only: this platform''s jobs'
+                      items:
+                        type: object
+                        additionalProperties: false
+                        required:
+                        - id
+                        - title
+                        - providerCount
+                        - endpointCount
+                        - runnableCount
+                        - cheapestPerCall
+                        - cheapestPerResult
+                        properties:
+                          id:
+                            type: string
+                          title:
+                            type: string
+                          providerCount:
+                            type: integer
+                            description: Distinct providers with at least one listed endpoint at this level
+                          endpointCount:
+                            type: integer
+                          runnableCount:
+                            type: integer
+                            description: Endpoints runnable without your own key (keyless, or a platform key exists)
+                          cheapestPerCall:
+                            type:
+                            - number
+                            - 'null'
+                            description: Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call
+                          cheapestPerResult:
+                            type:
+                            - number
+                            - 'null'
+                            description: Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result
+              jobs:
+                type: array
+                description: 'Depth full only: the category''s jobs, each naming its platform'
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - id
+                  - title
+                  - platform
+                  - providerCount
+                  - endpointCount
+                  - runnableCount
+                  - cheapestPerCall
+                  - cheapestPerResult
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    platform:
+                      type: string
+                    providerCount:
+                      type: integer
+                      description: Distinct providers with at least one listed endpoint at this level
+                    endpointCount:
+                      type: integer
+                    runnableCount:
+                      type: integer
+                      description: Endpoints runnable without your own key (keyless, or a platform key exists)
+                    cheapestPerCall:
+                      type:
+                      - number
+                      - 'null'
+                      description: Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call
+                    cheapestPerResult:
+                      type:
+                      - number
+                      - 'null'
+                      description: Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result
+    CatalogOverviewTopic:
+      type: object
+      additionalProperties: false
+      required:
+      - revision
+      - builtAt
+      - topic
+      - matchCount
+      - truncated
+      - jobs
+      properties:
+        revision:
+          type: string
+        builtAt:
+          type: string
+          format: date-time
+        topic:
+          type: string
+          description: 'The topic as matched: lowercased, punctuation folded to spaces'
+        filter:
+          type: object
+          additionalProperties: false
+          description: Present only on a narrowed view (category or platform given); such a view has no totals
+          properties:
+            category:
+              type: string
+            platform:
+              type: string
+        matchCount:
+          type: integer
+          description: Jobs that match before the cap
+        truncated:
+          type: boolean
+          description: True when matchCount is over the 25 jobs answered
+        jobs:
+          type: array
+          maxItems: 25
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - id
+            - title
+            - providerCount
+            - endpointCount
+            - runnableCount
+            - cheapestPerCall
+            - cheapestPerResult
+            - category
+            - platform
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              providerCount:
+                type: integer
+                description: Distinct providers with at least one listed endpoint at this level
+              endpointCount:
+                type: integer
+              runnableCount:
+                type: integer
+                description: Endpoints runnable without your own key (keyless, or a platform key exists)
+              cheapestPerCall:
+                type:
+                - number
+                - 'null'
+                description: Lowest per-call price in dollars at this level (the price you pay); null when nothing is priced per call
+              cheapestPerResult:
+                type:
+                - number
+                - 'null'
+                description: Lowest per-result price in dollars at this level (the price you pay); null when nothing is priced per result
+              category:
+                type: string
+              platform:
+                type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,181 @@
+openapi: 3.2.0
+info:
+  title: looot Platform Oauth API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Platform Oauth
+paths:
+  /v1/platform-oauth:
+    get:
+      summary: 'Platform operator: list every registered provider''s OAuth app status…'
+      responses:
+        '200':
+          description: '{ platformOAuthApps: [{ providerId, displayName, clientIdSet, clientSecretSet, clientIdHint, updatedAt }] }'
+        '403':
+          description: platform_operator_required, or provider-registry:read scope required
+        '503':
+          description: Platform OAuth control plane unavailable
+      tags:
+      - Platform Oauth
+      operationId: getV1PlatformOauth
+      x-operation-id-source: derived
+  /v1/platform-oauth/{providerId}:
+    get:
+      summary: 'Platform operator: report whether the platform''s OAuth client id and secret are…'
+      responses:
+        '200':
+          description: Platform OAuth status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - providerId
+                - clientIdSet
+                - clientSecretSet
+                properties:
+                  providerId:
+                    type: string
+                  clientIdSet:
+                    type: boolean
+                  clientSecretSet:
+                    type: boolean
+        '403':
+          description: platform_operator_required, or provider-registry:read scope required
+        '503':
+          description: Platform OAuth control plane unavailable
+      tags:
+      - Platform Oauth
+      operationId: getV1PlatformOauthByProviderId
+      x-operation-id-source: derived
+    put:
+      summary: 'Platform operator: set both the OAuth client id and secret for a provider…'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - clientId
+              - clientSecret
+              properties:
+                clientId:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                clientSecret:
+                  type: string
+                  minLength: 1
+                  maxLength: 4000
+      responses:
+        '200':
+          description: Platform OAuth status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - providerId
+                - clientIdSet
+                - clientSecretSet
+                properties:
+                  providerId:
+                    type: string
+                  clientIdSet:
+                    type: boolean
+                  clientSecretSet:
+                    type: boolean
+        '400':
+          description: Invalid request
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '503':
+          description: Setting the platform OAuth client failed
+      tags:
+      - Platform Oauth
+      operationId: putV1PlatformOauthByProviderId
+      x-operation-id-source: derived
+    patch:
+      summary: 'Platform operator: update the OAuth client id or secret without re-sending the…'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              minProperties: 1
+              properties:
+                clientId:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+                clientSecret:
+                  type: string
+                  minLength: 1
+                  maxLength: 4000
+      responses:
+        '200':
+          description: Platform OAuth status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - providerId
+                - clientIdSet
+                - clientSecretSet
+                properties:
+                  providerId:
+                    type: string
+                  clientIdSet:
+                    type: boolean
+                  clientSecretSet:
+                    type: boolean
+        '400':
+          description: Invalid request
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: No platform OAuth client set yet for this provider
+        '503':
+          description: Patching the platform OAuth client failed
+      tags:
+      - Platform Oauth
+      operationId: patchV1PlatformOauthByProviderId
+      x-operation-id-source: derived
+    delete:
+      summary: 'Platform operator: revoke a provider''s platform OAuth client id and secret'
+      responses:
+        '200':
+          description: '{ revoked: true }'
+        '403':
+          description: platform_operator_required, or provider-registry:write scope required
+        '404':
+          description: No platform OAuth client was set for this provider
+        '503':
+          description: Revoking the platform OAuth client failed
+      tags:
+      - Platform Oauth
+      operationId: deleteV1PlatformOauthByProviderId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

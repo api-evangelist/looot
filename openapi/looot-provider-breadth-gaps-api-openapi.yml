@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: looot Provider Breadth Gaps API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Provider Breadth Gaps
+paths:
+  /v1/provider-breadth-gaps:
+    get:
+      summary: List evidence-aware provider integration targets and their exact current gap
+      parameters:
+      - name: providerId
+        in: query
+        schema:
+          type: string
+      - name: capabilityId
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+      responses:
+        '200':
+          description: Versioned read-only target gap page
+        '400':
+          description: Invalid filter or cursor
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Provider Breadth Gaps
+      operationId: getV1ProviderBreadthGaps
+      x-operation-id-source: derived
+  /v1/provider-breadth-gaps/preview:
+    post:
+      summary: Validate and preview up to 100 external provider targets without persistence…
+      responses:
+        '200':
+          description: Read-only canonical gap preview
+        '400':
+          description: Invalid or duplicate target manifest
+        '403':
+          description: candidates:read scope required
+      tags:
+      - Provider Breadth Gaps
+      operationId: postV1ProviderBreadthGapsPreview
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

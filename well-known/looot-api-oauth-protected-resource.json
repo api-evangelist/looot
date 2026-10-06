@@ -1,0 +1,1 @@
+{"resource":"https://api.looot.ai/mcp","authorization_servers":["https://api.looot.ai"],"scopes_supported":["catalog.read","connections.read","runs.read","runs.execute","usage.read","workflows.read","workflows.execute"],"bearer_methods_supported":["header"],"resource_name":"looot","resource_documentation":"https://api.looot.ai/llms.txt"}

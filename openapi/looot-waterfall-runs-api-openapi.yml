@@ -1,0 +1,73 @@
+openapi: 3.2.0
+info:
+  title: looot Waterfall Runs API
+  version: 0.1.0
+  description: Discover, inspect, run, and pay for real (or fixture) provider operations through one bearer token.
+servers:
+- url: https://api.looot.ai
+  description: Public API (default)
+- url: https://coset-gateway.onrender.com
+  description: Legacy host -- still live, for tokens issued before the public domain existed
+- url: http://127.0.0.1:8787
+  description: Local development
+security:
+- bearerAuth: []
+tags:
+- name: Waterfall Runs
+paths:
+  /v1/waterfall-runs:
+    get:
+      summary: List tenant-scoped durable normalized waterfall runs
+      responses:
+        '200':
+          description: Waterfall runs
+        '403':
+          description: waterfalls:read scope required
+      tags:
+      - Waterfall Runs
+      operationId: getV1WaterfallRuns
+      x-operation-id-source: derived
+    post:
+      summary: Start one publication-pinned budget-checked normalized waterfall
+      responses:
+        '200':
+          description: Idempotent replay
+        '201':
+          description: Durable queued waterfall
+        '400':
+          description: Schema, publication or budget gate failed
+        '403':
+          description: waterfalls:write scope required
+      tags:
+      - Waterfall Runs
+      operationId: postV1WaterfallRuns
+      x-operation-id-source: derived
+  /v1/waterfall-runs/{waterfallRunId}:
+    get:
+      summary: Get one tenant-scoped waterfall with child cost lineage
+      responses:
+        '200':
+          description: Waterfall state
+        '404':
+          description: Missing or foreign run
+      tags:
+      - Waterfall Runs
+      operationId: getV1WaterfallRunsByWaterfallRunId
+      x-operation-id-source: derived
+  /v1/waterfall-runs/{waterfallRunId}/advance:
+    post:
+      summary: Advance exactly one durable waterfall boundary
+      responses:
+        '200':
+          description: Updated waterfall state
+        '404':
+          description: Missing or foreign run
+      tags:
+      - Waterfall Runs
+      operationId: postV1WaterfallRunsByWaterfallRunIdAdvance
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
