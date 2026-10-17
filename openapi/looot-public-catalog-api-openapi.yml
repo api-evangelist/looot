@@ -166,6 +166,78 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    PublicCatalogPrice:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - state
+        - amountMicros
+        - currency
+        - unit
+        - effectiveAt
+        properties:
+          state:
+            const: known
+          amountMicros:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+          currency:
+            type: string
+            pattern: ^[A-Z]{3}$
+          unit:
+            type: string
+            minLength: 1
+            maxLength: 80
+          effectiveAt:
+            type: string
+            format: date-time
+          comparisonBasis:
+            type: object
+            additionalProperties: false
+            required:
+            - canonicalMeter
+            - billingBasis
+            - tier
+            - minimumMicros
+            - rounding
+            properties:
+              canonicalMeter:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]{2,127}$
+              billingBasis:
+                enum:
+                - per_call
+                - per_result
+                - per_unit
+              tier:
+                type: string
+                minLength: 1
+                maxLength: 80
+              minimumMicros:
+                type: integer
+                minimum: 0
+                maximum: 9007199254740991
+              rounding:
+                enum:
+                - exact
+                - ceil
+                - floor
+      - type: object
+        additionalProperties: false
+        required:
+        - state
+        - reason
+        properties:
+          state:
+            enum:
+            - unknown
+            - uncomputable
+          reason:
+            type: string
+            minLength: 1
+            maxLength: 300
     PublicCatalogComparison:
       type: object
       additionalProperties: false
@@ -306,78 +378,6 @@ components:
                 type: string
                 minLength: 1
                 maxLength: 1000
-    PublicCatalogPrice:
-      oneOf:
-      - type: object
-        additionalProperties: false
-        required:
-        - state
-        - amountMicros
-        - currency
-        - unit
-        - effectiveAt
-        properties:
-          state:
-            const: known
-          amountMicros:
-            type: integer
-            minimum: 0
-            maximum: 9007199254740991
-          currency:
-            type: string
-            pattern: ^[A-Z]{3}$
-          unit:
-            type: string
-            minLength: 1
-            maxLength: 80
-          effectiveAt:
-            type: string
-            format: date-time
-          comparisonBasis:
-            type: object
-            additionalProperties: false
-            required:
-            - canonicalMeter
-            - billingBasis
-            - tier
-            - minimumMicros
-            - rounding
-            properties:
-              canonicalMeter:
-                type: string
-                pattern: ^[a-z][a-z0-9_-]{2,127}$
-              billingBasis:
-                enum:
-                - per_call
-                - per_result
-                - per_unit
-              tier:
-                type: string
-                minLength: 1
-                maxLength: 80
-              minimumMicros:
-                type: integer
-                minimum: 0
-                maximum: 9007199254740991
-              rounding:
-                enum:
-                - exact
-                - ceil
-                - floor
-      - type: object
-        additionalProperties: false
-        required:
-        - state
-        - reason
-        properties:
-          state:
-            enum:
-            - unknown
-            - uncomputable
-          reason:
-            type: string
-            minLength: 1
-            maxLength: 300
     PublicCatalogItem:
       type: object
       additionalProperties: false

@@ -427,6 +427,106 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ConnectionResource:
+      type: object
+      additionalProperties: false
+      required:
+      - resourceId
+      - connectionId
+      - providerResourceId
+      - kind
+      - displayName
+      - selected
+      - discoveredAt
+      properties:
+        resourceId:
+          type: string
+          pattern: ^cres_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerResourceId:
+          type: string
+        kind:
+          type: string
+        displayName:
+          type: string
+        selected:
+          type: boolean
+        discoveredAt:
+          type: string
+          format: date-time
+    ConnectionTestReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - receiptId
+      - connectionId
+      - providerId
+      - verification
+      - providerCalled
+      - credentialState
+      - message
+      - testedAt
+      properties:
+        receiptId:
+          type: string
+          pattern: ^ctr_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerId:
+          type: string
+        verification:
+          enum:
+          - fixture_tested
+          - not_tested
+        providerCalled:
+          type: boolean
+          description: Always false for this local-fixture-only endpoint; a real provider call happens only through /probe
+        credentialState:
+          enum:
+          - available
+          - unavailable
+        message:
+          type: string
+          description: Safe status text without credential or provider response material
+        testedAt:
+          type: string
+          format: date-time
+    ConnectionAlert:
+      type: object
+      additionalProperties: false
+      required:
+      - alertId
+      - connectionId
+      - providerId
+      - state
+      - message
+      - createdAt
+      - acknowledgedAt
+      properties:
+        alertId:
+          type: string
+          pattern: ^cal_[a-f0-9]{32}$
+        connectionId:
+          type: string
+        providerId:
+          type: string
+        state:
+          enum:
+          - degraded
+          - expired
+          - action_required
+          - revoked
+        message:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        acknowledgedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
     SelectConnectionResource:
       type: object
       additionalProperties: false
@@ -436,6 +536,35 @@ components:
         resourceId:
           type: string
           pattern: ^cres_[a-f0-9]{32}$
+    ConnectionFixtureReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - receiptId
+      - connectionId
+      - verification
+      - providerCalled
+      - credentialState
+      - evidence
+      - testedAt
+      properties:
+        receiptId:
+          type: string
+          pattern: ^cfr_[a-f0-9]{32}$
+        connectionId:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        verification:
+          const: fixture_tested
+        providerCalled:
+          type: boolean
+        credentialState:
+          const: available
+        evidence:
+          const: local_fixture_credential_access
+        testedAt:
+          type: string
+          format: date-time
     RegisterConnection:
       type: object
       description: One of api_key (default when kind is omitted), oauth, service_account, credential_file, signed_request, or cli_auth, discriminated by kind
@@ -521,147 +650,22 @@ components:
           items:
             type: string
           description: Secondary credential roles this provider requires beyond the primary auth
-    ConnectionFixtureReceipt:
+    ConnectionAuthorization:
       type: object
       additionalProperties: false
       required:
-      - receiptId
-      - connectionId
-      - verification
-      - providerCalled
-      - credentialState
-      - evidence
-      - testedAt
-      properties:
-        receiptId:
-          type: string
-          pattern: ^cfr_[a-f0-9]{32}$
-        connectionId:
-          type: string
-          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
-        verification:
-          const: fixture_tested
-        providerCalled:
-          type: boolean
-        credentialState:
-          const: available
-        evidence:
-          const: local_fixture_credential_access
-        testedAt:
-          type: string
-          format: date-time
-    ConnectionCallback:
-      type: object
-      additionalProperties: false
-      required:
+      - authorizationUrl
       - state
-      - code
+      - expiresAt
       properties:
+        authorizationUrl:
+          type: string
+          format: uri
         state:
           type: string
-        code:
-          type: string
-    ConnectionTestReceipt:
-      type: object
-      additionalProperties: false
-      required:
-      - receiptId
-      - connectionId
-      - providerId
-      - verification
-      - providerCalled
-      - credentialState
-      - message
-      - testedAt
-      properties:
-        receiptId:
-          type: string
-          pattern: ^ctr_[a-f0-9]{32}$
-        connectionId:
-          type: string
-        providerId:
-          type: string
-        verification:
-          enum:
-          - fixture_tested
-          - not_tested
-        providerCalled:
-          type: boolean
-          description: Always false for this local-fixture-only endpoint; a real provider call happens only through /probe
-        credentialState:
-          enum:
-          - available
-          - unavailable
-        message:
-          type: string
-          description: Safe status text without credential or provider response material
-        testedAt:
+        expiresAt:
           type: string
           format: date-time
-    ConnectionProbeDefinition:
-      type: object
-      additionalProperties: false
-      required:
-      - host
-      - method
-      - path
-      - expectedStatuses
-      properties:
-        host:
-          type: string
-        method:
-          enum:
-          - GET
-          - POST
-        path:
-          type: string
-        expectedStatuses:
-          type: array
-          items:
-            type: integer
-        identityPointer:
-          type: string
-        scopesPointer:
-          type: string
-        resourcesPointer:
-          type: string
-    ConnectionResource:
-      type: object
-      additionalProperties: false
-      required:
-      - resourceId
-      - connectionId
-      - providerResourceId
-      - kind
-      - displayName
-      - selected
-      - discoveredAt
-      properties:
-        resourceId:
-          type: string
-          pattern: ^cres_[a-f0-9]{32}$
-        connectionId:
-          type: string
-        providerResourceId:
-          type: string
-        kind:
-          type: string
-        displayName:
-          type: string
-        selected:
-          type: boolean
-        discoveredAt:
-          type: string
-          format: date-time
-    RotateConnection:
-      type: object
-      additionalProperties: false
-      required:
-      - secret
-      properties:
-        secret:
-          type: string
-          writeOnly: true
     Connection:
       type: object
       additionalProperties: false
@@ -804,6 +808,33 @@ components:
         secret:
           type: string
           writeOnly: true
+    ConnectionProbeDefinition:
+      type: object
+      additionalProperties: false
+      required:
+      - host
+      - method
+      - path
+      - expectedStatuses
+      properties:
+        host:
+          type: string
+        method:
+          enum:
+          - GET
+          - POST
+        path:
+          type: string
+        expectedStatuses:
+          type: array
+          items:
+            type: integer
+        identityPointer:
+          type: string
+        scopesPointer:
+          type: string
+        resourcesPointer:
+          type: string
     ConnectionHealthReceipt:
       type: object
       additionalProperties: false
@@ -864,41 +895,26 @@ components:
         checkedAt:
           type: string
           format: date-time
-    ConnectionAlert:
+    RotateConnection:
       type: object
       additionalProperties: false
       required:
-      - alertId
-      - connectionId
-      - providerId
-      - state
-      - message
-      - createdAt
-      - acknowledgedAt
+      - secret
       properties:
-        alertId:
+        secret:
           type: string
-          pattern: ^cal_[a-f0-9]{32}$
-        connectionId:
-          type: string
-        providerId:
-          type: string
+          writeOnly: true
+    ConnectionCallback:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      - code
+      properties:
         state:
-          enum:
-          - degraded
-          - expired
-          - action_required
-          - revoked
-        message:
           type: string
-        createdAt:
+        code:
           type: string
-          format: date-time
-        acknowledgedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
     ConnectionFixtureReceiptHistory:
       type: object
       additionalProperties: false
@@ -915,22 +931,6 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/ConnectionFixtureReceipt'
-    ConnectionAuthorization:
-      type: object
-      additionalProperties: false
-      required:
-      - authorizationUrl
-      - state
-      - expiresAt
-      properties:
-        authorizationUrl:
-          type: string
-          format: uri
-        state:
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
   securitySchemes:
     bearerAuth:
       type: http

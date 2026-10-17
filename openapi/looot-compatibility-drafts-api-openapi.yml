@@ -103,40 +103,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    SubmitCompatibilityGate:
-      type: object
-      additionalProperties: false
-      required:
-      - gate
-      - claim
-      - evidenceRefs
-      properties:
-        gate:
-          enum:
-          - provider_identity
-          - capability_mapping
-          - official_evidence
-          - rights
-          - auth
-          - base_url
-          - effect_classification
-          - price
-          - executor
-          - error_contract
-          - rate_limits
-          - retention
-          - authenticated_test
-          - production_approval
-        claim:
-          type: string
-          minLength: 1
-          maxLength: 2000
-        evidenceRefs:
-          type: array
-          minItems: 1
-          maxItems: 20
-          items:
-            $ref: '#/components/schemas/CompatibilityEvidenceRef'
     CompatibilityEvidenceRef:
       type: object
       additionalProperties: false
@@ -174,6 +140,40 @@ components:
           type: string
           minLength: 1
           maxLength: 300
+    SubmitCompatibilityGate:
+      type: object
+      additionalProperties: false
+      required:
+      - gate
+      - claim
+      - evidenceRefs
+      properties:
+        gate:
+          enum:
+          - provider_identity
+          - capability_mapping
+          - official_evidence
+          - rights
+          - auth
+          - base_url
+          - effect_classification
+          - price
+          - executor
+          - error_contract
+          - rate_limits
+          - retention
+          - authenticated_test
+          - production_approval
+        claim:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        evidenceRefs:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/CompatibilityEvidenceRef'
   securitySchemes:
     bearerAuth:
       type: http

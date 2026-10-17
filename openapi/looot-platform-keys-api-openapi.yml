@@ -97,70 +97,89 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    SetPlatformKey:
+    PlatformAuthConfig:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        properties:
+          authMethod:
+            const: bearer
+          headerName:
+            type: string
+          valuePrefix:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - headerName
+        properties:
+          authMethod:
+            const: header
+          headerName:
+            type: string
+          valuePrefix:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - paramName
+        properties:
+          authMethod:
+            const: query
+          paramName:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        properties:
+          authMethod:
+            const: basic
+          headerName:
+            type: string
+      - type: object
+        additionalProperties: false
+        required:
+        - authMethod
+        - fields
+        properties:
+          authMethod:
+            const: multi
+          fields:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              additionalProperties: false
+              required:
+              - field
+              - placement
+              - name
+              properties:
+                field:
+                  type: string
+                placement:
+                  enum:
+                  - header
+                  - query
+                name:
+                  type: string
+                valuePrefix:
+                  type: string
+    PlatformKeyList:
       type: object
       additionalProperties: false
       required:
-      - secret
+      - platformKeys
       properties:
-        secret:
-          type: string
-          writeOnly: true
-          minLength: 1
-          maxLength: 4000
-        authMethod:
-          enum:
-          - bearer
-          - header
-          - query
-          - basic
-          - multi
-          description: Selects which of headerName/paramName/valuePrefix/fields apply; omitted falls back to the endpoint's own authPlacement default
-        headerName:
-          type: string
-          minLength: 1
-          maxLength: 120
-          description: Required when authMethod is "header"
-        paramName:
-          type: string
-          minLength: 1
-          maxLength: 120
-          description: Required when authMethod is "query"
-        valuePrefix:
-          type: string
-          maxLength: 60
-        fields:
+        platformKeys:
           type: array
-          maxItems: 20
-          description: Required (at least one) when authMethod is "multi" -- the secret is a JSON object of named fields, each independently placed
           items:
-            type: object
-            additionalProperties: false
-            required:
-            - field
-            - placement
-            - name
-            properties:
-              field:
-                type: string
-                minLength: 1
-                maxLength: 120
-              placement:
-                enum:
-                - header
-                - query
-              name:
-                type: string
-                minLength: 1
-                maxLength: 120
-              valuePrefix:
-                type: string
-                maxLength: 60
-        platformFeeMicros:
-          type: integer
-          minimum: 0
-        approved:
-          type: boolean
+            $ref: '#/components/schemas/PlatformKey'
     PlatformKey:
       type: object
       additionalProperties: false
@@ -268,89 +287,70 @@ components:
           minimum: 0
         approved:
           type: boolean
-    PlatformAuthConfig:
-      oneOf:
-      - type: object
-        additionalProperties: false
-        required:
-        - authMethod
-        properties:
-          authMethod:
-            const: bearer
-          headerName:
-            type: string
-          valuePrefix:
-            type: string
-      - type: object
-        additionalProperties: false
-        required:
-        - authMethod
-        - headerName
-        properties:
-          authMethod:
-            const: header
-          headerName:
-            type: string
-          valuePrefix:
-            type: string
-      - type: object
-        additionalProperties: false
-        required:
-        - authMethod
-        - paramName
-        properties:
-          authMethod:
-            const: query
-          paramName:
-            type: string
-      - type: object
-        additionalProperties: false
-        required:
-        - authMethod
-        properties:
-          authMethod:
-            const: basic
-          headerName:
-            type: string
-      - type: object
-        additionalProperties: false
-        required:
-        - authMethod
-        - fields
-        properties:
-          authMethod:
-            const: multi
-          fields:
-            type: array
-            minItems: 1
-            items:
-              type: object
-              additionalProperties: false
-              required:
-              - field
-              - placement
-              - name
-              properties:
-                field:
-                  type: string
-                placement:
-                  enum:
-                  - header
-                  - query
-                name:
-                  type: string
-                valuePrefix:
-                  type: string
-    PlatformKeyList:
+    SetPlatformKey:
       type: object
       additionalProperties: false
       required:
-      - platformKeys
+      - secret
       properties:
-        platformKeys:
+        secret:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 4000
+        authMethod:
+          enum:
+          - bearer
+          - header
+          - query
+          - basic
+          - multi
+          description: Selects which of headerName/paramName/valuePrefix/fields apply; omitted falls back to the endpoint's own authPlacement default
+        headerName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "header"
+        paramName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: Required when authMethod is "query"
+        valuePrefix:
+          type: string
+          maxLength: 60
+        fields:
           type: array
+          maxItems: 20
+          description: Required (at least one) when authMethod is "multi" -- the secret is a JSON object of named fields, each independently placed
           items:
-            $ref: '#/components/schemas/PlatformKey'
+            type: object
+            additionalProperties: false
+            required:
+            - field
+            - placement
+            - name
+            properties:
+              field:
+                type: string
+                minLength: 1
+                maxLength: 120
+              placement:
+                enum:
+                - header
+                - query
+              name:
+                type: string
+                minLength: 1
+                maxLength: 120
+              valuePrefix:
+                type: string
+                maxLength: 60
+        platformFeeMicros:
+          type: integer
+          minimum: 0
+        approved:
+          type: boolean
   securitySchemes:
     bearerAuth:
       type: http

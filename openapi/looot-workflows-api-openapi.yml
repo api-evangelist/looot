@@ -136,108 +136,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CreateWorkflow:
-      type: object
-      additionalProperties: false
-      required:
-      - name
-      - steps
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 120
-        steps:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/WorkflowStep'
-    ReviseWorkflow:
-      type: object
-      additionalProperties: false
-      required:
-      - steps
-      properties:
-        steps:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/WorkflowStep'
-    PublishWorkflow:
-      type: object
-      additionalProperties: false
-      required:
-      - version
-      properties:
-        version:
-          type: integer
-          minimum: 1
-    WorkflowMapping:
-      type: object
-      maxProperties: 64
-      additionalProperties:
-        $ref: '#/components/schemas/WorkflowValue'
-    StartWorkflow:
-      type: object
-      additionalProperties: false
-      required:
-      - idempotencyKey
-      properties:
-        idempotencyKey:
-          type: string
-          minLength: 1
-          maxLength: 200
-    WorkflowValue:
-      oneOf:
-      - type: object
-        additionalProperties: false
-        required:
-        - source
-        - value
-        properties:
-          source:
-            const: literal
-          value: {}
-      - type: object
-        additionalProperties: false
-        required:
-        - source
-        - stepId
-        - path
-        properties:
-          source:
-            const: step
-          stepId:
-            type: string
-          path:
-            type: array
-            maxItems: 16
-            items:
-              type: string
-              minLength: 1
-              maxLength: 120
-    WorkflowComparison:
-      type: object
-      additionalProperties: false
-      required:
-      - left
-      - operator
-      properties:
-        left:
-          $ref: '#/components/schemas/WorkflowValue'
-        operator:
-          enum:
-          - eq
-          - neq
-          - exists
-          - gt
-          - gte
-          - lt
-          - lte
-        right:
-          $ref: '#/components/schemas/WorkflowValue'
     WorkflowStep:
       oneOf:
       - type: object
@@ -453,6 +351,108 @@ components:
           type: string
         equals:
           type: boolean
+    ReviseWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - steps
+      properties:
+        steps:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/WorkflowStep'
+    PublishWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+    WorkflowMapping:
+      type: object
+      maxProperties: 64
+      additionalProperties:
+        $ref: '#/components/schemas/WorkflowValue'
+    StartWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - idempotencyKey
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+          maxLength: 200
+    WorkflowValue:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - source
+        - value
+        properties:
+          source:
+            const: literal
+          value: {}
+      - type: object
+        additionalProperties: false
+        required:
+        - source
+        - stepId
+        - path
+        properties:
+          source:
+            const: step
+          stepId:
+            type: string
+          path:
+            type: array
+            maxItems: 16
+            items:
+              type: string
+              minLength: 1
+              maxLength: 120
+    WorkflowComparison:
+      type: object
+      additionalProperties: false
+      required:
+      - left
+      - operator
+      properties:
+        left:
+          $ref: '#/components/schemas/WorkflowValue'
+        operator:
+          enum:
+          - eq
+          - neq
+          - exists
+          - gt
+          - gte
+          - lt
+          - lte
+        right:
+          $ref: '#/components/schemas/WorkflowValue'
+    CreateWorkflow:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - steps
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        steps:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/WorkflowStep'
   securitySchemes:
     bearerAuth:
       type: http

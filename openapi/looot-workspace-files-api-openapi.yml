@@ -313,31 +313,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    WorkspaceUsage:
-      type: object
-      additionalProperties: false
-      required:
-      - files
-      - bytes
-      - maxFiles
-      - maxBytes
-      properties:
-        files:
-          type: integer
-          minimum: 0
-          maximum: 100000
-        bytes:
-          type: integer
-          minimum: 0
-          maximum: 1073741824
-        maxFiles:
-          type: integer
-          minimum: 1
-          maximum: 100000
-        maxBytes:
-          type: integer
-          minimum: 1
-          maximum: 1073741824
     WorkspaceRead:
       type: object
       additionalProperties: false
@@ -403,6 +378,31 @@ components:
           type: integer
           minimum: 1
           maximum: 9007199254740991
+    WorkspaceUsage:
+      type: object
+      additionalProperties: false
+      required:
+      - files
+      - bytes
+      - maxFiles
+      - maxBytes
+      properties:
+        files:
+          type: integer
+          minimum: 0
+          maximum: 100000
+        bytes:
+          type: integer
+          minimum: 0
+          maximum: 1073741824
+        maxFiles:
+          type: integer
+          minimum: 1
+          maximum: 100000
+        maxBytes:
+          type: integer
+          minimum: 1
+          maximum: 1073741824
   securitySchemes:
     bearerAuth:
       type: http

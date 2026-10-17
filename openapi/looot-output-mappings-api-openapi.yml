@@ -172,17 +172,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PreviewOutputMapping:
-      type: object
-      additionalProperties: false
-      required:
-      - raw
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        raw: {}
-        canonical: {}
     ReviseOutputMapping:
       type: object
       additionalProperties: false
@@ -209,6 +198,48 @@ components:
         version:
           type: integer
           minimum: 1
+    CreateOutputMapping:
+      type: object
+      additionalProperties: false
+      required:
+      - mappingId
+      - name
+      - definition
+      properties:
+        mappingId:
+          type: string
+          pattern: ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        definition:
+          $ref: '#/components/schemas/OutputMappingDefinition'
+        targetSchema: {}
+    OutputMappingDefinition:
+      type: object
+      additionalProperties: false
+      required:
+      - mode
+      properties:
+        mode:
+          enum:
+          - raw
+          - canonical
+          - mapped
+        expression:
+          $ref: '#/components/schemas/OutputMappingExpression'
+    PreviewOutputMapping:
+      type: object
+      additionalProperties: false
+      required:
+      - raw
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        raw: {}
+        canonical: {}
     OutputMappingExpression:
       oneOf:
       - type: object
@@ -302,37 +333,6 @@ components:
             - error
             - prefer_first
             - prefer_last
-    OutputMappingDefinition:
-      type: object
-      additionalProperties: false
-      required:
-      - mode
-      properties:
-        mode:
-          enum:
-          - raw
-          - canonical
-          - mapped
-        expression:
-          $ref: '#/components/schemas/OutputMappingExpression'
-    CreateOutputMapping:
-      type: object
-      additionalProperties: false
-      required:
-      - mappingId
-      - name
-      - definition
-      properties:
-        mappingId:
-          type: string
-          pattern: ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$
-        name:
-          type: string
-          minLength: 1
-          maxLength: 200
-        definition:
-          $ref: '#/components/schemas/OutputMappingDefinition'
-        targetSchema: {}
   securitySchemes:
     bearerAuth:
       type: http

@@ -125,15 +125,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CreateProviderActivationBundle:
-      type: object
-      additionalProperties: false
-      required:
-      - revisionId
-      properties:
-        revisionId:
-          type: string
-          pattern: ^ppr_[a-f0-9]{32}$
     CompatibilityEvidenceRef:
       type: object
       additionalProperties: false
@@ -161,6 +152,15 @@ components:
           - pricing
           - authenticated_test
           - internal_review
+    CreateProviderActivationBundle:
+      type: object
+      additionalProperties: false
+      required:
+      - revisionId
+      properties:
+        revisionId:
+          type: string
+          pattern: ^ppr_[a-f0-9]{32}$
     SubmitProviderActivationEvidence:
       type: object
       additionalProperties: false

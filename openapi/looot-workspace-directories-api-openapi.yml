@@ -228,28 +228,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    WorkspaceDirectoryPage:
-      type: object
-      additionalProperties: false
-      required:
-      - entries
-      - namespaceRevision
-      - directoryRevision
-      properties:
-        entries:
-          type: array
-          maxItems: 100000
-          items:
-            $ref: '#/components/schemas/WorkspaceDirectoryEntry'
-        namespaceRevision:
-          type: string
-          pattern: ^sha256:[a-f0-9]{64}$
-        directoryRevision:
-          oneOf:
-          - type: integer
-            minimum: 1
-            maximum: 9007199254740991
-          - type: 'null'
     WorkspaceDirectoryMutationResult:
       type: object
       additionalProperties: false
@@ -262,35 +240,6 @@ components:
         namespaceRevision:
           type: string
           pattern: ^sha256:[a-f0-9]{64}$
-    WorkspaceDirectory:
-      type: object
-      additionalProperties: false
-      required:
-      - tenantId
-      - path
-      - createdAt
-      - updatedAt
-      - revision
-      properties:
-        tenantId:
-          type: string
-          minLength: 1
-          maxLength: 200
-        path:
-          type: string
-          minLength: 2
-          maxLength: 1024
-          pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        revision:
-          type: integer
-          minimum: 1
-          maximum: 9007199254740991
     WorkspaceDirectoryEntry:
       oneOf:
       - type: object
@@ -327,6 +276,35 @@ components:
             pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
           file:
             $ref: '#/components/schemas/WorkspaceFile'
+    WorkspaceDirectory:
+      type: object
+      additionalProperties: false
+      required:
+      - tenantId
+      - path
+      - createdAt
+      - updatedAt
+      - revision
+      properties:
+        tenantId:
+          type: string
+          minLength: 1
+          maxLength: 200
+        path:
+          type: string
+          minLength: 2
+          maxLength: 1024
+          pattern: ^/(?!.*(?:^|/)\.\.(?:/|$))(?!.*(?:^|/)\.(?:/|$))(?!.*//)(?!.*\\)(?!.*[\u0000-\u001f\u007f])[^/]{1,255}(?:/[^/]{1,255})*$
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
     WorkspaceFile:
       type: object
       additionalProperties: false
@@ -378,6 +356,28 @@ components:
           type: integer
           minimum: 1
           maximum: 9007199254740991
+    WorkspaceDirectoryPage:
+      type: object
+      additionalProperties: false
+      required:
+      - entries
+      - namespaceRevision
+      - directoryRevision
+      properties:
+        entries:
+          type: array
+          maxItems: 100000
+          items:
+            $ref: '#/components/schemas/WorkspaceDirectoryEntry'
+        namespaceRevision:
+          type: string
+          pattern: ^sha256:[a-f0-9]{64}$
+        directoryRevision:
+          oneOf:
+          - type: integer
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
   securitySchemes:
     bearerAuth:
       type: http
