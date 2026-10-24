@@ -36,3 +36,46 @@ plans:
   price: 0.002
   description: Enrich companies
 docs: https://looot.ai/pricing
+x-canonical:
+  generated: '2026-10-23'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: hunter-email-finder
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: exa-search
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: diffbot-article
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: brightdata-scrape-structured
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: justoneapi-api-douyin-hot-search
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: ipinfo-lite
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
